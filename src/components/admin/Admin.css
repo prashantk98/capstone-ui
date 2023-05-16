@@ -1,0 +1,7 @@
+.admin,.admin__sub-category{
+  /* padding-top: 10rem; */
+  padding: 10rem 10rem 0 4rem;
+}
+.admin__sub-category{
+  padding: 4rem 10rem 0 4rem;
+}
