@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Navbar from "./Navbar";
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 
 // function isMobile(value){
 //   value = value.trim();
@@ -78,70 +78,124 @@ export default function Home() {
           sx={{width:'60%', background: '#14a8fd',fontSize:'30px',border:'none', borderRadius:'32px'}}
           required
         /> */}
-            <input
+            <TextField
               type="number"
-              name="mobile"
-              placeholder="Mobile number"
+              label="Mobile Number"
+              variant="outlined"
+              InputProps={{ inputProps: { min: 0} }}
+              sx={{
+                "&": {
+                  backgroundColor: "white",
+                  width: "80%",
+                  fontSize: "3rem",
+                  borderRadius: ".4rem",
+                  margin: '1.8rem 0px'
+                },
+                '& .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused':{
+                  color: 'black'
+                },
+                "& label": {
+                  fontSize: "2rem",
+                  textAlign: "center",
+                  // color: 'black'
+                },
+                "& .MuiInputBase-root": {
+                  fontSize: "1.8rem",
+                }
+              }}
+
               value={number}
               onChange={(event) => setNumber(event.target.value)}
-              className="home__mobile-number"
-              required
+              name="mobile"
             />
-            <input
-              type="text"
-              name="user-name"
-              placeholder="Name"
+            <TextField
+              label="Name"
+              variant="outlined"
+              sx={{
+                "&": {
+                  backgroundColor: "white",
+                  width: "80%",
+                  fontSize: "3rem",
+                  borderRadius: ".4rem",
+                  margin: '1.8rem 0px 7.4rem'
+                },
+                '& .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused':{
+                  color: 'black'
+                },
+                "& label": {
+                  fontSize: "2rem",
+                  textAlign: "center",
+                  // color: 'black'
+                },
+                "& .MuiInputBase-root": {
+                  fontSize: "1.8rem",
+                },
+              }}
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="home__user-name"
+              name="user-name"
             />
             <Stack direction="row" spacing={5}>
-            <Button
-              variant="contained"
-              color="error"
-              type="reset"
-              sx={{ fontSize: "1.6rem" }}
-              onClick={()=>{
-                setNumber('');
-                setName('');
-              }}
-            >
-              Reset
-            </Button>
-            <Button
-              variant="contained"
-              color="success"
-              type="submit"
-              sx={{ fontSize: "1.6rem" }}
-              onClick={() => {
-                console.log('continue button')
-              }}
-            >
-              Continue
-            </Button>
-          </Stack>
+              <Button
+                variant="contained"
+                color="error"
+                type="reset"
+                sx={{ fontSize: "1.6rem" }}
+                onClick={() => {
+                  setNumber("");
+                  setName("");
+                }}
+              >
+                Reset
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                type="submit"
+                sx={{ fontSize: "1.6rem" }}
+                onClick={() => {
+                  console.log("continue button");
+                }}
+              >
+                Continue
+              </Button>
+            </Stack>
           </form>
         </div>
         <div className="home__camera">
           <h1>Camera Capture Example</h1>
           {!image ? (
-        <div className="home__camera-screen">
-          <video ref={videoRef} autoPlay playsInline width={'90%'} height={'100%'}></video>
-        </div>
-      ) : (
-        <figure height={400} className="home__clicked-image">
-            <img src={image} alt="click on take snapshot" style={{ width: "100%", height: "100%", animation: "pulse 1s 1" }} />
-        </figure >
-      )}
-      <audio ref={audioRef} src={require('../shutter.wav')} />
-      <Stack direction="row" spacing={5}>
+            <div className="home__camera-screen">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                width={"100%"}
+                height={"100%"}
+              ></video>
+            </div>
+          ) : (
+            <figure height={400} className="home__clicked-image">
+              <img
+                src={image}
+                alt="click on take snapshot"
+                style={{
+                  // width: "100%",
+                  // height: "99%",
+                  animation: "pulse .2s 1",
+                  // border: "2px solid salmon",
+                }}
+              />
+            </figure>
+          )}
+          <audio ref={audioRef} src={require("../shutter.wav")} />
+          <Stack direction="row" spacing={5}>
             <Button
               variant="contained"
               color="success"
               sx={{ fontSize: "1.6rem" }}
               onClick={handleStartCaptureClick}
-            >
-              Start Camera
+            >{image?"Restart camera":'Start Camera'}
             </Button>
             <Button
               variant="contained"
@@ -157,28 +211,28 @@ export default function Home() {
               color="success"
               sx={{ fontSize: "1.6rem" }}
               href="/cart"
-
             >
-              Continue
+              Go to cart
             </Button>
           </Stack>
-          {/* <div className="home__camera-screen" height={400}>
-            <video ref={videoRef} autoPlay playsInline width={'90%'} height={'90%'}></video>
-          </div>
-          <Stack direction="row" spacing={5}>
+        </div>
+        {/* <div className="home__buttons">
+
+        </div> */}
+        
+      </section>
+      <Stack direction="row" spacing={5}>
             <Button
               variant="contained"
-              color="error"
+              color="success"
               sx={{ fontSize: "1.6rem" }}
-              onClick={handleStopCaptureClick}
-            >
-              Cancel
+              onClick={handleStartCaptureClick}
+            >{image?"Restart camera":'Start Camera'}
             </Button>
             <Button
               variant="contained"
               sx={{ fontSize: "1.6rem" }}
               onClick={() => {
-                handleStartCaptureClick();
                 handleCaptureClick();
               }}
             >
@@ -188,17 +242,11 @@ export default function Home() {
               variant="contained"
               color="success"
               sx={{ fontSize: "1.6rem" }}
-              // onClick={handleCaptureClick}
+              href="/cart"
             >
-              Continue
+              Go to cart
             </Button>
-          </Stack>
-          <figure height={400} className="home__clicked-image">
-            <img src={image} alt="click on take snapshot" />
-          </figure > */}
-          
-        </div>
-      </section>
+            </Stack>
     </>
   );
 }

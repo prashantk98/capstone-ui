@@ -12,15 +12,18 @@ import {
   TableRow,
   TableCell,
   TableContainer,
-  Paper
+  Paper,
+  // DataGrid
 } from "@mui/material";
-// import { Theme } from "@mui/material";
 import rowDataArray from "../../rowData";
 
 const options = ["Grocery", "Electronics", "Option 1", "Option 2"];
+
+
 export default function Admin() {
   const [value, setValue] = useState(options[0]);
   const [inputValue, setInputValue] = useState("");
+  
   return (
     // sx={{margin:'8rem 4rem 0 4rem'}}
     // sx={{ margin: "1.6rem 0" }}
@@ -137,6 +140,7 @@ export default function Admin() {
             );
           })}
         </TableBody>
+        
       </Table>
       </TableContainer>
     </>
