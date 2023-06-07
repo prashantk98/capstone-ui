@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CartItem from "./CartItem";
-import Navbar from "./Navbar";
+// import Navbar from "./Navbar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
@@ -13,8 +13,15 @@ import {
   AccordionSummary,
   AccordionDetails,
   Button,
+  Autocomplete,
+  TextField,
+  Stack,
+  Paper,
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import { NavLink } from "react-router-dom";
+import logo from "../images/logo.svg";
+import { AppBar, Toolbar, Grid } from "@mui/material";
 
 import Gpay from "../images/google_pay.svg";
 import amazonPay from "../images/Amazon_Pay.svg";
@@ -37,7 +44,15 @@ export default function Cart() {
   const [itemsArray, setItems] = useState(cartObject);
   const [itemName, setItemName] = useState();
   const [expanded, setExpanded] = useState(false);
+  const [totalItems, setTotalItems] = useState(5);
 
+  // const defaultProps = {
+  //   options: itemsFromDb,
+  //   getOptionLabel: (option) => option.title,
+  // };
+  // const flatProps = {
+  //   options: itemsFromDb.map((option) => option.title),
+  // };
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -49,6 +64,7 @@ export default function Cart() {
       price: 90.0 + Math.floor(Math.random() * 10),
       qty: Math.floor(Math.random() * 8) + 1,
     };
+    setTotalItems(totalItems+1);
     setItems((prevState) => {
       // return [...prevState, itemName];
       return [...prevState, newItem];
@@ -57,31 +73,44 @@ export default function Cart() {
     console.log(itemsArray);
   };
   const deleteItem = (index) => {
-    // const element = document.getElementById(`${index}`);
-    // element.remove();
-    console.log(index);
-    setItems((prevState) => {
-      return prevState.filter((currentValue, idx) => {
-        return idx !== index;
-      });
-    });
-    console.log(itemsArray);
+    const element = document.getElementById(`${index}`);
+    element.remove();
+    setTotalItems(totalItems-1);
+    // setItems((prevState) => {
+    //   return prevState.filter((currentValue, idx) => {
+    //     return idx !== index;
+    //   });
+    // });
+    // console.log(itemsArray);
   };
   // setItem(3);
   return (
     <>
-      <Navbar />
-      <section className="cart">
-        {/* <Button
-          variant="contained"
+      {/* <Navbar /> */}
+      <AppBar
+        sx={{
+          paddingLeft: "1rem",
+          paddingRight: "2rem",
+          // backgroundColor: '#af9990'
+          // background: '#afff90'
+          background: '#558044'
+        }}
+      >
+        <Toolbar>
+          <Grid
+            container
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            <Grid item>
+              <Button
+          variant="text"
           color="success"
           sx={{
             "&": {
-              fontSize: "1.4rem",
-              marginBottom: "1rem",
-              width: "50%",
-              // textAlign: 'center'
-              marginLeft: "30%",
+              fontSize: "1.8rem",
+              color: 'black'
             },
             // '&: hover': {backgroundColor: 'rgba(25, 118, 210, 0)'}
           }}
@@ -90,10 +119,32 @@ export default function Cart() {
           }}
         >
           <ArrowBackIcon /> Go Back!
-        </Button> */}
+        </Button>
+            </Grid>
+            <Grid item sm></Grid>
+
+            <Grid item>
+              <NavLink to="/home" className="navbar__home">
+                Home
+              </NavLink>
+            </Grid>
+            <Grid item>
+              <NavLink to="/cart" className="navbar__cart">
+                Cart
+              </NavLink>
+            </Grid>
+            <Grid item>
+              <NavLink to="/admin" className="navbar__admin">
+                Admin
+              </NavLink>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <section className="cart">
         <h4 className="cart__title">Shopping cart</h4>
         <p className="cart__description">
-          you have {itemsArray.length} item in your cart
+          you have {totalItems} item in your cart
         </p>
 
         <div className="cart__container">
@@ -108,6 +159,20 @@ export default function Cart() {
                 }}
                 value={itemName}
               />
+              {/* <Autocomplete
+              sx={{width: '30%'}}
+        {...defaultProps}
+        id="auto-highlight"
+        autoHighlight
+        renderInput={(params) => (
+          // <TextField {...params} label="autoHighlight"  fullWidth />
+          <TextField
+              {...params}
+              label="Category"
+              // sx={{ fontSize: 60 }}
+            />
+        )}
+      /> */}
               <Button
                 variant="contained"
                 startIcon={<AddCircleOutlineIcon />}
@@ -141,7 +206,7 @@ export default function Cart() {
           {/* <div className="cart__payment">
             Payment option
           </div> */}
-          <Card
+          {/* <Card
             sx={{
               width: "40%",
               height: "75vh",
@@ -171,6 +236,7 @@ export default function Cart() {
                   fontSize: "2rem",
                   textAlign: "center",
                   color: "white",
+                  fontWeight: '800'
                 }}
               >
                 Total: $ {Math.floor(Math.random() * 100 + 978)}
@@ -179,7 +245,7 @@ export default function Cart() {
                 expanded={expanded === "panel3"}
                 onChange={handleChange("panel3")}
                 sx={
-                  expanded === "panel3" ? { border: "2px solid #4BB543",background: '#F5F3EF' } : {background: '#F5F3EF'}
+                  expanded === "panel3" ? { border: "2px solid #4BB543",background: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {background: '#F5F3EF'}
                 }
               >
                 <AccordionSummary
@@ -232,7 +298,7 @@ export default function Cart() {
                 expanded={expanded === "panel1"}
                 onChange={handleChange("panel1")}
                 sx={
-                  expanded === "panel1" ? { border: "3px solid #4BB543",background: '#F5F3EF' } : {background: '#F5F3EF'}
+                  expanded === "panel1" ? { border: "3px solid #4BB543",background: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {background: '#F5F3EF'}
                 }
               >
                 <AccordionSummary
@@ -285,7 +351,7 @@ export default function Cart() {
                 expanded={expanded === "panel2"}
                 onChange={handleChange("panel2")}
                 sx={
-                  expanded === "panel2" ? { border: "2px solid #4BB543",backgroundColor: '#F5F3EF' } : {backgroundColor: '#F5F3EF'}
+                  expanded === "panel2" ? { border: "2px solid #4BB543",backgroundColor: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {backgroundColor: '#F5F3EF'}
                 }
               >
                 <AccordionSummary
@@ -330,6 +396,64 @@ export default function Cart() {
                 </AccordionDetails>
               </Accordion>
             </CardContent>
+          </Card> */}
+
+          <Card 
+          elevation={2}
+          sx={
+            {
+            '&':{
+            width: "40%",
+            height: "30rem",
+            backgroundColor: "#F5F3EF",
+            padding: '0',
+          },
+          "& .MuiCardContent-root":{
+            padding: '0'
+          }
+        }
+        }
+          >
+            <CardContent
+            sx={{
+              '& .MuiTypography-root':{
+                padding: '13px 24px',
+                fontSize: '1.8rem'
+              }
+            }}
+            >
+              <Typography
+              sx={{
+                textTransform: 'uppercase',
+                color: '#878787',
+                borderBottom: '1px solid #e0e0e0',
+              }}
+              >PRICE DETAILS</Typography>
+              <Stack direction="row" justifyContent="space-between">
+              <Typography>Price ({totalItems} item)</Typography>
+              <Typography>₹1200</Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between"
+              sx={{
+                borderBottom: '1px dashed #e0e0e0'
+              }}>
+              <Typography>Discount</Typography>
+              <Typography sx={
+                {
+                  color: '#388e3c',
+                }
+              }>-₹100</Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="space-between">
+              <Typography><strong>Total Amount</strong></Typography>
+              <Typography><strong>₹1,100</strong></Typography>
+              </Stack>
+              <Stack >
+              <Typography
+              sx={{color: '#388e3c'}}
+              >You will save ₹100 on this order</Typography>
+              </Stack>
+            </CardContent>
           </Card>
         </div>
       </section>
@@ -341,27 +465,41 @@ const cartObject = [
   {
     title: "Lorem Item",
     description: "Lorem Item description",
-    price: 90.0 + Math.floor(Math.random() * 10),
-    qty: Math.floor(Math.random() * 8) + 1,
+    price: 190.0,
+    qty: 1,
   },
   {
     title: "Lorem Item",
     description: "Lorem Item description",
-    price: 90.0 + Math.floor(Math.random() * 10),
-    qty: Math.floor(Math.random() * 8) + 1,
+    price: 90.0,
+    qty: 2,
   },
   {
     title: "Lorem Item",
     description: "Lorem Item description",
-    price: 90.0 + Math.floor(Math.random() * 10),
-    qty: Math.floor(Math.random() * 8) + 1,
+    price: 93.0,
+    qty: 1,
   },
   {
     title: "Lorem Item",
     description: "Lorem Item description",
-    price: 90.0 + Math.floor(Math.random() * 10),
-    qty: Math.floor(Math.random() * 8) + 1,
+    price: 32.0,
+    qty: 3,
   },
+  {
+    title: "Lorem Item",
+    description: "Lorem Item description",
+    price: 93.0,
+    qty: Math.floor(Math.random() * 8) + 1,
+  }
 ];
 
 export { cartObject };
+
+const itemsFromDb = [
+  { title: 'Bananas' },
+  { title: 'Apples'},
+  { title: 'Laptop' },
+  { title: 'Mobile' },
+  { title: 'Camera' }
+];

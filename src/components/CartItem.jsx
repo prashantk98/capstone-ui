@@ -14,7 +14,7 @@ export default function CartItem(prop) {
   };
 
   const handleDecrement = () => {
-    if (value > 0) {
+    if (value > 1) {
       setValue(+value - 1);
       // prop.qty-=1;
     } 
@@ -34,13 +34,14 @@ export default function CartItem(prop) {
           </IconButton>
           <input
             type="number"
-            min="0"
+            min="1"
             value={value}
+            onWheel={(e) => e.target.blur()}
             onChange={(event) => {
               setValue(Math.floor(event.target.value));
-              if (+value < 0) {
-                event.target.value = 0;
-                setValue(0);
+              if (+value <= 0) {
+                event.target.value = 1;
+                setValue(1);
               }
             }}
           />
@@ -48,7 +49,7 @@ export default function CartItem(prop) {
             <AddIcon />
           </IconButton>
         </div>
-        <p className="cart-item__price">${value * prop.price}</p>
+        <p className="cart-item__price">₹{value * prop.price}</p>
         <IconButton
           aria-label="delete"
           size="large"

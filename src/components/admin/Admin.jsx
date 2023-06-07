@@ -49,7 +49,7 @@ export default function Admin() {
             <TextField
               {...params}
               label="Category"
-              sx={{ fontSize: 60 }}
+              sx={{ fontSize: '6rem' }}
               required
             />
           )}
