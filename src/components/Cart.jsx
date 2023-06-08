@@ -2,6 +2,8 @@ import { useState } from "react";
 import CartItem from "./CartItem";
 // import Navbar from "./Navbar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Card,
@@ -17,6 +19,7 @@ import {
   TextField,
   Stack,
   Paper,
+  Box
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { NavLink } from "react-router-dom";
@@ -29,6 +32,8 @@ import phonePe from "../images/Phonepe.svg";
 import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined";
 
 const onlinePaymentMethod = [
   { src: Gpay, alt: "Google pay" },
@@ -45,6 +50,7 @@ export default function Cart() {
   const [itemName, setItemName] = useState();
   const [expanded, setExpanded] = useState(false);
   const [totalItems, setTotalItems] = useState(5);
+  const [isPaymentCliked, setPaymentClicked] = useState(false);
 
   // const defaultProps = {
   //   options: itemsFromDb,
@@ -93,7 +99,8 @@ export default function Cart() {
           paddingRight: "2rem",
           // backgroundColor: '#af9990'
           // background: '#afff90'
-          background: '#558044'
+          background: '#558044',
+          fontWeight: '500'
         }}
       >
         <Toolbar>
@@ -112,7 +119,6 @@ export default function Cart() {
               fontSize: "1.8rem",
               color: 'black'
             },
-            // '&: hover': {backgroundColor: 'rgba(25, 118, 210, 0)'}
           }}
           onClick={() => {
             window.history.back();
@@ -128,8 +134,42 @@ export default function Cart() {
                 Home
               </NavLink>
             </Grid>
-            <Grid item>
+            <Grid item
+            sx={{
+              position: 'relative'
+            }}>
               <NavLink to="/cart" className="navbar__cart">
+                <ShoppingCart
+                sx={
+                  {
+                    fontSize: '5rem',
+                    verticalAlign: 'middle',
+                    fontWeight: '400',
+                    opacity: '.7'
+
+                    // verticalAlign: 'bottom'
+                    // position: 'relative'
+                  }
+                }
+                />
+                <Typography
+                  sx={{
+                    '&':{
+                    // color: '#f08804',
+                    position: 'absolute',
+                    top: '-.5rem',
+                    left: '28%',
+                    fontSize: '1.8rem',
+                    background: '#ff0000d6',
+                    borderRadius: '50%',
+                    padding: '0px 8px',
+                    }
+                    ,
+                    '.navbar__cart:hover &':{
+                      color: 'white'
+                    }
+                  }}
+                  >{totalItems}</Typography>
                 Cart
               </NavLink>
             </Grid>
@@ -148,7 +188,20 @@ export default function Cart() {
         </p>
 
         <div className="cart__container">
-          <div className="cart__wrapper">
+          <Box
+          sx={{
+            '&':{
+              width:'50%',
+              // background: '#f1f3f6',
+              backgroundColor: 'white',
+              borderRadius: '.5rem',
+              height: '50.6rem'
+            },
+            '& .MuiPaper-root':{
+              // height: '5rem'
+            }
+          }}
+          >
             <div className="cart__input">
               <input
                 type="text"
@@ -159,20 +212,7 @@ export default function Cart() {
                 }}
                 value={itemName}
               />
-              {/* <Autocomplete
-              sx={{width: '30%'}}
-        {...defaultProps}
-        id="auto-highlight"
-        autoHighlight
-        renderInput={(params) => (
-          // <TextField {...params} label="autoHighlight"  fullWidth />
-          <TextField
-              {...params}
-              label="Category"
-              // sx={{ fontSize: 60 }}
-            />
-        )}
-      /> */}
+              
               <Button
                 variant="contained"
                 startIcon={<AddCircleOutlineIcon />}
@@ -181,13 +221,16 @@ export default function Cart() {
                 Add item
               </Button>
             </div>
-            <div className="cart__items">
-              {/* {itemsArray.map((currentValue, index) => {
-                return (
-                  <CartItem id={index} key={index} onSelect={deleteItem} text={currentValue} title={currentValue.title} description={currentValue.description} price={currentValue.price} qty={currentValue.qty} />
-                );
-              })} */}
-              {itemsArray.map((currentValue, index) => {
+
+        <Stack 
+        sx={{
+          height: '40rem',
+          overflowY: 'scroll',
+        }}
+        >
+          {/* <Paper>Item 1</Paper>
+          <Paper>Item 2</Paper> */}
+          {itemsArray.map((currentValue, index) => {
                 return (
                   <CartItem
                     id={index}
@@ -201,14 +244,12 @@ export default function Cart() {
                   />
                 );
               })}
-            </div>
-          </div>
-          {/* <div className="cart__payment">
-            Payment option
-          </div> */}
-          {/* <Card
+        </Stack>
+        {/* <Button>PAY</Button> */}
+        
+        {/* <Card
             sx={{
-              width: "40%",
+              width: "100%",
               height: "75vh",
               // backgroundColor: "#90efc7",
               background:'none',
@@ -216,31 +257,6 @@ export default function Cart() {
             }}
           >
             <CardContent>
-              <Typography
-                variant="h3"
-                component="h2"
-                sx={{
-                  marginBottom: "1.8rem",
-                  fontSize: "2rem",
-                  textAlign: "center",
-                  color: "white",
-                }}
-              >
-                Payment Options
-              </Typography>
-              <Typography
-                variant="h5"
-                component="h2"
-                sx={{
-                  marginBottom: "3rem",
-                  fontSize: "2rem",
-                  textAlign: "center",
-                  color: "white",
-                  fontWeight: '800'
-                }}
-              >
-                Total: $ {Math.floor(Math.random() * 100 + 978)}
-              </Typography>
               <Accordion
                 expanded={expanded === "panel3"}
                 onChange={handleChange("panel3")}
@@ -397,13 +413,59 @@ export default function Cart() {
               </Accordion>
             </CardContent>
           </Card> */}
+          </Box>
 
+
+
+          {/* <div className="cart__wrapper">
+            <div className="cart__input">
+              <input
+                type="text"
+                name="item-name"
+                placeholder="Add Item name"
+                onChange={(e) => {
+                  setItemName(e.target.value);
+                }}
+                value={itemName}
+              />
+              
+              <Button
+                variant="contained"
+                startIcon={<AddCircleOutlineIcon />}
+                onClick={addInput}
+              >
+                Add item
+              </Button>
+            </div>
+            <div className="cart__items">
+              {itemsArray.map((currentValue, index) => {
+                return (
+                  <CartItem
+                    id={index}
+                    key={index}
+                    onSelect={deleteItem}
+                    text={currentValue}
+                    title={currentValue.title}
+                    description={currentValue.description}
+                    price={currentValue.price}
+                    qty={currentValue.qty}
+                  />
+                );
+              })}
+            </div>
+          </div> */}
+
+          <Box 
+          sx={{
+            width: '40%',
+          }}
+          >
           <Card 
           elevation={2}
           sx={
             {
             '&':{
-            width: "40%",
+            width: "100%",
             height: "30rem",
             backgroundColor: "#F5F3EF",
             padding: '0',
@@ -430,7 +492,7 @@ export default function Cart() {
               }}
               >PRICE DETAILS</Typography>
               <Stack direction="row" justifyContent="space-between">
-              <Typography>Price ({totalItems} item)</Typography>
+              <Typography>Price ({totalItems} items)</Typography>
               <Typography>₹1200</Typography>
               </Stack>
               <Stack direction="row" justifyContent="space-between"
@@ -455,6 +517,193 @@ export default function Cart() {
               </Stack>
             </CardContent>
           </Card>
+          <Button
+                    variant="contained"
+                    // color="primar"
+                    sx={{
+                     '&': {
+                      marginTop: '2rem',
+                      width: "100%",
+                      height: "6rem",
+                      borderRadius: '0',
+                      // backgroundColor: "#F34237",
+                      // backgroundColor: 'var(--submit)',
+                      fontSize: "2rem",
+                      },
+                    }}
+                    onClick={()=>{setPaymentClicked(!isPaymentCliked)}}
+                  >
+                    Pay Now
+                  </Button>
+                  {
+                    isPaymentCliked&&<Card
+            sx={{
+              // width: "100%',
+              height: "75vh",
+              // backgroundColor: "#90efc7",
+              background:'none',
+              boxShadow: 'unset'
+            }}
+          >
+            <CardContent>
+              <Accordion
+                expanded={expanded === "panel3"}
+                onChange={handleChange("panel3")}
+                sx={
+                  expanded === "panel3" ? { border: "2px solid #4BB543",background: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {background: '#F5F3EF'}
+                }
+              >
+                <AccordionSummary
+                  expandIcon={
+                    expanded === "panel3" ? (
+                      <RadioButtonCheckedIcon color="success" />
+                    ) : (
+                      <RadioButtonCheckedIcon />
+                    )
+                  }
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                  sx={{
+                    "& .MuiAccordionSummary-content": { alignItems: "center" },
+                  }}
+                >
+                  <Typography
+                    sx={{ width: "50%", flexShrink: 0, fontSize: "1.8rem" }}
+                  >
+                    Pay with Credit Card
+                  </Typography>
+                  <ImageList sx={{ width: 200 }} cols={3}>
+                    {creditCard.map((item) => (
+                      <ImageListItem key={item.img} sx={{ margin: "0 .8rem" }}>
+                        <img src={item.src} alt={item.alt} />
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography sx={{ fontSize: "1.4rem" }}>
+                    Nulla facilisi. Phasellus sollicitudin nulla et quam mattis
+                    feugiat. Aliquam eget maximus est, id dignissim quam.
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "100%",
+                      height: "5vh",
+                      backgroundColor: "#F34237",
+                      fontSize: "1.4rem",
+                    }}
+                  >
+                    Pay Now
+                  </Button>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion
+                expanded={expanded === "panel1"}
+                onChange={handleChange("panel1")}
+                sx={
+                  expanded === "panel1" ? { border: "3px solid #4BB543",background: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {background: '#F5F3EF'}
+                }
+              >
+                <AccordionSummary
+                  expandIcon={
+                    expanded === "panel1" ? (
+                      <RadioButtonCheckedIcon color="success" />
+                    ) : (
+                      <RadioButtonCheckedIcon />
+                    )
+                  }
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                  sx={{
+                    "& .MuiAccordionSummary-content": { alignItems: "center" },
+                  }}
+                >
+                  <Typography
+                    sx={{ width: "50%", flexShrink: 0, fontSize: "1.8rem" }}
+                  >
+                    Pay with UPI QR Code
+                  </Typography>
+                  <ImageList sx={{ width: 200 }} cols={3}>
+                    {onlinePaymentMethod.map((item) => (
+                      <ImageListItem key={item.img} sx={{ margin: "0 .8rem" }}>
+                        <img src={item.src} alt={item.alt} />
+                      </ImageListItem>
+                    ))}
+                  </ImageList>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography sx={{ fontSize: "1.4rem" }}>
+                    Nulla facilisi. Phasellus sollicitudin nulla et quam mattis
+                    feugiat. Aliquam eget maximus est, id dignissim quam.
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "100%",
+                      height: "5vh",
+                      backgroundColor: "#F34237",
+                      fontSize: "1.4rem",
+                    }}
+                  >
+                    Show QR
+                  </Button>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion
+                expanded={expanded === "panel2"}
+                onChange={handleChange("panel2")}
+                sx={
+                  expanded === "panel2" ? { border: "2px solid #4BB543",backgroundColor: '#F5F3EF',boxShadow: '1px 1px 7px green' } : {backgroundColor: '#F5F3EF'}
+                }
+              >
+                <AccordionSummary
+                  expandIcon={
+                    expanded === "panel2" ? (
+                      <RadioButtonCheckedIcon color="success" />
+                    ) : (
+                      <RadioButtonCheckedIcon />
+                    )
+                  }
+                  aria-controls="panel2bh-content"
+                  id="panel2bh-header"
+                >
+                  <Typography
+                    sx={{ width: "33%", flexShrink: 0, fontSize: "1.8rem" }}
+                  >
+                    Cash Payment
+                  </Typography>
+                  <Typography
+                    sx={{ color: "text.secondary", fontSize: "1.6rem" }}
+                  >
+                    Pay via Cash
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography sx={{ fontSize: "1.4rem" }}>
+                    Donec placerat, lectus sed mattis semper, neque lectus
+                    feugiat lectus, varius pulvinar diam eros in elit.
+                    Pellentesque convallis laoreet laoreet.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "100%",
+                      height: "5vh",
+                      backgroundColor: "#F34237",
+                      fontSize: "1.4rem",
+                    }}
+                  >
+                    Pay Now
+                  </Button>
+                </AccordionDetails>
+              </Accordion>
+            </CardContent>
+            </Card>
+                  }
+          </Box>
         </div>
       </section>
     </>
@@ -503,3 +752,4 @@ const itemsFromDb = [
   { title: 'Mobile' },
   { title: 'Camera' }
 ];
+

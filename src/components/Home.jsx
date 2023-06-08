@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import Navbar from "./Navbar";
 import { Button, Stack, TextField, Box } from "@mui/material";
 import axios from 'axios';
+import { useEffect } from "react";
 
 // function isMobile(value){
 //   value = value.trim();
@@ -48,6 +49,10 @@ export default function Home() {
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   // const [value, setValue] = useState('');
+
+  // useEffect(() => {
+  //   handleStartCaptureClick();
+  // }, []);
   return (
     <>
       <Navbar />
@@ -161,15 +166,16 @@ export default function Home() {
               >
                 Reset
               </Button>
-              {/* <Button
+              {
+                image!==null?<Button
                 variant="contained"
                 color="success"
                 sx={{ fontSize: "1.6rem" }}
                 onClick={handleStartCaptureClick}
               >
                 {image ? "Restart camera" : "Start Camera"}
-              </Button> */}
-              <Button
+              </Button>
+              :<Button
                 variant="contained"
                 sx={{ fontSize: "1.6rem" }}
                 onClick={() => {
@@ -178,6 +184,8 @@ export default function Home() {
               >
                 Take snapshot
               </Button>
+
+              }
               <Button
                 variant="contained"
                 color="success"
