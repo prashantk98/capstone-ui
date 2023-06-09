@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import logo from "../images/webLogo.png";
+// import logo from "../images/webLogo.png";
 import { AppBar, Toolbar, Grid} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';

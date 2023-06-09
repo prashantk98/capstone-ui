@@ -73,7 +73,7 @@ button:hover{
 
 .home__details {
   padding: 2rem 0 2rem 4rem;
-  padding-left: 4.0rem;
+  /* padding-left: 4.0rem; */
   width: 70%;
 }
 .home__camera {
@@ -257,3 +257,18 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 /* navbar color #99a195 */
+
+
+.logo__nhome{
+  /* display: block;
+  align-items: center; */
+  display: flex;
+  padding-top: 4rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+.logo__nhome img{
+  width: 5.8rem;
+  object-fit: cover;
+}

@@ -2,8 +2,8 @@ import { useState } from "react";
 import CartItem from "./CartItem";
 // import Navbar from "./Navbar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+// import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   Card,
@@ -15,15 +15,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   Button,
-  Autocomplete,
-  TextField,
   Stack,
-  Paper,
   Box
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import { NavLink } from "react-router-dom";
-import logo from "../images/logo.svg";
+// import logo from "../images/logo.svg";
 import { AppBar, Toolbar, Grid } from "@mui/material";
 
 import Gpay from "../images/google_pay.svg";
@@ -33,7 +30,7 @@ import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
-import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined";
+// import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined";
 
 const onlinePaymentMethod = [
   { src: Gpay, alt: "Google pay" },
@@ -753,3 +750,4 @@ const itemsFromDb = [
   { title: 'Camera' }
 ];
 
+console.log(itemsFromDb[0].title)

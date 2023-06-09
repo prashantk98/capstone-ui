@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import Navbar from "./Navbar";
 import { Button, Stack, TextField, Box } from "@mui/material";
 import axios from 'axios';
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 // function isMobile(value){
 //   value = value.trim();
@@ -26,14 +26,15 @@ export default function Home() {
       console.error(err);
     }
   };
-  const handleStopCaptureClick = () => {
-    const stream = videoRef.current.srcObject;
-    if (stream) {
-      const tracks = stream.getTracks();
-      tracks.forEach((track) => track.stop());
-      videoRef.current.srcObject = null;
-    }
-  };
+  // const handleStopCaptureClick = () => {
+  //   const stream = videoRef.current.srcObject;
+  //   if (stream) {
+  //     const tracks = stream.getTracks();
+  //     tracks.forEach((track) => track.stop());
+  //     videoRef.current.srcObject = null;
+  //   }
+  // };
+
   const handleCaptureClick = () => {
     audioRef.current.play();
     const canvas = document.createElement("canvas");

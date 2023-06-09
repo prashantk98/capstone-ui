@@ -1,10 +1,11 @@
-import { NavLink } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
 import logo from '../../images/logo.svg';
-import { Typography,Container,Box } from "@mui/material";
+import { Typography,Container } from "@mui/material";
 import { useState } from "react";
 import './invoice.css';
 export default function Invoice(){
   const [todayDate, SetDate] = useState(new Date());
+  SetDate(todayDate);
   return (
     <>
     <section className="invoice">
