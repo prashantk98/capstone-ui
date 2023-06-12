@@ -1,12 +1,32 @@
-
-import { Box, Stack,Button } from "@mui/material";
+import { Box, Stack,Button,Badge,Grid,AppBar,Toolbar,Typography,Card,Accordion,AccordionSummary,AccordionDetails,CardContent,ImageList,ImageListItem } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 // import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CartItem from "../components/CartItem";
-// import {cartObject}  from "../components/cart";
+import { NavLink } from "react-router-dom";
+import Gpay from "../images/google_pay.svg";
+import amazonPay from "../images/Amazon_Pay.svg";
+import phonePe from "../images/Phonepe.svg";
+import visa from "../images/visa.svg";
+import mastercard from "../images/mastercard.svg";
+import rupay from "../images/rupay.svg";
+
+
+const onlinePaymentMethod = [
+  { src: Gpay, alt: "Google pay" },
+  { src: phonePe, alt: "PhonePe" },
+  { src: amazonPay, alt: "Amazon pay" },
+];
+const creditCard = [
+  { src: visa, alt: "visa card" },
+  { src: mastercard, alt: "mastercard card" },
+  { src: rupay, alt: "rupay card" },
+];
+
 export default function Ncart (){
 
   const [image, setImage] = useState(null);
@@ -14,9 +34,13 @@ export default function Ncart (){
   const audioRef = useRef(null);
   const [itemsArray, setItems] = useState(cartObject);
   const [itemName, setItemName] = useState();
-  // const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [totalItems, setTotalItems] = useState(5);
-  // const [isPaymentCliked, setPaymentClicked] = useState(false);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+  const [isPaymentCliked, setPaymentClicked] = useState(false);
 
   // const defaultProps = {
   //   options: itemsFromDb,
@@ -74,45 +98,140 @@ export default function Ncart (){
   //   }
   // };
 
-  // const handleCaptureClick = () => {
-  //   audioRef.current.play();
-  //   const canvas = document.createElement("canvas");
-  //   canvas.width = videoRef.current.videoWidth;
-  //   canvas.height = videoRef.current.videoHeight;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-  //   const capturedImage = canvas.toDataURL();
-  //   setImage(capturedImage);
-  //   // handleStopCaptureClick();
-  // };
+  const handleCaptureClick = () => {
+    audioRef.current.play();
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    const capturedImage = canvas.toDataURL();
+    console.log(capturedImage);
+    setImage(capturedImage);
+    // handleStopCaptureClick();
+  };
 
   useEffect(() => {
     handleStartCaptureClick();
   }, []);
   return<>
-  <Navbar></Navbar>
+  <AppBar
+        sx={{
+          paddingLeft: "1rem",
+          paddingRight: "2rem",
+          // backgroundColor: '#af9990'
+          // background: '#afff90'
+          background: '#558044',
+          fontWeight: '500'
+        }}
+      >
+        <Toolbar>
+          <Grid
+            container
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            <Grid item>
+              <NavLink to="/" className="navbar__logo">
+                {/* <img src={logo} alt="website logo" /> */}
+                {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
+                Smart Cart
+              </NavLink>
+            </Grid>
+            <Grid item sm></Grid>
+
+            <Grid item>
+              <NavLink to="/nhome" className="navbar__home">
+                Home
+              </NavLink>
+            </Grid>
+            <Grid item
+            sx={{
+              position: 'relative'
+            }}
+            >
+              <NavLink to="/ncart" className="navbar__cart">
+                {/* <ShoppingCart
+                sx={
+                  {
+                    fontSize: '5rem',
+                    verticalAlign: 'middle',
+                    fontWeight: '400',
+                    opacity: '.7'
+                  }
+                }
+                /> */}
+                <Badge badgeContent={totalItems}
+                sx={
+                  {
+                    '& .MuiBadge-badge':{
+                      fontSize: '2rem',
+                      margin: '0 .8rem 0'
+                    }
+                  }
+                }
+                >
+                  <ShoppingCart
+                  sx={
+                    {
+                      fontSize: '3rem',
+                      padding: '0 .8rem'
+                    }
+                  }
+                  ></ShoppingCart>
+                </Badge>
+                {/* <Typography
+                  sx={{
+                    '&':{
+                      position: 'absolute',
+                      top: '-.5rem',
+                      left: '28%',
+                      fontSize: '1.8rem',
+                      background: '#ff0000d6',
+                      borderRadius: '50%',
+                      padding: '0px 8px'
+                    }
+                    ,
+                    '.navbar__cart:hover &':{
+                      color: 'white'
+                    }
+                  }}
+                  >0</Typography> */}
+                Cart
+              </NavLink>
+            </Grid>
+            <Grid item>
+              <NavLink to="/admin" className="navbar__admin">
+                Admin
+              </NavLink>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
   <Stack 
   direction='row'
   sx={
     {
-      padding: '7rem 4rem',
-      justifyContent: 'space-between'
+      padding: '7rem 4rem 0rem',
+      justifyContent: 'space-between',
+      height: '60rem'
     }
   }
   >
     <Box>
           {!image ? (
-            // <div className="home__camera-screen">
+            <div className="home__camera-screen">
               <video
                 ref={videoRef}
                 autoPlay
-                playsInline
-                width={"100%"}
-                height={"100%"}
+                // playsInline
+                // width={"100%"}
+                // height={"100%"}
               ></video>
-            // </div>
+            </div>
           ) : (
-            // <figure height={400} className="home__clicked-image">
+            <figure  className="home__clicked-image">
               <img
                 src={image}
                 alt="click on take snapshot"
@@ -123,43 +242,17 @@ export default function Ncart (){
                   // border: "2px solid salmon",
                 }}
               />
-            // </figure>
+            </figure>
           )}
           <audio ref={audioRef} src={require("../shutter.wav")} />
-          {/* <Stack direction="row" spacing={5}>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ fontSize: "1.6rem" }}
-              onClick={handleStartCaptureClick}
-            >
-              {image ? "Restart camera" : "Start Camera"}
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ fontSize: "1.6rem" }}
-              onClick={() => {
-                handleCaptureClick();
-              }}
-            >
-              Take snapshot
-            </Button>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ fontSize: "1.6rem" }}
-              href="/cart"
-            >
-              Go to cart
-            </Button>
-          </Stack> */}
+          
     </Box>
     <Box
           sx={{
             '&':{
               width:'50%',
               // background: '#f1f3f6',
-              backgroundColor: 'white',
+              backgroundColor: 'black',
               borderRadius: '.5rem',
               height: '50.6rem'
             },
@@ -190,7 +283,7 @@ export default function Ncart (){
 
         <Stack 
         sx={{
-          height: '40rem',
+          height: '44.3rem',
           overflowY: 'scroll',
         }}
         >
@@ -215,11 +308,16 @@ export default function Ncart (){
         
         {/* <Card
             sx={{
+              '&':{
               width: "100%",
               height: "75vh",
               // backgroundColor: "#90efc7",
               background:'none',
               boxShadow: 'unset'
+              },
+              '& .css-46bh2p-MuiCardContent-root':{
+                padding: '0'
+              }
             }}
           >
             <CardContent>
@@ -379,8 +477,97 @@ export default function Ncart (){
               </Accordion>
             </CardContent>
           </Card> */}
+          
           </Box>
   </Stack>
+  <Stack direction='row'
+  sx={{
+    '&':{
+      margin: '0 4rem',
+      alignItems: 'center'
+    }
+  }}
+  >
+  <Stack
+              direction="row"
+              spacing={5}
+              sx={{
+                '&':{
+                // m: "2rem 0 0",
+                width: "50%",
+                // padding: "0 0 0 1rem",
+                justifyContent: "space-around",
+                },
+                '.css-1jspvjo-MuiStack-root>:not(style)+:not(style)': {
+                  marginLeft: '0px'
+                }
+              }}
+            >
+              <Button
+                variant="contained"
+                color="error"
+                type="reset"
+                sx={{ fontSize: "1.6rem" }}
+                // onClick={() => {
+                //   setNumber("");
+                //   setName("");
+                // }}
+              >
+                Reset
+              </Button>
+              {
+                image!==null?<Button
+                variant="contained"
+                color="success"
+                sx={{ fontSize: "1.6rem" }}
+                onClick={handleStartCaptureClick}
+              >
+                {image ? "Restart camera" : "Start Camera"}
+              </Button>
+              :<Button
+                variant="contained"
+                sx={{ fontSize: "1.6rem" }}
+                onClick={() => {
+                  handleCaptureClick();
+                }}
+              >
+                Take snapshot
+              </Button>
+
+              }
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ fontSize: "1.6rem" }}
+                href="/cart"
+              >
+                Add to cart
+              </Button>
+    </Stack>
+    <Button
+        variant="contained"
+        // color="primar"
+        sx={{
+          '&': {
+          // marginTop: '2rem',
+          width: "50%",
+          height: "4rem",
+          // borderRadius: '0',
+          // backgroundColor: "#F34237",
+          // backgroundColor: 'var(--submit)',
+          fontSize: "2rem",
+          },
+        }}
+        onClick={()=>{setPaymentClicked(!isPaymentCliked)
+        alert('Thanks for shopping');
+        window.location.href= '/nhome';
+        }
+      }
+      >
+        Pay via Cash
+    </Button>
+        
+    </Stack>
   </>
 }
 
