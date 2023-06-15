@@ -1,143 +1,114 @@
-let rowDataArray= [{
-  "id": 1,
-  "first_name": "Shepard",
-  "last_name": "McMeyler",
-  "email": "smcmeyler0@wufoo.com",
-  "gender": "Male",
-  "ip_address": "38.133.160.250"
-}, {
-  "id": 2,
-  "first_name": "Patsy",
-  "last_name": "Ramalho",
-  "email": "pramalho1@51.la",
-  "gender": "Female",
-  "ip_address": "208.59.61.21"
-}, {
-  "id": 3,
-  "first_name": "Skell",
-  "last_name": "Fackrell",
-  "email": "sfackrell2@booking.com",
-  "gender": "Male",
-  "ip_address": "76.0.147.144"
-}, {
-  "id": 4,
-  "first_name": "Vladamir",
-  "last_name": "Hadfield",
-  "email": "vhadfield3@sogou.com",
-  "gender": "Male",
-  "ip_address": "113.167.54.181"
-}, {
-  "id": 5,
-  "first_name": "Adlai",
-  "last_name": "Pleasance",
-  "email": "apleasance4@smh.com.au",
-  "gender": "Non-binary",
-  "ip_address": "77.52.127.144"
-}, {
-  "id": 6,
-  "first_name": "Kayla",
-  "last_name": "Ayliffe",
-  "email": "kayliffe5@wikia.com",
-  "gender": "Female",
-  "ip_address": "177.94.36.239"
-}, {
-  "id": 7,
-  "first_name": "Salvador",
-  "last_name": "Rakestraw",
-  "email": "srakestraw6@uiuc.edu",
-  "gender": "Genderfluid",
-  "ip_address": "235.186.113.166"
-}, {
-  "id": 8,
-  "first_name": "Lem",
-  "last_name": "Kingcote",
-  "email": "lkingcote7@sciencedirect.com",
-  "gender": "Male",
-  "ip_address": "21.25.27.122"
-}, {
-  "id": 9,
-  "first_name": "Noby",
-  "last_name": "Camolli",
-  "email": "ncamolli8@blogger.com",
-  "gender": "Male",
-  "ip_address": "178.125.253.6"
-}, {
-  "id": 10,
-  "first_name": "Kellsie",
-  "last_name": "Lanfare",
-  "email": "klanfare9@epa.gov",
-  "gender": "Female",
-  "ip_address": "191.17.162.165"
-}, {
-  "id": 11,
-  "first_name": "Lulita",
-  "last_name": "Jewer",
-  "email": "ljewera@marriott.com",
-  "gender": "Female",
-  "ip_address": "183.142.185.33"
-}, {
-  "id": 12,
-  "first_name": "Coralie",
-  "last_name": "Chaloner",
-  "email": "cchalonerb@nhs.uk",
-  "gender": "Female",
-  "ip_address": "168.174.92.121"
-}, {
-  "id": 13,
-  "first_name": "Frederik",
-  "last_name": "Bernaldo",
-  "email": "fbernaldoc@samsung.com",
-  "gender": "Male",
-  "ip_address": "208.144.93.190"
-}, {
-  "id": 14,
-  "first_name": "Koenraad",
-  "last_name": "Eales",
-  "email": "kealesd@boston.com",
-  "gender": "Male",
-  "ip_address": "116.56.234.132"
-}, {
-  "id": 15,
-  "first_name": "Barny",
-  "last_name": "Cliffe",
-  "email": "bcliffee@w3.org",
-  "gender": "Male",
-  "ip_address": "146.144.224.88"
-}, {
-  "id": 16,
-  "first_name": "Ericka",
-  "last_name": "Jeckells",
-  "email": "ejeckellsf@cargocollective.com",
-  "gender": "Female",
-  "ip_address": "100.204.154.195"
-}, {
-  "id": 17,
-  "first_name": "Fleur",
-  "last_name": "Sandford",
-  "email": "fsandfordg@usda.gov",
-  "gender": "Non-binary",
-  "ip_address": "83.19.221.88"
-}, {
-  "id": 18,
-  "first_name": "Tiphany",
-  "last_name": "Dallaway",
-  "email": "tdallawayh@godaddy.com",
-  "gender": "Female",
-  "ip_address": "159.173.191.115"
-}, {
-  "id": 19,
-  "first_name": "Warren",
-  "last_name": "Scardefield",
-  "email": "wscardefieldi@amazonaws.com",
-  "gender": "Male",
-  "ip_address": "244.93.94.154"
-}, {
-  "id": 20,
-  "first_name": "Ruperta",
-  "last_name": "Orrah",
-  "email": "rorrahj@oakley.com",
-  "gender": "Female",
-  "ip_address": "36.243.30.92"
-}]
+const totalItemInDb = [
+  { id: 1, name: 'Apple', category: 'Fruit', available: true },
+  { id: 2, name: 'Banana', category: 'Fruit', available: true },
+  { id: 3, name: 'Carrot', category: 'Vegetable', available: true },
+  { id: 4, name: 'Broccoli', category: 'Vegetable', available: false },
+  { id: 5, name: 'Orange', category: 'Fruit', available: false },
+  { id: 6, name: 'Grapes', category: 'Fruit', available: true },
+  { id: 7, name: 'Cabbage', category: 'Vegetable', available: true },
+  { id: 8, name: 'Strawberry', category: 'Fruit', available: true },
+  { id: 9, name: 'Spinach', category: 'Vegetable', available: false },
+  { id: 10, name: 'Pear', category: 'Fruit', available: true },
+  { id: 11, name: 'Tomato', category: 'Vegetable', available: true },
+  { id: 12, name: 'Watermelon', category: 'Fruit', available: true },
+  { id: 13, name: 'Potato', category: 'Vegetable', available: false },
+  { id: 14, name: 'Pineapple', category: 'Fruit', available: true },
+  { id: 15, name: 'Cauliflower', category: 'Vegetable', available: true },
+  { id: 16, name: 'Mango', category: 'Fruit', available: false },
+  { id: 17, name: 'Lettuce', category: 'Vegetable', available: true },
+  { id: 18, name: 'Kiwi', category: 'Fruit', available: true },
+  { id: 19, name: 'Cucumber', category: 'Vegetable', available: false },
+  { id: 20, name: 'Cherry', category: 'Fruit', available: true },
+];
 
-export default rowDataArray;
+
+export default totalItemInDb;
+
+export const apiLocalPath='https://4380-183-83-219-106.ngrok-free.app';
+export const objectDetectionProbability = {
+  objectName: [
+    "Apple",
+    "Banana",
+    "Orange",
+    "Grapes",
+    "Strawberry",
+    "Mango",
+    "Watermelon",
+    "Pineapple",
+    "Cherry",
+    "Peach",
+    "Pear",
+    "Kiwi",
+    "Blueberry",
+    "Raspberry",
+    "Blackberry",
+    "Plum",
+    "Lemon",
+    "Lime",
+    "Coconut",
+    "Pomegranate",
+    "Cantaloupe",
+    "Honeydew",
+    "Fig",
+    "Avocado",
+    "Papaya",
+    "Guava",
+    "Passion Fruit",
+    "Dragon Fruit",
+    "Lychee",
+    "Apricot",
+    "Nectarine",
+    "Cranberry",
+    "Raspberry",
+    "Gooseberry",
+    "Pineapple",
+    "Mandarin",
+    "Clementine",
+    "Tangerine",
+    "Mulberry",
+    "Star Fruit"
+  ],
+  objectProbability: [
+    0.67,
+    0.75,
+    0.89,
+    0.58,
+    0.92,
+    0.61,
+    0.84,
+    0.78,
+    0.73,
+    0.56,
+    0.8,
+    0.51,
+    0.91,
+    0.86,
+    0.7,
+    0.62,
+    0.94,
+    0.76,
+    0.53,
+    0.83,
+    0.68,
+    0.88,
+    0.59,
+    0.72,
+    0.96,
+    0.87,
+    0.66,
+    0.55,
+    0.81,
+    0.97,
+    0.71,
+    0.54,
+    0.95,
+    0.79,
+    0.69,
+    0.74,
+    0.63,
+    0.85,
+    0.52,
+    0.9,
+    0.65,
+  ]
+}

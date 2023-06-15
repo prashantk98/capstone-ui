@@ -108,8 +108,8 @@ export default function Home() {
                   handleStartCaptureClick();
                   // const axios = require("axios");
                   let data = JSON.stringify({
-                    phoneNumber: "9765432810",
-                    // phoneNumber: event.target.value.trim(),
+                    // phoneNumber: "9765432810",
+                    phoneNumber: event.target.value.trim(),
                   });
 
                   let config = {
