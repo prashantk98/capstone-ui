@@ -169,18 +169,17 @@ import ListItemText from "@mui/material/ListItemText";
 import AddIcon from "@mui/icons-material/Add";
 // import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import { useEffect } from "react";
 import { useRef } from "react";
-import * as echarts from "echarts";
-import { objectDetectionProbability } from "../../rowData";
+// import { objectDetectionProbability } from "../../rowData";
 import ReactEcharts from "echarts-for-react";
-import { Paper, Grid,Table,TableCell, TableRow,TableContainer,TableBody,TableHead } from "@mui/material";
-import PaidIcon from '@mui/icons-material/Paid';
+import { Paper, Grid,Table,TableCell, TableRow,TableContainer,TableBody,TableHead,TextField,Modal,Button } from "@mui/material";
+// import PaidIcon from '@mui/icons-material/Paid';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SellIcon from '@mui/icons-material/Sell';
 import totalItemInDb from "../../rowData";
-// import Grid from '@mui/material/Grid';
+import { useState } from "react";
+import CountUp from 'react-countup';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -253,18 +252,25 @@ const chartOption = {
     trigger: "axis",
   },
   xAxis: {
-    name: "Fruits Name",
+    name: "Item Name",
     type: "category",
     boundaryGap: false,
-    data: objectDetectionProbability.objectName,
+    data: totalItemInDb.reduce((accumulator, current)=>{
+    return [...accumulator, current.name]  
+    },[]),
+
   },
   yAxis: {
-    name: "Probability",
+    name: "Probability %",
     type: "value",
+    // data: objectDetectionProbability.objectProbability,
+    
   },
   series: [
     {
-      data: objectDetectionProbability.objectProbability,
+      data: totalItemInDb.reduce((accumulator, current)=>{
+        return [...accumulator, current.probability]  
+        },[]),
       type: "line",
     },
   ],
@@ -331,8 +337,11 @@ export default function Admin() {
         <List
           sx={{
             ".css-10hburv-MuiTypography-root": {
-              fontSize: "1.4rem",
+              fontSize: "1.8rem",
             },
+            '& svg':{
+              fontSize: '1.8rem'
+            }
           }}
         >
           {[
@@ -364,40 +373,7 @@ export default function Admin() {
           ))}
         </List>
         <Divider />
-        <List
-          sx={{
-            ".css-10hburv-MuiTypography-root": {
-              fontSize: "1.4rem",
-            },
-          }}
-        >
-          {["All Item", "All Category", "All SubCategory"].map(
-            (text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                <ListItemButton
-                  sx={{
-                    "&": {
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {index % 2 === 0 ? <AddIcon /> : <AddIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            )
-          )}
-        </List>
+        
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3, fontSize: "1.4rem",width: '90%' }}>
         <DrawerHeader />
@@ -411,6 +387,7 @@ export default function Admin() {
         >
           <Grid item xs={2.5}>
             <Paper 
+            elevation={3}
             sx={{
               p:3
             }}>
@@ -419,10 +396,25 @@ export default function Admin() {
                 fontSize: "1.8rem",
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative',
+                // gap: '1rem'
+                // justifyContent: 'space-between'
               }}
               >
-              <PaidIcon fontSize="large"/>
+              <CurrencyRupeeIcon fontSize="large"
+              sx={{
+                '&':{
+                  backgroundColor: 'green',
+                  color: 'white',
+                  fontSize: '5.4rem',
+                  position: 'absolute',
+                  top: '-3.2rem',
+                  left: '-3.2rem',
+                  borderRadius: '.8rem'
+                }
+              }}
+              />
               Total Revenue
               </Typography>
               <Typography
@@ -435,12 +427,14 @@ export default function Admin() {
               }}
               >
               <CurrencyRupeeIcon fontSize="large"/>
-              612,839
+              
+              <CountUp end={612839} duration={1} />
               </Typography>
               </Paper>
           </Grid>
           <Grid item xs={2.5}>
           <Paper 
+          elevation={3}
           sx={{
             p:3
           }}
@@ -450,10 +444,23 @@ export default function Admin() {
                 fontSize: "1.8rem",
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative'
               }}
               >
-                <ReceiptIcon fontSize="large"/>
+                <ReceiptIcon fontSize="large"
+                sx={{
+                  '&':{
+                    backgroundColor: 'orange',
+                    color: 'white',
+                    fontSize: '5.4rem',
+                    position: 'absolute',
+                    top: '-3.2rem',
+                  left: '-3.2rem',
+                    borderRadius: '.8rem'
+                  }
+                }}
+                />
               Total Transaction
               </Typography>
               <Typography
@@ -465,12 +472,13 @@ export default function Admin() {
                 fontWeight: "700",
               }}
               >
-              54,231
+              <CountUp end={54231} duration={1} />
               </Typography>
               </Paper>
           </Grid>
           <Grid item xs={2.5}>
           <Paper 
+          elevation={3}
           sx={{
             p:3
           }}
@@ -480,10 +488,23 @@ export default function Admin() {
                 fontSize: "1.8rem",
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative'
               }}
               >
-              <SellIcon fontSize="large"/>
+              <SellIcon fontSize="large"
+              sx={{
+                '&':{
+                  backgroundColor: 'blue',
+                  color: 'white',
+                  fontSize: '5.4rem',
+                  position: 'absolute',
+                  top: '-3.2rem',
+                  left: '-3.2rem',
+                  borderRadius: '.8rem'
+                }
+              }}
+              />
               Total Product Sold
               </Typography>
               <Typography
@@ -495,12 +516,13 @@ export default function Admin() {
                 justifyContent: 'center'
               }}
               >
-              12,333
+              <CountUp end={12333} duration={1}/>
               </Typography>
               </Paper>
           </Grid>
         </Grid>
         <Paper
+        elevation={3}
           sx={{
             "&": {
               padding: "1rem",
@@ -516,13 +538,15 @@ export default function Admin() {
           >
              Probability Of Object Detection
           </Typography>
-          <ReactEcharts option={chartOption} width="80%" style={{height: '40rem'}} />
+          <ReactEcharts option={chartOption} style={{height: '40rem'}} />
         </Paper>
-
+        <AddItemAdmin/>
         <TableContainer component={Paper} sx={{width:'100%',
+        maxHeight: '40rem',margin: '3rem 0'
         // margin: '0 4rem 0 4rem'
         }}>
        <Table  aria-label="simple table" 
+       stickyHeader
        sx={{'& thead th': {
              fontWeight: '600',
              color: 'black',
@@ -542,8 +566,10 @@ export default function Admin() {
          <TableHead>
            <TableRow >
              <TableCell>Id</TableCell>
+             <TableCell>Image</TableCell>
              <TableCell>Name</TableCell>
              <TableCell>Category</TableCell>
+             <TableCell>Probability %</TableCell>
              <TableCell>Available</TableCell>
            </TableRow>
          </TableHead>
@@ -551,10 +577,25 @@ export default function Admin() {
            {totalItemInDb.map((current, index) => {
              return (
                <TableRow key={current.id}
-               sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
+               sx={{ '&:last-child td, &:last-child th': { border: 0 }, 'td img':{
+                width: '3.2rem',
+                height: '3.2rem'
+               }}}>
                  <TableCell>{current.id}</TableCell>
+                 <TableCell><img src={current.imgSrc} alt='item' /></TableCell>
                  <TableCell>{current.name}</TableCell>
                  <TableCell>{current.category}</TableCell>
+                 <TableCell
+                 sx={
+                  current.probability<=50?{
+                    color: 'red'
+                  }:current.probability<=70?{
+                    color: 'orange'
+                  }:{
+                    color: 'green'
+                  }
+                 }
+                 >{current.probability}</TableCell>
                  <TableCell
                  sx={
                   current.available?{
@@ -570,14 +611,142 @@ export default function Admin() {
 
        </Table>
        </TableContainer>
+
+      
       </Box>
     </Box>
   );
 }
 
-export function AddItemAdmin(){
+
+
+const addItemModalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2.4rem',
+  margin: '0 auto',
+  '& label':{
+    fontSize: '1.8rem'
+  },
+  '& input':{
+    fontSize: '1.8rem'
+  },
+  '& .MuiTypography-root':{
+    fontSize: '2rem'
+  },
+  '& button':{
+    fontSize: '1.8rem'
+  }
+
+};
+
+
+
+ function AddItemAdmin(){
+  const [openAddItemModal, setOpenAddItemModal] = useState(false);
+  const [itemName, setItemName] = useState('');
+  const [itemPrice, setItemPrice] = useState('');
+  const [itemCategory, setItemCategory] = useState('');
+  const [itemSubCategory, setItemSubCategory] = useState('');
+  const [itemPhoto, setItemPhoto] = useState(null);
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   // Perform form submission logic here
+  //   console.log({
+  //     itemName,
+  //     itemPrice,
+  //     itemCategory,
+  //     itemSubCategory,
+  //     itemQuantity,
+  //     itemPhoto,
+  //   });
+  //   // Reset form fields
+  //   setItemName('');
+  //   setItemPrice('');
+  //   setItemCategory('');
+  //   setItemSubCategory('');
+  //   setItemQuantity('');
+  //   setItemPhoto(null);
+  // };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    console.log(itemPhoto);
+    setItemPhoto(file);
+  };
+
   return (
     <>
+    <Button 
+    variant="outlined"
+    sx={{
+      fontSize: '1.8rem'
+    }}
+     onClick={()=>setOpenAddItemModal(true)}>Add item</Button>
+    <Modal
+    open={openAddItemModal}
+    onClose={()=>setOpenAddItemModal(false)}
+    >
+      <Box sx={
+        addItemModalStyle
+      }
+      component ='form'
+      >
+        <Typography>This is modal to add item </Typography>
+
+        <TextField
+        name="itemName"
+        label="Item Name"
+        variant="filled"
+        fullWidth
+        value={itemName}
+        onChange={(e) => setItemName(e.target.value)}
+      />
+      <TextField
+        name="itemPrice"
+        label="Item Price"
+        variant="filled"
+        fullWidth
+        value={itemPrice}
+        onChange={(e) => setItemPrice(e.target.value)}
+      />
+      <TextField
+        name="itemCategory"
+        label="Item Category"
+        variant="filled"
+        fullWidth
+        value={itemCategory}
+        onChange={(e) => setItemCategory(e.target.value)}
+      />
+      <TextField
+        name="itemSubCategory"
+        label="Item Sub-Category"
+        variant="filled"
+        fullWidth
+        value={itemSubCategory}
+        onChange={(e) => setItemSubCategory(e.target.value)}
+      />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoChange}
+      />
+      <Button type="submit" variant="contained" color="primary">
+        Submit
+      </Button>
+    {/* <Button onClick={()=>setOpenAddItemModal(false)}>Close Modal</Button> */}
+      </Box>
+    </Modal>
     </>
   );
 }

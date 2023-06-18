@@ -1,30 +1,81 @@
+// const totalItemInDb = [
+//   { id: 1, name: 'Apple', category: 'Fruit', available: true },
+//   { id: 2, name: 'Banana', category: 'Fruit', available: true },
+//   { id: 3, name: 'Carrot', category: 'Vegetable', available: true },
+//   { id: 4, name: 'Broccoli', category: 'Vegetable', available: false },
+//   { id: 5, name: 'Orange', category: 'Fruit', available: false },
+//   { id: 6, name: 'Grapes', category: 'Fruit', available: true },
+//   { id: 7, name: 'Cabbage', category: 'Vegetable', available: true },
+//   { id: 8, name: 'Strawberry', category: 'Fruit', available: true },
+//   { id: 9, name: 'Spinach', category: 'Vegetable', available: false },
+//   { id: 10, name: 'Pear', category: 'Fruit', available: true },
+//   { id: 11, name: 'Tomato', category: 'Vegetable', available: true },
+//   { id: 12, name: 'Watermelon', category: 'Fruit', available: true },
+//   { id: 13, name: 'Potato', category: 'Vegetable', available: false },
+//   { id: 14, name: 'Pineapple', category: 'Fruit', available: true },
+//   { id: 15, name: 'Cauliflower', category: 'Vegetable', available: true },
+//   { id: 16, name: 'Mango', category: 'Fruit', available: false },
+//   { id: 17, name: 'Lettuce', category: 'Vegetable', available: true },
+//   { id: 18, name: 'Kiwi', category: 'Fruit', available: true },
+//   { id: 19, name: 'Cucumber', category: 'Vegetable', available: false },
+//   { id: 20, name: 'Cherry', category: 'Fruit', available: true },
+// ];
+
+
+import apple from './images/apple.jpeg';
+import mango from './images/mango.jpeg';
+import pineApple from './images/pineapple.jpeg';
+import Pomegranate from './images/pomegranate.jpeg';
+import capscicumGreen from './images/capscicum-green.jpeg';
+import litchi from './images/litchi.jpeg';
+import banana from './images/Banana.svg';
+import orange from './images/orange.jpeg';
+import grapes from './images/grapes.jpeg';
+import strawberry from './images/strawberry.jpeg';
+import Watermelon from './images/watermelon.jpeg';
+import carrot from './images/carrot.jpeg';
+import broccoli from './images/broccoli.jpeg';
+import tomato from './images/tomato.jpeg';
+import cucumber from './images/cucumber.avif';
+import peach from './images/peach.jpeg';
+import spinach from './images/spinach.jpeg';
+import potato from './images/potato.jpeg';
+import cauliflower from './images/cauliflower.jpeg';
+import pumpkin from './images/pumpkin.jpeg';
+import cherry from './images/cherry.jpeg';
+import kiwi from './images/kiwi.jpeg';
+import pepper from './images/pepper.jpeg';
+import lettuce from './images/lettuce.jpeg';
+
+
 const totalItemInDb = [
-  { id: 1, name: 'Apple', category: 'Fruit', available: true },
-  { id: 2, name: 'Banana', category: 'Fruit', available: true },
-  { id: 3, name: 'Carrot', category: 'Vegetable', available: true },
-  { id: 4, name: 'Broccoli', category: 'Vegetable', available: false },
-  { id: 5, name: 'Orange', category: 'Fruit', available: false },
-  { id: 6, name: 'Grapes', category: 'Fruit', available: true },
-  { id: 7, name: 'Cabbage', category: 'Vegetable', available: true },
-  { id: 8, name: 'Strawberry', category: 'Fruit', available: true },
-  { id: 9, name: 'Spinach', category: 'Vegetable', available: false },
-  { id: 10, name: 'Pear', category: 'Fruit', available: true },
-  { id: 11, name: 'Tomato', category: 'Vegetable', available: true },
-  { id: 12, name: 'Watermelon', category: 'Fruit', available: true },
-  { id: 13, name: 'Potato', category: 'Vegetable', available: false },
-  { id: 14, name: 'Pineapple', category: 'Fruit', available: true },
-  { id: 15, name: 'Cauliflower', category: 'Vegetable', available: true },
-  { id: 16, name: 'Mango', category: 'Fruit', available: false },
-  { id: 17, name: 'Lettuce', category: 'Vegetable', available: true },
-  { id: 18, name: 'Kiwi', category: 'Fruit', available: true },
-  { id: 19, name: 'Cucumber', category: 'Vegetable', available: false },
-  { id: 20, name: 'Cherry', category: 'Fruit', available: true },
+  { id: 1, name: 'Apple', category: 'Fruit', probability: 45, available: true, imgSrc: apple },
+  { id: 2, name: 'Banana', category: 'Fruit', probability: 55, available: true, imgSrc: banana },
+  { id: 3, name: 'Carrot', category: 'Vegetable', probability: 65, available: true, imgSrc: carrot},
+  { id: 4, name: 'Broccoli', category: 'Vegetable', probability: 75, available: false ,imgSrc: broccoli},
+  { id: 5, name: 'Orange', category: 'Fruit', probability: 85, available: false, imgSrc: orange },
+  { id: 6, name: 'Grapes', category: 'Fruit', probability: 60, available: true, imgSrc: grapes },
+  { id: 7, name: 'Tomato', category: 'Vegetable', probability: 70, available: true,imgSrc: tomato },
+  { id: 8, name: 'Cucumber', category: 'Vegetable', probability: 80, available: true,imgSrc: cucumber },
+  { id: 9, name: 'Peach', category: 'Fruit', probability: 50, available: true,imgSrc: peach },
+  { id: 10, name: 'Spinach', category: 'Vegetable', probability: 90, available: false, imgSrc: spinach },
+  { id: 11, name: 'Mango', category: 'Fruit', probability: 40, available: true, imgSrc: mango },
+  { id: 12, name: 'Potato', category: 'Vegetable', probability: 70, available: true, imgSrc: potato },
+  { id: 13, name: 'Strawberry', category: 'Fruit', probability: 75, available: true, imgSrc: strawberry },
+  { id: 14, name: 'Cauliflower', category: 'Vegetable', probability: 55, available: false, imgSrc: cauliflower },
+  { id: 15, name: 'Watermelon', category: 'Fruit', probability: 80, available: true, imgSrc: Watermelon },
+  { id: 16, name: 'Pumpkin', category: 'Vegetable', probability: 65, available: true, imgSrc: pumpkin },
+  { id: 17, name: 'Cherry', category: 'Fruit', probability: 50, available: true,imgSrc: cherry },
+  { id: 18, name: 'Lettuce', category: 'Vegetable', probability: 75, available: true,imgSrc: lettuce },
+  { id: 19, name: 'Kiwi', category: 'Fruit', probability: 90, available: false,imgSrc: kiwi },
+  { id: 20, name: 'Pepper', category: 'Vegetable', probability: 45, available: true, imgSrc: pepper},
 ];
+
 
 
 export default totalItemInDb;
 
-export const apiLocalPath='https://4380-183-83-219-106.ngrok-free.app';
+export const apiLocalPath='https://5976-183-83-219-106.ngrok-free.app';
 export const objectDetectionProbability = {
   objectName: [
     "Apple",

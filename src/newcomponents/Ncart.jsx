@@ -18,6 +18,17 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import CartItem from "../components/CartItem";
 import { NavLink } from "react-router-dom";
+import apple from '../images/apple.jpeg';
+import mango from '../images/mango.jpeg';
+import pineApple from '../images/pineapple.jpeg';
+import Pomegranate from '../images/pomegranate.jpeg';
+import capscicumGreen from '../images/capscicum-green.jpeg';
+import litchi from '../images/litchi.jpeg';
+import banana from '../images/Banana.svg';
+import orange from '../images/orange.jpeg';
+import grapes from '../images/grapes.jpeg';
+import strawberry from '../images/strawberry.jpeg';
+import Watermelon from '../images/watermelon.jpeg';
 
 // let totalItemsGlobal;
 // let itemsArrayGlobal;
@@ -54,6 +65,8 @@ export default function Ncart() {
         description: ` description of ${itemSelectedManuallyObj.name}`,
         price: itemSelectedManuallyObj.price,
         qty: 1,
+        imgSrc: itemSelectedManuallyObj.imgSrc,
+        probability: itemSelectedManuallyObj.probability,
       };
       setItems([...itemsArray, obj]);
       setItemManually(null);
@@ -324,6 +337,7 @@ export default function Ncart() {
                     index={index}
                     item={currentValue}
                     removeItemFromCart={removeItemFromCart}
+                    // imgSrc = {currentValue.im}
                     // key={index}
                     // onSelect={deleteItem}
                     // text={currentValue}
@@ -448,36 +462,46 @@ export default function Ncart() {
   );
 }
 
-const cartObject = [
+export const cartObject = [
   {
     title: "Lorem Item1",
     description: "Lorem Item description",
     price: 190.0,
     qty: 1,
+    imgSrc: apple,
+    probability: 81
   },
   {
     title: "Lorem Item2",
     description: "Lorem Item description",
     price: 90.0,
     qty: 2,
+    imgSrc: pineApple,
+    probability: 52
   },
   {
     title: "Lorem Item3",
     description: "Lorem Item description",
     price: 93.0,
     qty: 1,
+    imgSrc: Pomegranate,
+    probability: 58
   },
   {
     title: "Lorem Item4",
     description: "Lorem Item description",
     price: 32.0,
     qty: 3,
+    imgSrc: mango,
+    probability: 91
   },
   {
     title: "Lorem Item5",
     description: "Lorem Item description",
     price: 93.0,
     qty: Math.floor(Math.random() * 8) + 1,
+    imgSrc: capscicumGreen,
+    probability: 50
   },
 ];
 // console.log(totalItemsGlobal);
@@ -485,25 +509,54 @@ const cartObject = [
 
 
 const fruitsFromDb = [
-  {name: 'Litchi',price: 32},
-  { name: 'Apple', price: 20 },
-  { name: 'Banana', price: 21 },
-  { name: 'Orange', price: 22 },
-  { name: 'Grapes', price: 23 },
-  { name: 'Mango', price: 24 },
-  { name: 'Pineapple', price: 25 },
-  { name: 'Watermelon', price: 26 },
-  { name: 'Strawberry', price: 27 },
-  { name: 'Cherry', price: 28 },
-  { name: 'Blueberry', price: 29 },
-  { name: 'Peach', price: 30 },
-  { name: 'Pear', price: 31 },
-  { name: 'Plum', price: 32 },
-  { name: 'Kiwi', price: 33 },
-  { name: 'Lemon', price: 34 },
-  { name: 'Lime', price: 35 },
-  { name: 'Raspberry', price: 36 },
-  { name: 'Blackberry', price: 37 },
-  { name: 'Cantaloupe', price: 38 },
-  { name: 'Pomegranate', price: 39 },
-]
+  {name: 'Litchi',price: 32, imgSrc: litchi, probability: 46},
+  { name: 'Apple', price: 20, imgSrc: apple,probability: 61},
+  { name: 'Banana', price: 21,imgSrc: banana,probability: 54 },
+  { name: 'Orange', price: 22, imgSrc: orange,probability: 76},
+  { name: 'Grapes', price: 23, imgSrc: grapes,probability: 73 },
+  { name: 'Mango', price: 24, imgSrc: mango,probability: 90 },
+  { name: 'Pineapple', price: 25, imgSrc: pineApple, probability: 84 },
+  { name: 'Watermelon', price: 26, imgSrc: Watermelon, probability: 81 },
+  { name: 'Strawberry', price: 27, imgSrc: strawberry, probability: 63 },
+  { name: 'Cherry', price: 28, imgSrc: strawberry, probability: 42 },
+  { name: 'Blueberry', price: 29, imgSrc: grapes, probability: 81 },
+  { name: 'Peach', price: 30, imgSrc: orange, probability: 47 },
+  { name: 'Pear', price: 31, imgSrc: mango, probability: 90 },
+  { name: 'Plum', price: 32, imgSrc: litchi,probability: 69 },
+  { name: 'Kiwi', price: 33 , imgSrc: apple, probability: 49},
+  { name: 'Lemon', price: 34, imgSrc:orange,probability: 59 },
+  { name: 'Lime', price: 35, imgSrc: pineApple, probability: 70 },
+  { name: 'Raspberry', price: 36 , imgSrc: grapes, probability: 84},
+  { name: 'Blackberry', price: 37, imgSrc: grapes, probability: 66 },
+  { name: 'Cantaloupe', price: 38, imgSrc: Watermelon, probability: 43 },
+  { name: 'Pomegranate', price: 39, imgSrc: Pomegranate, probability: 67 },
+];
+
+const ImageToBase64Converter = () => {
+  const [base64Image, setBase64Image] = useState('');
+
+  useEffect(() => {
+    // Path to your image file
+    const imagePath = require('../images/apples.jpg');
+
+    // Fetch the image file as a Blob
+    fetch(imagePath)
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create a FileReader object
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          const base64String = reader.result;
+          setBase64Image(base64String);
+        };
+
+        // Read the image file as base64
+        reader.readAsDataURL(blob);
+      });
+  }, []);
+  return base64Image;
+};
+
+// export default ImageToBase64Converter;
+// console.log(ImageToBase64Converter());

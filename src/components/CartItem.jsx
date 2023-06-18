@@ -62,7 +62,7 @@ export default function CartItem(prop) {
       </div> */}
 
       <div className="cart-item" key={prop.index} >
-        <img src={banana} alt="banana " />
+        <img src={prop.item.imgSrc} alt={prop.item.imgSrc} />
         <div className="cart-item__details">
           <h3 className="cart-item__title">{prop.item.title}</h3>
           <p className="cart-item__description">{prop.item.description}</p>
@@ -89,6 +89,10 @@ export default function CartItem(prop) {
             <AddIcon />
           </IconButton>
         </div>
+        {
+          prop.item.probability<=55?
+        <p className="cart-item__detection-probability" style={{color:'red'}}>{prop.item.probability}%</p>:prop.item.probability<=74?<p className="cart-item__detection-probability" style={{color:'orange'}}>{prop.item.probability}%</p>:<p className="cart-item__detection-probability" style={{color:'green'}}>{prop.item.probability}%</p>
+}
         <p className="cart-item__price">₹{value * prop.item.price}</p>
         <IconButton
           aria-label="delete"

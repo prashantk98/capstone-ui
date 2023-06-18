@@ -179,9 +179,11 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* cart-item */
-.cart-item img{
-  height: 3rem;
+.cart-item img, .bill-item img{
+  width: 4.5rem;
   height: 4.5rem;
+  object-fit: cover;
+  box-shadow: 1px 1px 2px white, -1px -1px 2px white;
 }
 .cart-item,.cart__input{
   display: flex;
@@ -224,7 +226,7 @@ input[type=number]::-webkit-outer-spin-button {
 .cart-item__title{
   font-size: 1.8rem;
 }
-.cart-item__description,.cart-item__price{
+.cart-item__description,.cart-item__price,.cart-item__detection-probability{
   font-size: 1.4rem;
 }
 
@@ -290,4 +292,28 @@ input[type=number]::-webkit-outer-spin-button {
 .bill__quantity{
   color: black;
   font-size: 1.4rem;
+}
+.bill-item{
+   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #F8F4EF;
+
+  background-color: #F2F2F1;
+  padding: 1.5rem;
+  border-bottom: 1px solid white;
+  height: 3.2rem;
+}
+.bill-item__description,.bill-item__title,.bill-item__price{
+  color: black;
+}
+.bill-item__title{
+  font-size: 1.8rem;
+}
+.bill-item__description,.bill-item__price{
+  font-size: 1.4rem;
+}
+.bill-item img{
+  height: 3rem;
+  height: 4.5rem;
 }

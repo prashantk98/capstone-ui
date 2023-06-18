@@ -19,8 +19,11 @@ import {
 } from "@mui/material";
 import { Result } from "antd";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import QrCodeIcon from '@mui/icons-material/QrCode';
 // import logo from "../images/logo.svg";
-import { itemsArrayGlobal } from "../newcomponents/Ncart";
+// import { itemsArrayGlobal } from "../newcomponents/Ncart";
+import { cartObject } from "../newcomponents/Ncart";
 
 import Gpay from "../images/google_pay.svg";
 import amazonPay from "../images/Amazon_Pay.svg";
@@ -142,16 +145,16 @@ export default function Cart() {
           <Paper>Item 2</Paper> */}
               {itemsArray.map((currentValue, index) => {
                 return (
-                  <div className="cart-item" key={index}>
-                    <img src={banana} alt="banana " />
-                    <div className="cart-item__details">
-                      <h3 className="cart-item__title">{currentValue.title}</h3>
-                      <p className="cart-item__description">
+                  <div className="bill-item" key={index}>
+                    <img src={currentValue.imgSrc} alt={currentValue.imgSrc} />
+                    <div className="bill-item__details">
+                      <h3 className="bill-item__title">{currentValue.title}</h3>
+                      <p className="bill-item__description">
                         {currentValue.description}
                       </p>
                     </div>
                     <p className="bill__quantity">{currentValue.qty}</p>
-                    <p className="cart-item__price">₹{currentValue.price}</p>
+                    <p className="bill-item__price">₹{currentValue.price}</p>
                   </div>
                 );
               })}
@@ -232,6 +235,8 @@ export default function Cart() {
           <Box
             sx={{
               width: "40%",
+              backgroundColor: 'white',
+              height: '43rem'
             }}
           >
             {/* <Card
@@ -327,11 +332,13 @@ export default function Cart() {
             </Button> */}
             <Typography
             sx={{
-              fontSize: '1.8rem',
+              fontSize: '2rem',
               color: 'black',
-              textAlign: 'center'
+              textAlign: 'center',
+              // background: 'white',
+              padding: '1rem'
             }}
-            ><strong>Total Amount {(totalPrice-totalPrice*.01).toFixed(2)}</strong></Typography>
+            ><strong>Total Amount ₹{(totalPrice-totalPrice*.01).toFixed(2)}</strong></Typography>
             {
               // isPaymentCliked &&
               <Card
@@ -360,9 +367,9 @@ export default function Cart() {
                     <AccordionSummary
                       expandIcon={
                         expanded === "panel3" ? (
-                          <RadioButtonCheckedIcon color="success" />
+                          <RadioButtonCheckedIcon color="success"/>
                         ) : (
-                          <RadioButtonCheckedIcon />
+                          <RadioButtonUncheckedIcon />
                         )
                       }
                       aria-controls="panel1bh-content"
@@ -391,9 +398,7 @@ export default function Cart() {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography sx={{ fontSize: "1.4rem" }}>
-                        Nulla facilisi. Phasellus sollicitudin nulla et quam
-                        mattis feugiat. Aliquam eget maximus est, id dignissim
-                        quam.
+                      Seamless and Secure Payments: Pay with Confidence Using Your Credit Card!
                       </Typography>
 
                       <Button
@@ -401,7 +406,6 @@ export default function Cart() {
                         sx={{
                           width: "100%",
                           height: "5vh",
-                          backgroundColor: "#F34237",
                           fontSize: "1.4rem",
                         }}
                         onClick={() => {
@@ -430,7 +434,7 @@ export default function Cart() {
                         expanded === "panel1" ? (
                           <RadioButtonCheckedIcon color="success" />
                         ) : (
-                          <RadioButtonCheckedIcon />
+                          <RadioButtonUncheckedIcon />
                         )
                       }
                       aria-controls="panel1bh-content"
@@ -459,9 +463,7 @@ export default function Cart() {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography sx={{ fontSize: "1.4rem" }}>
-                        Nulla facilisi. Phasellus sollicitudin nulla et quam
-                        mattis feugiat. Aliquam eget maximus est, id dignissim
-                        quam.
+                      Seamless and Secure Payments: Pay with Confidence Using Online Payments Method!
                       </Typography>
 
                       <Button
@@ -469,14 +471,14 @@ export default function Cart() {
                         sx={{
                           width: "100%",
                           height: "5vh",
-                          backgroundColor: "#F34237",
                           fontSize: "1.4rem",
                         }}
                         onClick={() => {
                           setOpenModal(true);
                         }}
                       >
-                        Show QR
+                        <QrCodeIcon/>
+                         Show QR
                       </Button>
                     </AccordionDetails>
                   </Accordion>
@@ -498,7 +500,7 @@ export default function Cart() {
                         expanded === "panel2" ? (
                           <RadioButtonCheckedIcon color="success" />
                         ) : (
-                          <RadioButtonCheckedIcon />
+                          <RadioButtonUncheckedIcon />
                         )
                       }
                       aria-controls="panel2bh-content"
@@ -516,17 +518,13 @@ export default function Cart() {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography sx={{ fontSize: "1.4rem" }}>
-                        Donec placerat, lectus sed mattis semper, neque lectus
-                        feugiat lectus, varius pulvinar diam eros in elit.
-                        Pellentesque convallis laoreet laoreet.
+                      <Typography sx={{ fontSize: "1.4rem" }}>Flexible and Traditional: Experience the Ease of Cash Payments!
                       </Typography>
                       <Button
                         variant="contained"
                         sx={{
                           width: "100%",
                           height: "5vh",
-                          backgroundColor: "#F34237",
                           fontSize: "1.4rem",
                         }}
                         onClick={() => {
@@ -567,7 +565,7 @@ export default function Cart() {
                 </Typography> */}
                 <Result
                   status="success"
-                  title="Successfully Purchased "
+                  title="Payment Successful "
                   subTitle="Thanks for Shopping! Visit again"
                   
                 />
@@ -580,40 +578,6 @@ export default function Cart() {
   );
 }
 
-const cartObject = [
-  {
-    title: "Lorem Item 1",
-    description: "Lorem Item description",
-    price: 190.0,
-    qty: Math.floor(Math.random() * 8) + 1,
-  },
-  {
-    title: "Lorem Item 2",
-    description: "Lorem Item description",
-    price: 90.0,
-    qty: Math.floor(Math.random() * 8) + 1,
-  },
-  {
-    title: "Lorem Item 3",
-    description: "Lorem Item description",
-    price: 13.0,
-    qty: Math.floor(Math.random() * 8) + 1,
-  },
-  {
-    title: "Lorem Item 4",
-    description: "Lorem Item description",
-    price: 32.0,
-    qty: Math.floor(Math.random() * 8) + 1,
-  },
-  {
-    title: "Lorem Item 5",
-    description: "Lorem Item description",
-    price: 93.0,
-    qty: Math.floor(Math.random() * 8) + 1,
-  },
-];
-
-export { cartObject };
 
 const itemsFromDb = [
   { title: "Bananas" },
