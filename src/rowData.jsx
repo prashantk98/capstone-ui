@@ -49,33 +49,37 @@ import lettuce from './images/lettuce.jpeg';
 
 
 const totalItemInDb = [
-  { id: 1, name: 'Apple', category: 'Fruit', probability: 45, available: true, imgSrc: apple },
-  { id: 2, name: 'Banana', category: 'Fruit', probability: 55, available: true, imgSrc: banana },
-  { id: 3, name: 'Carrot', category: 'Vegetable', probability: 65, available: true, imgSrc: carrot},
-  { id: 4, name: 'Broccoli', category: 'Vegetable', probability: 75, available: false ,imgSrc: broccoli},
-  { id: 5, name: 'Orange', category: 'Fruit', probability: 85, available: false, imgSrc: orange },
-  { id: 6, name: 'Grapes', category: 'Fruit', probability: 60, available: true, imgSrc: grapes },
-  { id: 7, name: 'Tomato', category: 'Vegetable', probability: 70, available: true,imgSrc: tomato },
-  { id: 8, name: 'Cucumber', category: 'Vegetable', probability: 80, available: true,imgSrc: cucumber },
-  { id: 9, name: 'Peach', category: 'Fruit', probability: 50, available: true,imgSrc: peach },
-  { id: 10, name: 'Spinach', category: 'Vegetable', probability: 90, available: false, imgSrc: spinach },
-  { id: 11, name: 'Mango', category: 'Fruit', probability: 40, available: true, imgSrc: mango },
-  { id: 12, name: 'Potato', category: 'Vegetable', probability: 70, available: true, imgSrc: potato },
-  { id: 13, name: 'Strawberry', category: 'Fruit', probability: 75, available: true, imgSrc: strawberry },
-  { id: 14, name: 'Cauliflower', category: 'Vegetable', probability: 55, available: false, imgSrc: cauliflower },
-  { id: 15, name: 'Watermelon', category: 'Fruit', probability: 80, available: true, imgSrc: Watermelon },
-  { id: 16, name: 'Pumpkin', category: 'Vegetable', probability: 65, available: true, imgSrc: pumpkin },
-  { id: 17, name: 'Cherry', category: 'Fruit', probability: 50, available: true,imgSrc: cherry },
-  { id: 18, name: 'Lettuce', category: 'Vegetable', probability: 75, available: true,imgSrc: lettuce },
-  { id: 19, name: 'Kiwi', category: 'Fruit', probability: 90, available: false,imgSrc: kiwi },
-  { id: 20, name: 'Pepper', category: 'Vegetable', probability: 45, available: true, imgSrc: pepper},
+  { id: 1, name: 'Apple', category: 'Fruit', probability: 45, available: true, imgSrc: apple,price: 25 },
+  { id: 2, name: 'Banana', category: 'Fruit', probability: 55, available: true, imgSrc: banana,price: 10 },
+  { id: 3, name: 'Carrot', category: 'Vegetable', probability: 65, available: true, imgSrc: carrot,price: 14},
+  { id: 4, name: 'Broccoli', category: 'Vegetable', probability: 75, available: false ,imgSrc: broccoli,price: 20},
+  { id: 5, name: 'Orange', category: 'Fruit', probability: 85, available: false, imgSrc: orange,price: 37 },
+  { id: 6, name: 'Grapes', category: 'Fruit', probability: 60, available: true, imgSrc: grapes,price: 34 },
+  { id: 7, name: 'Tomato', category: 'Vegetable', probability: 70, available: true,imgSrc: tomato,price: 27 },
+  { id: 8, name: 'Cucumber', category: 'Vegetable', probability: 80, available: true,imgSrc: cucumber,price: 26 },
+  { id: 9, name: 'Peach', category: 'Fruit', probability: 50, available: true,imgSrc: peach,price: 30 },
+  { id: 10, name: 'Spinach', category: 'Vegetable', probability: 90, available: false, imgSrc: spinach,price: 23 },
+  { id: 11, name: 'Mango', category: 'Fruit', probability: 40, available: true, imgSrc: mango,price: 50 },
+  { id: 12, name: 'Potato', category: 'Vegetable', probability: 70, available: true, imgSrc: potato,price: 17 },
+  { id: 13, name: 'Strawberry', category: 'Fruit', probability: 75, available: true, imgSrc: strawberry,price: 10 },
+  { id: 14, name: 'Cauliflower', category: 'Vegetable', probability: 55, available: false, imgSrc: cauliflower,price: 10 },
+  { id: 15, name: 'Watermelon', category: 'Fruit', probability: 80, available: true, imgSrc: Watermelon,price: 13 },
+  { id: 16, name: 'Pumpkin', category: 'Vegetable', probability: 65, available: true, imgSrc: pumpkin,price: 44 },
+  { id: 17, name: 'Cherry', category: 'Fruit', probability: 50, available: true,imgSrc: cherry,price: 31 },
+  { id: 18, name: 'Lettuce', category: 'Vegetable', probability: 75, available: true,imgSrc: lettuce,price: 15 },
+  { id: 19, name: 'Kiwi', category: 'Fruit', probability: 90, available: false,imgSrc: kiwi,price: 12 },
+  { id: 20, name: 'Pepper', category: 'Vegetable', probability: 45, available: true, imgSrc: pepper,price: 20},
+  { id: 21, name: 'Litchi', category: 'Fruit',price: 32, imgSrc: litchi, probability: 46,available: true},
+  { id: 22, name: 'Pineapple', category: 'Fruit', price: 25, imgSrc: pineApple, probability: 84, available: true },
+  { id: 23, name: 'Pomegranate', category: 'Fruit', price: 39, imgSrc: Pomegranate, probability: 67,available:true },
+  { id: 24, name: 'Capscicum-green', category: 'Vegetable', price: 21, imgSrc: capscicumGreen, probability: 40, available: true },
 ];
 
 
 
 export default totalItemInDb;
 
-export const apiLocalPath='https://5976-183-83-219-106.ngrok-free.app';
+export const apiLocalPath='https://facd-183-83-219-106.ngrok-free.app';
 export const objectDetectionProbability = {
   objectName: [
     "Apple",

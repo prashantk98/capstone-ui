@@ -1,151 +1,3 @@
-// import Navbar from "../Navbar";
-// import "./Admin.css";
-// import { useState } from "react";
-// import {
-//   Typography,
-//   Button,
-//   TextField,
-//   Autocomplete,
-//   Table,
-//   TableBody,
-//   TableHead,
-//   TableRow,
-//   TableCell,
-//   TableContainer,
-//   Paper,
-//   // DataGrid
-// } from "@mui/material";
-// import rowDataArray from "../../rowData";
-
-// const options = ["Grocery", "Electronics", "Option 1", "Option 2"];
-
-// export default function Admin() {
-//   const [value, setValue] = useState(options[0]);
-//   const [inputValue, setInputValue] = useState("");
-
-//   return (
-//     // sx={{margin:'8rem 4rem 0 4rem'}}
-//     // sx={{ margin: "1.6rem 0" }}
-//     <>
-//       <Navbar />
-//       <form action="/#" className="admin" >
-//         <Typography variant="h4" >
-//           Add new category
-//         </Typography>
-//         <Autocomplete
-//           value={value}
-//           onChange={(event, newValue) => {
-//             setValue(newValue);
-//           }}
-//           inputValue={inputValue}
-//           onInputChange={(event, newInputValue) => {
-//             setInputValue(newInputValue);
-//           }}
-//           id="controllable-states-demo"
-//           options={options}
-//           sx={{ width: 300, fontSize: 30, margin: "1.6rem 0" }}
-//           renderInput={(params) => (
-//             <TextField
-//               {...params}
-//               label="Category"
-//               sx={{ fontSize: '6rem' }}
-//               required
-//             />
-//           )}
-//         />
-//         <Button variant="contained" color="success" sx={{ margin: "1.6rem 0" }}>
-//           Success
-//         </Button>
-//       </form>
-
-//       <form action="/#" className="admin__sub-category">
-//         <Typography variant="h4" sx={{ margin: "1.6rem 0" }}>
-//           Add new Sub-category
-//         </Typography>
-//         <Autocomplete
-//           value={value}
-//           onChange={(event, newValue) => {
-//             setValue(newValue);
-//           }}
-//           inputValue={inputValue}
-//           onInputChange={(event, newInputValue) => {
-//             setInputValue(newInputValue);
-//           }}
-//           id="controllable-states-demo"
-//           options={options}
-//           sx={{ width: 300, fontSize: 30, margin: "1.6rem 0", border: "none" }}
-//           renderInput={(params) => (
-//             <TextField {...params} label="sub-category" required />
-//           )}
-//         />
-//         <Autocomplete
-//           value={value}
-//           onChange={(event, newValue) => {
-//             setValue(newValue);
-//           }}
-//           inputValue={inputValue}
-//           onInputChange={(event, newInputValue) => {
-//             setInputValue(newInputValue);
-//           }}
-//           id="controllable-states-demo"
-//           options={options}
-//           sx={{ width: 300, fontSize: 30, margin: "1.6rem 0" }}
-//           renderInput={(params) => (
-//             <TextField {...params} label="Category" required />
-//           )}
-//         />
-//         <Button
-//           variant="contained"
-//           color="success"
-//           className="admin__sub-category__button"
-//           sx={{ margin: "1.6rem 0" }}
-//         >
-//           Success
-//         </Button>
-//       </form>
-//       <TableContainer component={Paper} sx={{width:'90%',margin: '0 4rem 0 4rem'}}>
-//       <Table  aria-label="simple table" sx={{'& thead th': {
-//             fontWeight: '600',
-//             color: 'black',
-//             backgroundColor: '#42a5f5',
-//             fontSize:'1.6rem'
-//         },
-//         '& tbody td': {
-//             fontWeight: '300',
-//             fontSize:'1.2rem'
-//         },
-//         '& tbody tr:hover': {
-//             backgroundColor: '#fffbf2',
-//             cursor: 'pointer',
-//         }}}>
-//         <TableHead>
-//           <TableRow >
-//             <TableCell>First Name</TableCell>
-//             <TableCell>Last Name</TableCell>
-//             <TableCell>Email</TableCell>
-//             <TableCell>Gender</TableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {rowDataArray.map((current, index) => {
-//             return (
-//               <TableRow key={current.id}
-//               sx={{ '&:last-child td, &:last-child th': { border: 0 }}}>
-//                 <TableCell>{current.first_name}</TableCell>
-//                 <TableCell>{current.last_name}</TableCell>
-//                 <TableCell>{current.email}</TableCell>
-//                 <TableCell>{current.gender}</TableCell>
-//               </TableRow>
-//             );
-//           })}
-//         </TableBody>
-
-//       </Table>
-//       </TableContainer>
-//     </>
-//   );
-// }
-
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -169,7 +21,7 @@ import ListItemText from "@mui/material/ListItemText";
 import AddIcon from "@mui/icons-material/Add";
 // import HomeIcon from '@mui/icons-material/Home';
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import { useRef } from "react";
+// import { useRef } from "react";
 // import { objectDetectionProbability } from "../../rowData";
 import ReactEcharts from "echarts-for-react";
 import { Paper, Grid,Table,TableCell, TableRow,TableContainer,TableBody,TableHead,TextField,Modal,Button } from "@mui/material";
@@ -177,6 +29,8 @@ import { Paper, Grid,Table,TableCell, TableRow,TableContainer,TableBody,TableHea
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SellIcon from '@mui/icons-material/Sell';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import totalItemInDb from "../../rowData";
 import { useState } from "react";
 import CountUp from 'react-countup';
@@ -250,6 +104,19 @@ const Drawer = styled(MuiDrawer, {
 const chartOption = {
   tooltip: {
     trigger: "axis",
+    formatter: (params) => {
+      const dataIndex = params[0]?.dataIndex;
+      if (dataIndex !== undefined) {
+        const data = totalItemInDb.reduce((accumulator, current)=>{
+          return [...accumulator, current.imgSrc]  
+          },[]);
+        return `
+            <img src="${data[dataIndex]}" alt="${params[0]?.name}" style="width: 4rem; height: 4rem;" />
+            <div>${params[0]?.name}: ${params[0]?.value}%</div>
+        `;
+      }
+      return '';
+    }
   },
   xAxis: {
     name: "Item Name",
@@ -278,8 +145,12 @@ const chartOption = {
 
 export default function Admin() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const chartRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState({
+    key: '',
+    direction: ''
+  });
+  // const chartRef = useRef(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -287,6 +158,31 @@ export default function Admin() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  const sortTable = (key) => {
+    let direction = 'asc';
+
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+
+    setSortConfig({ key, direction });
+  };
+
+  const sortedData = [...totalItemInDb].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+  const getSortIcon = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'asc' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>;
+    }
+    return null;
   };
 
   return (
@@ -554,7 +450,6 @@ export default function Admin() {
              fontSize:'1.6rem'
          },
          '& tbody td': {
-             fontWeight: '300',
              fontSize:'1.2rem',
              fontWeight: '500'
         },
@@ -565,16 +460,16 @@ export default function Admin() {
          }}}>
          <TableHead>
            <TableRow >
-             <TableCell>Id</TableCell>
+             <TableCell onClick={() => sortTable('id')}>Id{getSortIcon('id')}</TableCell>
              <TableCell>Image</TableCell>
-             <TableCell>Name</TableCell>
-             <TableCell>Category</TableCell>
-             <TableCell>Probability %</TableCell>
-             <TableCell>Available</TableCell>
+             <TableCell onClick={() => sortTable('name')}>Name{getSortIcon('name')}</TableCell>
+             <TableCell onClick={() => sortTable('category')}>Category {getSortIcon('category')}</TableCell>
+             <TableCell onClick={() => sortTable('probability')}>Probability % {getSortIcon('probability')} </TableCell>
+             <TableCell onClick={() => sortTable('available')}>Available {getSortIcon('available')} </TableCell>
            </TableRow>
          </TableHead>
          <TableBody>
-           {totalItemInDb.map((current, index) => {
+           {sortedData.map((current, index) => {
              return (
                <TableRow key={current.id}
                sx={{ '&:last-child td, &:last-child th': { border: 0 }, 'td img':{
@@ -582,7 +477,7 @@ export default function Admin() {
                 height: '3.2rem'
                }}}>
                  <TableCell>{current.id}</TableCell>
-                 <TableCell><img src={current.imgSrc} alt='item' /></TableCell>
+                 <TableCell><img src={current.imgSrc} alt={current.name} /></TableCell>
                  <TableCell>{current.name}</TableCell>
                  <TableCell>{current.category}</TableCell>
                  <TableCell
@@ -692,7 +587,7 @@ const addItemModalStyle = {
     sx={{
       fontSize: '1.8rem'
     }}
-     onClick={()=>setOpenAddItemModal(true)}>Add item</Button>
+     onClick={()=>setOpenAddItemModal(true)}>Add New Product</Button>
     <Modal
     open={openAddItemModal}
     onClose={()=>setOpenAddItemModal(false)}

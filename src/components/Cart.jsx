@@ -1,8 +1,8 @@
-import { useState } from "react";
-import CartItem from "./CartItem";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import banana from "../images/Banana.svg";
-import Ncart from "../newcomponents/Ncart";
+import { useEffect, useState } from "react";
+// import CartItem from "./CartItem";
+// import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+// import banana from "../images/Banana.svg";
+// import Ncart from "../newcomponents/Ncart";
 import {
   Card,
   CardContent,
@@ -31,6 +31,7 @@ import phonePe from "../images/Phonepe.svg";
 import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
+import { useNavigate } from "react-router-dom";
 
 const onlinePaymentMethod = [
   { src: Gpay, alt: "Google pay" },
@@ -43,19 +44,21 @@ const creditCard = [
   { src: rupay, alt: "rupay card" },
 ];
 export default function Cart() {
-  const [itemsArray, setItems] = useState(cartObject);
-  const [itemName, setItemName] = useState("");
+  const [itemsArray, setItems] = useState(JSON.parse(sessionStorage.getItem('itemsArray')));
+  // const [itemName, setItemName] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [totalItems, setTotalItems] = useState(5);
-  const [isPaymentCliked, setPaymentClicked] = useState(false);
+  const [totalItems, setTotalItems] = useState(itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.qty,0));
+  // const [isPaymentCliked, setPaymentClicked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(
     itemsArray.reduce(
-      (accumulator, currentValue) =>
-        accumulator + currentValue.price * currentValue.qty,
-      0
-    )
+    (accumulator, currentValue) =>
+      accumulator + currentValue.price * currentValue.qty,
+    0
+  )
   );
+  
   const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate();
   // const [totalDiscout, setTotalDiscount] = useState(0);
 
   // const defaultProps = {
@@ -65,6 +68,14 @@ export default function Cart() {
   // const flatProps = {
   //   options: itemsFromDb.map((option) => option.title),
   // };
+  // useEffect(() => {
+  //   // Retrieve data from session storage on component mount
+  //   const storedData = JSON.parse(sessionStorage.getItem('itemsArray'));
+  //   console.log(storedData);
+  //   if (storedData) {
+  //     setItems(storedData);
+  //   }
+  // }, []);
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
@@ -115,9 +126,10 @@ export default function Cart() {
   return (
     <>
       <section className="cart">
-        <h4 className="cart__title">Shopping cart</h4>
+        <h3 className="cart__title">Hello {sessionStorage.getItem('userName')}</h3>
+        {/* <h4 className="cart__title">Shopping cart</h4> */}
         <p className="cart__description">
-          you have {totalItems} item in your cart
+          You have {totalItems} {totalItems>1?'items':'item'} in your cart
         </p>
 
         <div className="cart__container">
@@ -385,11 +397,10 @@ export default function Cart() {
                       >
                         Pay with Credit Card
                       </Typography>
-                      <ImageList sx={{ width: 200 }} cols={3}>
-                        {creditCard.map((item) => (
+                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
+                        {creditCard.map((item,index) => (
                           <ImageListItem
-                            key={item.img}
-                            sx={{ margin: "0 .8rem" }}
+                            key={index}
                           >
                             <img src={item.src} alt={item.alt} />
                           </ImageListItem>
@@ -450,11 +461,10 @@ export default function Cart() {
                       >
                         Pay with UPI QR Code
                       </Typography>
-                      <ImageList sx={{ width: 200 }} cols={3}>
-                        {onlinePaymentMethod.map((item) => (
+                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
+                        {onlinePaymentMethod.map((item,index) => (
                           <ImageListItem
-                            key={item.img}
-                            sx={{ margin: "0 .8rem" }}
+                            key={index}
                           >
                             <img src={item.src} alt={item.alt} />
                           </ImageListItem>
@@ -550,24 +560,23 @@ export default function Cart() {
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  width: 400,
+                  width: 440,
                   bgcolor: "background.paper",
                   border: "2px solid #000",
                   boxShadow: 24,
                   p: 4,
                 }}
               >
-                {/* <Typography  variant="h3" component="h2">
-                Thanks for Shopping!
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2,fontSize: '1.4rem' }}>
-                Your order has been successfully placed.
-                </Typography> */}
                 <Result
                   status="success"
-                  title="Payment Successful "
+                  title={<code>Paid ₹{(totalPrice-totalPrice*0.01).toFixed(2)} Successfully </code>}
                   subTitle="Thanks for Shopping! Visit again"
-                  
+                  extra={[
+                    <Button >
+                      Print Bill
+                    </Button>,
+                    <Button variant="contained" onClick={()=>navigate("/nhome")} color="success"> Home</Button>,
+                  ]}
                 />
               </Box>
             </Modal>
@@ -579,12 +588,3 @@ export default function Cart() {
 }
 
 
-const itemsFromDb = [
-  { title: "Bananas" },
-  { title: "Apples" },
-  { title: "Laptop" },
-  { title: "Mobile" },
-  { title: "Camera" },
-];
-
-console.log(itemsFromDb[0].title);

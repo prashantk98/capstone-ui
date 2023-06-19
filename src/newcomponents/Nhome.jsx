@@ -5,18 +5,21 @@ import {
   Stack,
   Typography,
   Paper,
-  Container,
+  Grid,
+  AppBar,
+  Toolbar,
+  Badge,
 } from "@mui/material";
 import logo from "../images/webLogo.png";
 import newHomeBg from "../images/homeBgFull.svg";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { apiLocalPath } from "../rowData";
 import Footer from "./Footer";
-import { orange } from "@mui/material/colors";
+import { useNavigate, NavLink } from "react-router-dom";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
 function isMobileNumberValid(value) {
   value = value.trim();
   return value.length === 10;
@@ -24,140 +27,103 @@ function isMobileNumberValid(value) {
 function isUserNameValid(value) {
   return value.trim().length !== 0;
 }
-export let LoginToken = '';
+export let LoginToken = "";
 
 export default function Nhome() {
+  const navigate = useNavigate();
   const [number, setNumber] = useState("");
   const [name, setName] = useState("");
   const [nameHelperText, setNameHelperText] = useState("");
   const [numberHelperText, setNumberHelperText] = useState("");
   const [isUserNameFound, setIsUserNameFound] = useState(false);
+  // const [itemsArray, _setItemsArray] = useState([]);
+  useEffect(()=>{
+    sessionStorage.clear();
+  },[])
   return (
     <>
-      {/* <Container 
-    sx={
-      {
-        '&':{
-        backgroundColor: '#ececec',
-        width: '50%',
-        height: '60rem',
-        marginTop: '10rem',
-        padding: '4rem 0',
-        borderRadius: '4px',
-        boxShadow: '0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12)',
-        // background: 'linear-gradient(#e66465, #9198e5)'
-        // backgroundImage: 'linear-gradient(160deg, #0093E9 0%, #80D0C7 100%)'
+      <AppBar
+        sx={{
+          paddingLeft: "1rem",
+          paddingRight: "2rem",
+          // backgroundColor: '#af9990'
+          // background: '#afff90'
+          background: "#558044",
+          fontWeight: "500",
+        }}
+      >
+        <Toolbar>
+          <Grid
+            container
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            <Grid item>
+              <NavLink to="/" className="navbar__logo">
+                {/* <img src={logo} alt="website logo" /> */}
+                {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
+                Smart Cart
+              </NavLink>
+            </Grid>
+            <Grid item sm></Grid>
 
-        },
-      }
-    }
-    >
-      <Box
-            component="form"
-            // action="/#"
-            onSubmit={(e) => e.preventDefault}
-            sx={{
-              '&':{
-                marginTop: '5.4rem',
-              },
-              "& .MuiTextField-root": {
-                // m: 1,
-                // width: '25ch',
-                width: "50%",
-                backgroundColor: "white",
-                fontSize: "3rem",
-                borderRadius: ".4rem",
-                background: "#F5F3EF",
-                // margin: '0 auto',
-                display: 'block',
-                margin: '2.4rem auto',
-              },
-              "& .MuiInputBase-root": {
-                fontSize: "1.8rem",
-                width: '100%'
-              },
-              "& label": {
-                fontSize: "2rem",
-                textAlign: "center",
-              },
-              // "& .css-1jy569b-MuiFormLabel-root-MuiInputLabel-root.Mui-focused":
-              //   {
-              //     color: "black",
-              //   },
-            }}
-            noValidate
-            // autoComplete="off"
-          >
-            <figure className="logo__nhome">
-            <img src={logo} alt="website logo" />
-            </figure>
-            <Typography
-            sx={{
-              fontWeight: '800',
-              margin: '0 auto',
-              width: '50%',
-              fontSize: '2.4rem',
-              textTransform: 'capitalize',
-              textAlign: 'center',
-            }}
-            >Hello welcome to Smart Cart</Typography>
-            <Typography 
-            sx={
-              {
-                margin: '0 auto',
-                width: '40%',
-                fontSize: '1.8rem',
-                textTransform: 'capitalize',
-                textAlign: 'center',
-                color: '#6e6d7a'
-              }
-            }
-            >
-              Please Enter your mobile number and name for billing</Typography>
-            <TextField
-              type="number"
-              label="Mobile Number"
-              variant="outlined"
-              InputProps={{ inputProps: { min: 0 } }}
-              // value={number}
-              onWheel={(e) => e.target.blur()}
-              onChange={(event) => {
-                
+            <Grid item>
+              <NavLink to="/nhome" className="navbar__home">
+                Home
+              </NavLink>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                position: "relative",
               }}
-              name="mobile"
-              required
-            />
-            <TextField
-              label="Name"
-              variant="outlined"
-              name="user-name"
-            />
-          </Box>
-          <Stack direction='row' 
-          sx={{
-            '&':{
-            justifyContent: 'center'
-            },
-            '& .MuiButtonBase-root':{
-              margin: '0 3rem',
-              fontSize: '1.6rem'
-            }
-          }}
-          >
-            <Button
-            variant="contained" 
-            color="error" 
             >
-              Reset
-            </Button>
-            <Button variant="contained" 
-            type="submit"
-            href="/ncart"
-            >
-              Continue
-            </Button>
-          </Stack>
-    </Container> */}
+              <NavLink to="/ncart" className="navbar__cart">
+                <Badge
+                  badgeContent={0}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      fontSize: "2rem",
+                      margin: "0 .8rem 0",
+                    },
+                  }}
+                >
+                  <ShoppingCart
+                    sx={{
+                      fontSize: "3rem",
+                      padding: "0 .8rem",
+                    }}
+                  ></ShoppingCart>
+                </Badge>
+                {/* <Typography
+                  sx={{
+                    '&':{
+                      position: 'absolute',
+                      top: '-.5rem',
+                      left: '28%',
+                      fontSize: '1.8rem',
+                      background: '#ff0000d6',
+                      borderRadius: '50%',
+                      padding: '0px 8px'
+                    }
+                    ,
+                    '.navbar__cart:hover &':{
+                      color: 'white'
+                    }
+                  }}
+                  >0</Typography> */}
+                Cart
+              </NavLink>
+            </Grid>
+            <Grid item>
+              <NavLink to="/admin" className="navbar__admin">
+                Admin
+              </NavLink>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
       <Stack
         direction="row"
         sx={{
@@ -271,7 +237,7 @@ export default function Nhome() {
                       let config = {
                         method: "post",
                         maxBodyLength: Infinity,
-                        url: apiLocalPath+'/auth/user/login',
+                        url: apiLocalPath + "/auth/user/login",
                         headers: {
                           "Content-Type": "application/json",
                         },
@@ -283,12 +249,21 @@ export default function Nhome() {
                         .then((response) => {
                           setName(response.data.username);
                           setIsUserNameFound(true);
-                          // LoginToken = 
-                          sessionStorage.setItem('LoginToke', response.data.token);
+                          // Access token =
+                          sessionStorage.setItem(
+                            "accessToken",
+                            response.data.token
+                          );
+                          sessionStorage.setItem(
+                            "userName",
+                            response.data.username
+                          );
+                          sessionStorage.setItem("userMobile", number);
                         })
                         .catch((error) => {
-                          console.error('user not found')
+                          console.error("user not found");
                           console.log(error);
+                          setIsUserNameFound(false);
                         });
                     }
                     setNumber(event.target.value);
@@ -338,8 +313,8 @@ export default function Nhome() {
                 <Button
                   variant="contained"
                   sx={{
-                    '&': {
-                      background: 'orange'
+                    "&": {
+                      background: "orange",
                     },
                     "&:hover": {
                       color: "white",
@@ -372,9 +347,9 @@ export default function Nhome() {
                   }}
                   onClick={() => {
                     if (isMobileNumberValid(number)) {
-                      if (!isUserNameFound &&!isUserNameValid(name)) {
+                      if (!isUserNameValid(name)) {
                         setNameHelperText("Please Enter user Name");
-                      } else {
+                      } else if(!isUserNameFound) {
                         var myHeaders = new Headers();
                         myHeaders.append("Content-Type", "application/json");
 
@@ -391,17 +366,18 @@ export default function Nhome() {
                           redirect: "follow",
                         };
 
-                        fetch(
-                          apiLocalPath+'/signup/user/',
-                          requestOptions
-                        )
+                        fetch(apiLocalPath + "/signup/user/", requestOptions)
                           .then((response) => response.text())
-                          .then((result) =>{ 
-                            console.log(result)
+                          .then((result) => {
+                            console.log(result);
+                            sessionStorage.setItem("userName", name);
+                            sessionStorage.setItem("userMobile", number);
+                            sessionStorage.setItem("accessToken", result.token);
                           })
                           .catch((error) => console.log("error", error));
-
-                        window.location.href = "/ncart"; 
+                        navigate("/ncart");
+                      }else{
+                        navigate("/ncart");
                       }
                     }
                   }}
@@ -427,7 +403,6 @@ export default function Nhome() {
       </Stack>
       <Footer></Footer>
     </>
-
   );
 }
 

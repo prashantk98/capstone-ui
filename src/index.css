@@ -165,17 +165,20 @@ input[type=number]::-webkit-outer-spin-button {
   height: 1024px;
   /* height: 850px; */
   /* height: 100vh; */
-  padding: 7.6rem 10rem 0 4rem;
+  padding: 4.6rem 10rem 0 4rem;
   color: white;
 }
 .cart__title{
-  font-size: 1.8rem;
-  font-weight: 500;
+  font-size: 2.4rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: black;
 }
 .cart__description{
   font-size: 1.4rem;
   font-weight: 500;
   margin-bottom: 4rem;
+  color: black;
 }
 
 /* cart-item */
@@ -275,7 +278,7 @@ input[type=number]::-webkit-outer-spin-button {
   /* display: block;
   align-items: center; */
   display: flex;
-  padding-top: 4rem;
+  padding-top: 7rem;
   padding-left: 4.8rem;
   text-align: center;
   align-items: center;

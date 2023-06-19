@@ -1,7 +1,5 @@
-import { Stack, Typography,List, ListItem,ListItemText,Button,TextField } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { Stack, Typography,List, Button,TextField } from "@mui/material";
 import CartItem from "../components/CartItem";
-// import { totalItemsGlobal,itemsArrayGlobal } from "./Ncart";
 import Ncart from "./Ncart";
 import { useState } from "react";
 
