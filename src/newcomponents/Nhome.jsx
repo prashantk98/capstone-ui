@@ -289,7 +289,7 @@ export default function Nhome() {
                   if (/^[A-Za-z]*$/.test(event.target.value)) {
                     setName(event.target.value);
                     setNameHelperText("");
-                    setIsUserNameFound(true);
+                    // setIsUserNameFound(true);
                   } else {
                     setNameHelperText("Name contain a-z/A-Z only");
                   }
@@ -350,6 +350,7 @@ export default function Nhome() {
                       if (!isUserNameValid(name)) {
                         setNameHelperText("Please Enter user Name");
                       } else if(!isUserNameFound) {
+                      // console.log(isUserNameFound);
                         var myHeaders = new Headers();
                         myHeaders.append("Content-Type", "application/json");
 

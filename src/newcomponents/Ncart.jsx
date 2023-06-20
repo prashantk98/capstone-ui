@@ -146,6 +146,9 @@ export default function Ncart() {
     setImage(capturedImage);
     // handleStopCaptureClick();
   };
+
+
+  const [base64Image, setBase64Image] = useState(null);
   const convertImageToBase64 = () => {
     fetch(apples)
       .then((response) => response.blob())
@@ -157,12 +160,31 @@ export default function Ncart() {
         };
         reader.readAsDataURL(blob);
       });
+      // return base64Image;
   };
 
-  const [base64Image, setBase64Image] = useState(convertImageToBase64());
 
   useEffect(() => {
     handleStartCaptureClick();
+    const fetchImage = async () => {
+      try {
+        const response = await fetch(apples);
+        const blob = await response.blob();
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          console.log(reader);
+          const base64String = reader.result;
+
+          setBase64Image(base64String);
+        };
+
+        reader.readAsDataURL(blob);
+      } catch (error) {
+        console.error('Error fetching image:', error);
+      }
+    };
+    fetchImage();
   }, []);
   // if (authenticated) {
     return (
@@ -542,8 +564,8 @@ export default function Ncart() {
                       image: base64Image,
                     });
                     // console.log(base64Image);
-                    console.log(sessionStorage.getItem('userName'));
-                    console.log(sessionStorage.getItem('accessToken'));
+                    // console.log(sessionStorage.getItem('userName'));
+                    // console.log(sessionStorage.getItem('accessToken'));
 
                     let config = {
                       method: "post",
@@ -551,7 +573,7 @@ export default function Ncart() {
                       url: apiLocalPath+"/orders/addNew/",
                       headers: {
                         Authorization:
-                          "Bearer" + sessionStorage.getItem("accessToken"),
+                          "Bearer " + sessionStorage.getItem("accessToken"),
                       },
                       data: data,
                     };

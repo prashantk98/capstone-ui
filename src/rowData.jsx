@@ -79,7 +79,7 @@ const totalItemInDb = [
 
 export default totalItemInDb;
 
-export const apiLocalPath='https://facd-183-83-219-106.ngrok-free.app';
+export const apiLocalPath='https://dff9-183-83-219-106.ngrok-free.app';
 export const objectDetectionProbability = {
   objectName: [
     "Apple",

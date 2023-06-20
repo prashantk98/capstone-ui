@@ -31,6 +31,7 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import SellIcon from '@mui/icons-material/Sell';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import EditIcon from '@mui/icons-material/Edit';
 import totalItemInDb from "../../rowData";
 import { useState } from "react";
 import CountUp from 'react-countup';
@@ -150,7 +151,6 @@ export default function Admin() {
     key: '',
     direction: ''
   });
-  // const chartRef = useRef(null);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -437,7 +437,8 @@ export default function Admin() {
           <ReactEcharts option={chartOption} style={{height: '40rem'}} />
         </Paper>
         <AddItemAdmin/>
-        <TableContainer component={Paper} sx={{width:'100%',
+        <TableContainer component={Paper} 
+        sx={{width:'100%',
         maxHeight: '40rem',margin: '3rem 0'
         // margin: '0 4rem 0 4rem'
         }}>
@@ -466,6 +467,7 @@ export default function Admin() {
              <TableCell onClick={() => sortTable('category')}>Category {getSortIcon('category')}</TableCell>
              <TableCell onClick={() => sortTable('probability')}>Probability % {getSortIcon('probability')} </TableCell>
              <TableCell onClick={() => sortTable('available')}>Available {getSortIcon('available')} </TableCell>
+             <TableCell >Edit </TableCell>
            </TableRow>
          </TableHead>
          <TableBody>
@@ -480,6 +482,7 @@ export default function Admin() {
                  <TableCell><img src={current.imgSrc} alt={current.name} /></TableCell>
                  <TableCell>{current.name}</TableCell>
                  <TableCell>{current.category}</TableCell>
+                 
                  <TableCell
                  sx={
                   current.probability<=50?{
@@ -499,14 +502,20 @@ export default function Admin() {
                   color: 'red'
                  }}
                  >{current.available?'Yes':'No'}</TableCell>
+                 <TableCell>
+                  <EditItemDetails
+                  currentItem={current}
+                  />
+                  </TableCell>
                </TableRow>
              );
            })}
          </TableBody>
-
        </Table>
        </TableContainer>
-
+        <EditItemDetails/>
+       
+    
       
       </Box>
     </Box>
@@ -643,5 +652,112 @@ const addItemModalStyle = {
       </Box>
     </Modal>
     </>
+  );
+}
+
+function EditItemDetails(prop){
+  const [editableItemModal, setEditableItemModal] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [editedAge, setEditedAge] = useState('');
+  const [itemName, setItemName] = useState('');
+  const [itemPrice, setItemPrice] = useState('');
+  const [itemCategory, setItemCategory] = useState('');
+  const [itemSubCategory, setItemSubCategory] = useState('');
+  const [itemPhoto, setItemPhoto] = useState(null);
+  // const [editableItemModal, setEditableItemModal] = useState(false);
+
+
+  const handleEdit = (item) => {
+    setEditableItemModal(item);
+    // setEditedName(item.name);
+    // setEditedAge(item.age);
+  };
+  // const chartRef = useRef(null);
+  
+  const handleCancel = () => {
+    setEditableItemModal(false);
+    setEditedName('');
+    setEditedAge('');
+  };
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    console.log(itemPhoto);
+    setItemPhoto(file);
+  };
+  const handleSave = () => {
+    const updatedData = totalItemInDb.map((item) => {
+      if (item.id === editableItemModal.id) {
+        return { ...item, name: editedName, age: editedAge };
+      }
+      return item;
+    });
+
+    // setData(updatedData);
+    setEditableItemModal(null);
+    setEditedName('');
+    setEditedAge('');
+  };
+  return (
+    <>
+    <IconButton
+      onClick={() => handleEdit(prop.currentItem)}
+      >
+      <EditIcon/>
+    </IconButton>
+    <Modal open={Boolean(editableItemModal)} onClose={handleCancel}>
+        {/* <div className="modal-container"> */}
+        <Box sx={
+        addItemModalStyle
+      }
+      component ='form'
+      >
+          <h2>Edit Details</h2>
+          <TextField
+        name="itemName"
+        label="Item Name"
+        variant="filled"
+        fullWidth
+        value={itemName}
+        onChange={(e) => setItemName(e.target.value)}
+      />
+      <TextField
+        name="itemPrice"
+        label="Item Price"
+        variant="filled"
+        fullWidth
+        value={itemPrice}
+        onChange={(e) => setItemPrice(e.target.value)}
+      />
+      <TextField
+        name="itemCategory"
+        label="Item Category"
+        variant="filled"
+        fullWidth
+        value={itemCategory}
+        onChange={(e) => setItemCategory(e.target.value)}
+      />
+      <TextField
+        name="itemSubCategory"
+        label="Item Sub-Category"
+        variant="filled"
+        fullWidth
+        value={itemSubCategory}
+        onChange={(e) => setItemSubCategory(e.target.value)}
+      />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoChange}
+      />
+          <Button variant="contained" onClick={handleSave}>
+            Save
+          </Button>
+          <Button variant="contained" onClick={handleCancel}>
+            Cancel
+          </Button>
+          </Box>
+      </Modal>
+      </>
   );
 }
