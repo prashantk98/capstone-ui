@@ -258,6 +258,7 @@ export default function Nhome() {
                             "userName",
                             response.data.username
                           );
+                          console.log(response.data);
                           sessionStorage.setItem("userMobile", number);
                         })
                         .catch((error) => {

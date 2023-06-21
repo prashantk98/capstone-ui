@@ -24,17 +24,34 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 // import { useRef } from "react";
 // import { objectDetectionProbability } from "../../rowData";
 import ReactEcharts from "echarts-for-react";
-import { Paper, Grid,Table,TableCell, TableRow,TableContainer,TableBody,TableHead,TextField,Modal,Button } from "@mui/material";
+import {
+  Paper,
+  Grid,
+  Table,
+  TableCell,
+  TableRow,
+  TableContainer,
+  TableBody,
+  TableHead,
+  TextField,
+  Modal,
+  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  NativeSelect,
+} from "@mui/material";
 // import PaidIcon from '@mui/icons-material/Paid';
-import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
-import ReceiptIcon from '@mui/icons-material/Receipt';
-import SellIcon from '@mui/icons-material/Sell';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import EditIcon from '@mui/icons-material/Edit';
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import SellIcon from "@mui/icons-material/Sell";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import EditIcon from "@mui/icons-material/Edit";
 import totalItemInDb from "../../rowData";
 import { useState } from "react";
-import CountUp from 'react-countup';
+import CountUp from "react-countup";
+import Footer from "../../newcomponents/Footer";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -108,37 +125,35 @@ const chartOption = {
     formatter: (params) => {
       const dataIndex = params[0]?.dataIndex;
       if (dataIndex !== undefined) {
-        const data = totalItemInDb.reduce((accumulator, current)=>{
-          return [...accumulator, current.imgSrc]  
-          },[]);
+        const data = totalItemInDb.reduce((accumulator, current) => {
+          return [...accumulator, current.imgSrc];
+        }, []);
         return `
             <img src="${data[dataIndex]}" alt="${params[0]?.name}" style="width: 4rem; height: 4rem;" />
             <div>${params[0]?.name}: ${params[0]?.value}%</div>
         `;
       }
-      return '';
-    }
+      return "";
+    },
   },
   xAxis: {
     name: "Item Name",
     type: "category",
     boundaryGap: false,
-    data: totalItemInDb.reduce((accumulator, current)=>{
-    return [...accumulator, current.name]  
-    },[]),
-
+    data: totalItemInDb.reduce((accumulator, current) => {
+      return [...accumulator, current.productName];
+    }, []),
   },
   yAxis: {
     name: "Probability %",
     type: "value",
     // data: objectDetectionProbability.objectProbability,
-    
   },
   series: [
     {
-      data: totalItemInDb.reduce((accumulator, current)=>{
-        return [...accumulator, current.probability]  
-        },[]),
+      data: totalItemInDb.reduce((accumulator, current) => {
+        return [...accumulator, (current.probability * 100).toFixed(2)];
+      }, []),
       type: "line",
     },
   ],
@@ -148,8 +163,8 @@ export default function Admin() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({
-    key: '',
-    direction: ''
+    key: "",
+    direction: "",
   });
 
   const handleDrawerOpen = () => {
@@ -160,10 +175,10 @@ export default function Admin() {
     setOpen(false);
   };
   const sortTable = (key) => {
-    let direction = 'asc';
+    let direction = "asc";
 
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
 
     setSortConfig({ key, direction });
@@ -171,396 +186,430 @@ export default function Admin() {
 
   const sortedData = [...totalItemInDb].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? -1 : 1;
+      return sortConfig.direction === "asc" ? -1 : 1;
     }
     if (a[sortConfig.key] > b[sortConfig.key]) {
-      return sortConfig.direction === 'asc' ? 1 : -1;
+      return sortConfig.direction === "asc" ? 1 : -1;
     }
     return 0;
   });
   const getSortIcon = (key) => {
     if (sortConfig.key === key) {
-      return sortConfig.direction === 'asc' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>;
+      return sortConfig.direction === "asc" ? (
+        <ArrowUpwardIcon />
+      ) : (
+        <ArrowDownwardIcon />
+      );
     }
     return null;
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
-    >
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        open={open}
+    <>
+      <Box
         sx={{
-          // fontSize: '3rem'
-          backgroundColor: "#558044",
-          fontSize: "3rem",
+          display: "flex",
         }}
       >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h4" noWrap component="div">
-            Smart Cart
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          open={open}
           sx={{
-            ".css-10hburv-MuiTypography-root": {
-              fontSize: "1.8rem",
-            },
-            '& svg':{
-              fontSize: '1.8rem'
-            }
+            // fontSize: '3rem'
+            backgroundColor: "#558044",
+            fontSize: "3rem",
           }}
         >
-          {[
-            "Dashboard",
-            "Add new Item",
-            "Add Category",
-            "Add Sub-Category",
-          ].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h4" noWrap component="div">
+              Smart Cart
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List
+            sx={{
+              ".css-10hburv-MuiTypography-root": {
+                fontSize: "1.8rem",
+              },
+              "& svg": {
+                fontSize: "1.8rem",
+              },
+            }}
+          >
+            {[
+              "Dashboard",
+              "Add new Item",
+              "Add Category",
+              "Add Sub-Category",
+            ].map((text, index) => (
+              <ListItem key={text} disablePadding sx={{ display: "block" }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {index % 2 === 0 ? <DashboardIcon /> : <AddIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+        </Drawer>
+        <Box
+          component="main"
+          sx={{ flexGrow: 1, p: 3, fontSize: "1.4rem", width: "90%" }}
+        >
+          <DrawerHeader />
+
+          <Grid
+            container
+            // spacing={4}
+            justifyContent="space-between"
+            alignItems="center"
+            paddingBottom="3rem"
+          >
+            <Grid item xs={2.5}>
+              <Paper
+                elevation={3}
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  p: 3,
                 }}
               >
-                <ListItemIcon
+                <Typography
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
+                    fontSize: "1.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                    // gap: '1rem'
+                    // justifyContent: 'space-between'
+                  }}
+                >
+                  <CurrencyRupeeIcon
+                    fontSize="large"
+                    sx={{
+                      "&": {
+                        backgroundColor: "green",
+                        color: "white",
+                        fontSize: "5.4rem",
+                        position: "absolute",
+                        top: "-3.2rem",
+                        left: "-3.2rem",
+                        borderRadius: ".8rem",
+                      },
+                    }}
+                  />
+                  Total Revenue
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "1.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "700",
+                  }}
+                >
+                  <CurrencyRupeeIcon fontSize="large" />
+
+                  <CountUp end={612839} duration={1} />
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={2.5}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "1.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                  }}
+                >
+                  <ReceiptIcon
+                    fontSize="large"
+                    sx={{
+                      "&": {
+                        backgroundColor: "orange",
+                        color: "white",
+                        fontSize: "5.4rem",
+                        position: "absolute",
+                        top: "-3.2rem",
+                        left: "-3.2rem",
+                        borderRadius: ".8rem",
+                      },
+                    }}
+                  />
+                  Total Transaction
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "1.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "700",
+                  }}
+                >
+                  <CountUp end={54231} duration={1} />
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={2.5}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "1.8rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    position: "relative",
+                  }}
+                >
+                  <SellIcon
+                    fontSize="large"
+                    sx={{
+                      "&": {
+                        backgroundColor: "blue",
+                        color: "white",
+                        fontSize: "5.4rem",
+                        position: "absolute",
+                        top: "-3.2rem",
+                        left: "-3.2rem",
+                        borderRadius: ".8rem",
+                      },
+                    }}
+                  />
+                  Total Product Sold
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "1.8rem",
+                    fontWeight: "700",
+                    display: "flex",
+                    alignItems: "center",
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <DashboardIcon /> : <AddIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, fontSize: "1.4rem",width: '90%' }}>
-        <DrawerHeader />
-
-        <Grid
-          container
-          // spacing={4}
-          justifyContent="space-between"
-          alignItems="center"
-          paddingBottom="3rem"
-        >
-          <Grid item xs={2.5}>
-            <Paper 
+                  <CountUp end={12333} duration={1} />
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+          <Paper
             elevation={3}
             sx={{
-              p:3
-            }}>
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
-                // gap: '1rem'
-                // justifyContent: 'space-between'
-              }}
-              >
-              <CurrencyRupeeIcon fontSize="large"
-              sx={{
-                '&':{
-                  backgroundColor: 'green',
-                  color: 'white',
-                  fontSize: '5.4rem',
-                  position: 'absolute',
-                  top: '-3.2rem',
-                  left: '-3.2rem',
-                  borderRadius: '.8rem'
-                }
-              }}
-              />
-              Total Revenue
-              </Typography>
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: "700",
-              }}
-              >
-              <CurrencyRupeeIcon fontSize="large"/>
-              
-              <CountUp end={612839} duration={1} />
-              </Typography>
-              </Paper>
-          </Grid>
-          <Grid item xs={2.5}>
-          <Paper 
-          elevation={3}
-          sx={{
-            p:3
-          }}
-          >
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative'
-              }}
-              >
-                <ReceiptIcon fontSize="large"
-                sx={{
-                  '&':{
-                    backgroundColor: 'orange',
-                    color: 'white',
-                    fontSize: '5.4rem',
-                    position: 'absolute',
-                    top: '-3.2rem',
-                  left: '-3.2rem',
-                    borderRadius: '.8rem'
-                  }
-                }}
-                />
-              Total Transaction
-              </Typography>
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: "700",
-              }}
-              >
-              <CountUp end={54231} duration={1} />
-              </Typography>
-              </Paper>
-          </Grid>
-          <Grid item xs={2.5}>
-          <Paper 
-          elevation={3}
-          sx={{
-            p:3
-          }}
-          >
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative'
-              }}
-              >
-              <SellIcon fontSize="large"
-              sx={{
-                '&':{
-                  backgroundColor: 'blue',
-                  color: 'white',
-                  fontSize: '5.4rem',
-                  position: 'absolute',
-                  top: '-3.2rem',
-                  left: '-3.2rem',
-                  borderRadius: '.8rem'
-                }
-              }}
-              />
-              Total Product Sold
-              </Typography>
-              <Typography
-              sx={{
-                fontSize: "1.8rem",
-                fontWeight: "700",
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              >
-              <CountUp end={12333} duration={1}/>
-              </Typography>
-              </Paper>
-          </Grid>
-        </Grid>
-        <Paper
-        elevation={3}
-          sx={{
-            "&": {
-              padding: "1rem",
-              marginBottom: '3rem'
-            },
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: "1.8rem",
-              fontWeight: "700",
+              "&": {
+                padding: "1rem",
+                marginBottom: "3rem",
+              },
             }}
           >
-             Probability Of Object Detection
-          </Typography>
-          <ReactEcharts option={chartOption} style={{height: '40rem'}} />
-        </Paper>
-        <AddItemAdmin/>
-        <TableContainer component={Paper} 
-        sx={{width:'100%',
-        maxHeight: '40rem',margin: '3rem 0'
-        // margin: '0 4rem 0 4rem'
-        }}>
-       <Table  aria-label="simple table" 
-       stickyHeader
-       sx={{'& thead th': {
-             fontWeight: '600',
-             color: 'black',
-             backgroundColor: '#42a5f5',
-             fontSize:'1.6rem'
-         },
-         '& tbody td': {
-             fontSize:'1.2rem',
-             fontWeight: '500'
-        },
-         '& tbody tr:hover': {
-             backgroundColor: '#fffbf2',
-             cursor: 'pointer',
-            //  fontWeight: '500'
-         }}}>
-         <TableHead>
-           <TableRow >
-             <TableCell onClick={() => sortTable('id')}>Id{getSortIcon('id')}</TableCell>
-             <TableCell>Image</TableCell>
-             <TableCell onClick={() => sortTable('name')}>Name{getSortIcon('name')}</TableCell>
-             <TableCell onClick={() => sortTable('category')}>Category {getSortIcon('category')}</TableCell>
-             <TableCell onClick={() => sortTable('probability')}>Probability % {getSortIcon('probability')} </TableCell>
-             <TableCell onClick={() => sortTable('available')}>Available {getSortIcon('available')} </TableCell>
-             <TableCell >Edit </TableCell>
-           </TableRow>
-         </TableHead>
-         <TableBody>
-           {sortedData.map((current, index) => {
-             return (
-               <TableRow key={current.id}
-               sx={{ '&:last-child td, &:last-child th': { border: 0 }, 'td img':{
-                width: '3.2rem',
-                height: '3.2rem'
-               }}}>
-                 <TableCell>{current.id}</TableCell>
-                 <TableCell><img src={current.imgSrc} alt={current.name} /></TableCell>
-                 <TableCell>{current.name}</TableCell>
-                 <TableCell>{current.category}</TableCell>
-                 
-                 <TableCell
-                 sx={
-                  current.probability<=50?{
-                    color: 'red'
-                  }:current.probability<=70?{
-                    color: 'orange'
-                  }:{
-                    color: 'green'
-                  }
-                 }
-                 >{current.probability}</TableCell>
-                 <TableCell
-                 sx={
-                  current.available?{
-                    color: 'green'
-                 }:{
-                  color: 'red'
-                 }}
-                 >{current.available?'Yes':'No'}</TableCell>
-                 <TableCell>
-                  <EditItemDetails
-                  currentItem={current}
-                  />
+            <Typography
+              sx={{
+                fontSize: "1.8rem",
+                fontWeight: "700",
+              }}
+            >
+              Probability Of Object Detection
+            </Typography>
+            <ReactEcharts option={chartOption} style={{ height: "40rem" }} />
+          </Paper>
+          <AddItemAdmin />
+          <TableContainer
+            component={Paper}
+            sx={{
+              width: "100%",
+              maxHeight: "40rem",
+              margin: "3rem 0",
+              // margin: '0 4rem 0 4rem'
+            }}
+          >
+            <Table
+              aria-label="simple table"
+              stickyHeader
+              sx={{
+                "& thead th": {
+                  fontWeight: "600",
+                  color: "black",
+                  backgroundColor: "#42a5f5",
+                  fontSize: "1.6rem",
+                },
+                "& tbody td": {
+                  fontSize: "1.2rem",
+                  fontWeight: "500",
+                },
+                "& tbody tr:hover": {
+                  backgroundColor: "#fffbf2",
+                  cursor: "pointer",
+                  //  fontWeight: '500'
+                },
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell onClick={() => sortTable("id")}>
+                    Id{getSortIcon("id")}
                   </TableCell>
-               </TableRow>
-             );
-           })}
-         </TableBody>
-       </Table>
-       </TableContainer>
-        <EditItemDetails/>
-       
-    
-      
+                  <TableCell>Image</TableCell>
+                  <TableCell onClick={() => sortTable("name")}>
+                    Name{getSortIcon("name")}
+                  </TableCell>
+                  <TableCell onClick={() => sortTable("category")}>
+                    Category {getSortIcon("category")}
+                  </TableCell>
+                  <TableCell onClick={() => sortTable("probability")}>
+                    Probability % {getSortIcon("probability")}{" "}
+                  </TableCell>
+                  <TableCell onClick={() => sortTable("available")}>
+                    Available {getSortIcon("available")}{" "}
+                  </TableCell>
+                  <TableCell>Edit </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {sortedData.map((current, index) => {
+                  return (
+                    <TableRow
+                      key={current.id}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                        "td img": {
+                          width: "3.2rem",
+                          height: "3.2rem",
+                        },
+                      }}
+                    >
+                      <TableCell>{current.id}</TableCell>
+                      <TableCell>
+                        <img src={current.imgSrc} alt={current.productName} />
+                      </TableCell>
+                      <TableCell>{current.productName}</TableCell>
+                      <TableCell>{current.category}</TableCell>
+
+                      <TableCell
+                        sx={
+                          current.probability * 100 <= 50
+                            ? {
+                                color: "red",
+                              }
+                            : current.probability * 100 <= 70
+                            ? {
+                                color: "orange",
+                              }
+                            : {
+                                color: "green",
+                              }
+                        }
+                      >
+                        {(current.probability * 100).toFixed(2)}
+                      </TableCell>
+                      <TableCell
+                        sx={
+                          current.available
+                            ? {
+                                color: "green",
+                              }
+                            : {
+                                color: "red",
+                              }
+                        }
+                      >
+                        {current.available ? "Yes" : "No"}
+                      </TableCell>
+                      <TableCell>
+                        <EditItemDetails currentItem={current} />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          {/* <EditItemDetails/> */}
+
+          <Footer />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }
 
-
-
 const addItemModalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 600,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '2.4rem',
-  margin: '0 auto',
-  '& label':{
-    fontSize: '1.8rem'
+  display: "flex",
+  flexDirection: "column",
+  gap: "2.4rem",
+  margin: "0 auto",
+  "& .MuiTypography-root": {
+    fontSize: "2rem",
   },
-  '& input':{
-    fontSize: '1.8rem'
+  "& button, & .MuiSelect-select, & input, & label": {
+    fontSize: "1.8rem",
   },
-  '& .MuiTypography-root':{
-    fontSize: '2rem'
-  },
-  '& button':{
-    fontSize: '1.8rem'
-  }
-
 };
 
-
-
- function AddItemAdmin(){
+function AddItemAdmin() {
   const [openAddItemModal, setOpenAddItemModal] = useState(false);
-  const [itemName, setItemName] = useState('');
-  const [itemPrice, setItemPrice] = useState('');
-  const [itemCategory, setItemCategory] = useState('');
-  const [itemSubCategory, setItemSubCategory] = useState('');
+  const [itemName, setItemName] = useState("");
+  const [itemPrice, setItemPrice] = useState("");
+  const [itemCategory, setItemCategory] = useState("");
+  const [itemAvailable, setItemAvailable] = useState("");
   const [itemPhoto, setItemPhoto] = useState(null);
 
   // const handleSubmit = (e) => {
@@ -570,7 +619,7 @@ const addItemModalStyle = {
   //     itemName,
   //     itemPrice,
   //     itemCategory,
-  //     itemSubCategory,
+  //     itemAvailable,
   //     itemQuantity,
   //     itemPhoto,
   //   });
@@ -578,7 +627,7 @@ const addItemModalStyle = {
   //   setItemName('');
   //   setItemPrice('');
   //   setItemCategory('');
-  //   setItemSubCategory('');
+  //   setItemAvailable('');
   //   setItemQuantity('');
   //   setItemPhoto(null);
   // };
@@ -591,81 +640,74 @@ const addItemModalStyle = {
 
   return (
     <>
-    <Button 
-    variant="outlined"
-    sx={{
-      fontSize: '1.8rem'
-    }}
-     onClick={()=>setOpenAddItemModal(true)}>Add New Product</Button>
-    <Modal
-    open={openAddItemModal}
-    onClose={()=>setOpenAddItemModal(false)}
-    >
-      <Box sx={
-        addItemModalStyle
-      }
-      component ='form'
+      <Button
+        variant="outlined"
+        sx={{
+          fontSize: "1.8rem",
+        }}
+        onClick={() => setOpenAddItemModal(true)}
       >
-        <Typography>This is modal to add item </Typography>
-
-        <TextField
-        name="itemName"
-        label="Item Name"
-        variant="filled"
-        fullWidth
-        value={itemName}
-        onChange={(e) => setItemName(e.target.value)}
-      />
-      <TextField
-        name="itemPrice"
-        label="Item Price"
-        variant="filled"
-        fullWidth
-        value={itemPrice}
-        onChange={(e) => setItemPrice(e.target.value)}
-      />
-      <TextField
-        name="itemCategory"
-        label="Item Category"
-        variant="filled"
-        fullWidth
-        value={itemCategory}
-        onChange={(e) => setItemCategory(e.target.value)}
-      />
-      <TextField
-        name="itemSubCategory"
-        label="Item Sub-Category"
-        variant="filled"
-        fullWidth
-        value={itemSubCategory}
-        onChange={(e) => setItemSubCategory(e.target.value)}
-      />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handlePhotoChange}
-      />
-      <Button type="submit" variant="contained" color="primary">
-        Submit
+        Add New Product
       </Button>
-    {/* <Button onClick={()=>setOpenAddItemModal(false)}>Close Modal</Button> */}
-      </Box>
-    </Modal>
+      <Modal open={openAddItemModal} onClose={() => setOpenAddItemModal(false)}>
+        <Box sx={addItemModalStyle} component="form">
+          <Typography>This is modal to add item </Typography>
+
+          <TextField
+            name="itemName"
+            label="Item Name"
+            variant="filled"
+            fullWidth
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+          />
+          <TextField
+            name="itemPrice"
+            label="Item Price"
+            variant="filled"
+            fullWidth
+            value={itemPrice}
+            onChange={(e) => setItemPrice(e.target.value)}
+          />
+          <TextField
+            name="itemCategory"
+            label="Item Category"
+            variant="filled"
+            fullWidth
+            value={itemCategory}
+            onChange={(e) => setItemCategory(e.target.value)}
+          />
+          <TextField
+            name="itemAvailable"
+            label="Item Available"
+            variant="filled"
+            fullWidth
+            value={itemAvailable}
+            onChange={(e) => setItemAvailable(e.target.value)}
+          />
+          <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+          {/* <Button onClick={()=>setOpenAddItemModal(false)}>Close Modal</Button> */}
+        </Box>
+      </Modal>
     </>
   );
 }
 
-function EditItemDetails(prop){
+function EditItemDetails(prop) {
   const [editableItemModal, setEditableItemModal] = useState(false);
-  const [editedName, setEditedName] = useState('');
-  const [editedAge, setEditedAge] = useState('');
-  const [itemName, setItemName] = useState('');
-  const [itemPrice, setItemPrice] = useState('');
-  const [itemCategory, setItemCategory] = useState('');
-  const [itemSubCategory, setItemSubCategory] = useState('');
+  const [editedName, setEditedName] = useState("");
+  const [editedAge, setEditedAge] = useState("");
+  const [itemName, setItemName] = useState(prop.currentItem.productName);
+  const [itemPrice, setItemPrice] = useState(prop.currentItem.price);
+  const [itemCategory, setItemCategory] = useState(prop.currentItem.category);
+  const [itemAvailable, setItemAvailable] = useState(
+    prop.currentItem.available
+  );
   const [itemPhoto, setItemPhoto] = useState(null);
   // const [editableItemModal, setEditableItemModal] = useState(false);
-
 
   const handleEdit = (item) => {
     setEditableItemModal(item);
@@ -673,11 +715,11 @@ function EditItemDetails(prop){
     // setEditedAge(item.age);
   };
   // const chartRef = useRef(null);
-  
+
   const handleCancel = () => {
     setEditableItemModal(false);
-    setEditedName('');
-    setEditedAge('');
+    setEditedName("");
+    setEditedAge("");
   };
 
   const handlePhotoChange = (e) => {
@@ -695,69 +737,80 @@ function EditItemDetails(prop){
 
     // setData(updatedData);
     setEditableItemModal(null);
-    setEditedName('');
-    setEditedAge('');
+    setEditedName("");
+    setEditedAge("");
   };
   return (
     <>
-    <IconButton
-      onClick={() => handleEdit(prop.currentItem)}
-      >
-      <EditIcon/>
-    </IconButton>
-    <Modal open={Boolean(editableItemModal)} onClose={handleCancel}>
+      <IconButton onClick={() => handleEdit(prop.currentItem)}>
+        <EditIcon />
+      </IconButton>
+      <Modal open={Boolean(editableItemModal)} onClose={handleCancel}>
         {/* <div className="modal-container"> */}
-        <Box sx={
-        addItemModalStyle
-      }
-      component ='form'
-      >
+        <Box sx={addItemModalStyle} component="form">
           <h2>Edit Details</h2>
           <TextField
-        name="itemName"
-        label="Item Name"
+            name="itemName"
+            label="Item Name"
+            variant="filled"
+            fullWidth
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+          />
+          <TextField
+            name="itemPrice"
+            label="Item Price"
+            variant="filled"
+            fullWidth
+            value={itemPrice}
+            onChange={(e) => setItemPrice(e.target.value)}
+          />
+          <TextField
+            name="itemCategory"
+            label="Item Category"
+            variant="filled"
+            fullWidth
+            value={itemCategory}
+            onChange={(e) => setItemCategory(e.target.value)}
+          />
+          {/* <TextField
+        name="itemAvailable"
+        label="Item Available"
         variant="filled"
         fullWidth
-        value={itemName}
-        onChange={(e) => setItemName(e.target.value)}
-      />
-      <TextField
-        name="itemPrice"
-        label="Item Price"
-        variant="filled"
-        fullWidth
-        value={itemPrice}
-        onChange={(e) => setItemPrice(e.target.value)}
-      />
-      <TextField
-        name="itemCategory"
-        label="Item Category"
-        variant="filled"
-        fullWidth
-        value={itemCategory}
-        onChange={(e) => setItemCategory(e.target.value)}
-      />
-      <TextField
-        name="itemSubCategory"
-        label="Item Sub-Category"
-        variant="filled"
-        fullWidth
-        value={itemSubCategory}
-        onChange={(e) => setItemSubCategory(e.target.value)}
-      />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handlePhotoChange}
-      />
+        value={itemAvailable}
+        onChange={(e) => setItemAvailable(e.target.value)}
+      /> */}
+          <InputLabel id="demo-simple-select-standard-label">
+            Item Available
+          </InputLabel>
+          <Select
+            // labelId="demo-simple-select-standard-label"
+            // id="demo-simple-select-standard"
+            name="itemAvailable"
+            label="Item Available"
+            variant="filled"
+            value={itemAvailable}
+            onChange={(event) => setItemAvailable(event.target.value)}
+            // defaultValue={itemAvailable}
+          >
+            
+            <MenuItem value={true} sx={{ fontSize: "1.8rem", color: "green" }}>
+              Yes
+            </MenuItem>
+            <MenuItem value={false} sx={{ fontSize: "1.8rem", color: "red" }}>
+              No
+            </MenuItem>
+          </Select>
+          <input type="file" accept="image/*" onChange={handlePhotoChange} />
           <Button variant="contained" onClick={handleSave}>
             Save
           </Button>
           <Button variant="contained" onClick={handleCancel}>
             Cancel
           </Button>
-          </Box>
+        </Box>
       </Modal>
-      </>
+    </>
   );
 }

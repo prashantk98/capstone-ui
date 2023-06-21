@@ -227,6 +227,7 @@ input[type=number]::-webkit-outer-spin-button {
   color: black;
 }
 .cart-item__title{
+  text-transform: capitalize;
   font-size: 1.8rem;
 }
 .cart-item__description,.cart-item__price,.cart-item__detection-probability{
@@ -312,9 +313,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .bill-item__title{
   font-size: 1.8rem;
+  text-transform: capitalize;
 }
 .bill-item__description,.bill-item__price{
   font-size: 1.4rem;
+  text-transform: capitalize;
+}
+.bill-item__price{
+  width: 10%;
 }
 .bill-item img{
   height: 3rem;

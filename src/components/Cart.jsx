@@ -24,35 +24,26 @@ import QrCodeIcon from '@mui/icons-material/QrCode';
 // import logo from "../images/logo.svg";
 // import { itemsArrayGlobal } from "../newcomponents/Ncart";
 import { cartObject } from "../newcomponents/Ncart";
-
-import Gpay from "../images/google_pay.svg";
-import amazonPay from "../images/Amazon_Pay.svg";
-import phonePe from "../images/Phonepe.svg";
+import paytm from "../images/paytmLogo.svg";
 import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
 import { useNavigate } from "react-router-dom";
-
-const onlinePaymentMethod = [
-  { src: Gpay, alt: "Google pay" },
-  { src: phonePe, alt: "PhonePe" },
-  { src: amazonPay, alt: "Amazon pay" },
-];
 const creditCard = [
   { src: visa, alt: "visa card" },
   { src: mastercard, alt: "mastercard card" },
   { src: rupay, alt: "rupay card" },
 ];
 export default function Cart() {
-  const [itemsArray, setItems] = useState(JSON.parse(sessionStorage.getItem('itemsArray')));
+  const [itemsArray, setItems] = useState(!JSON.parse(sessionStorage.getItem('itemsArray'))?[]:JSON.parse(sessionStorage.getItem('itemsArray')));
   // const [itemName, setItemName] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [totalItems, setTotalItems] = useState(itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.qty,0));
+  const [totalItems, setTotalItems] = useState(itemsArray.length!==0?itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.quantity,0):0);
   // const [isPaymentCliked, setPaymentClicked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(
     itemsArray.reduce(
     (accumulator, currentValue) =>
-      accumulator + currentValue.price * currentValue.qty,
+      accumulator + currentValue.price * currentValue.quantity,
     0
   )
   );
@@ -158,15 +149,15 @@ export default function Cart() {
               {itemsArray.map((currentValue, index) => {
                 return (
                   <div className="bill-item" key={index}>
-                    <img src={currentValue.imgSrc} alt={currentValue.imgSrc} />
+                    <img src={'data:image/jpeg;base64,'+currentValue.imgSrc} alt={currentValue.imgSrc} />
                     <div className="bill-item__details">
-                      <h3 className="bill-item__title">{currentValue.title}</h3>
+                      <h3 className="bill-item__title">{currentValue.productName}</h3>
                       <p className="bill-item__description">
-                        {currentValue.description}
+                        Description Of {currentValue.productName}
                       </p>
                     </div>
-                    <p className="bill__quantity">{currentValue.qty}</p>
-                    <p className="bill-item__price">₹{currentValue.price}</p>
+                    <p className="bill__quantity">{currentValue.quantity}</p>
+                    <p className="bill-item__price">₹{currentValue.price*currentValue.quantity}</p>
                   </div>
                 );
               })}
@@ -204,7 +195,7 @@ export default function Cart() {
                   PRICE DETAILS
                 </Typography>
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography>Price ({totalItems} items)</Typography>
+                  <Typography>Price ({totalItems} {totalItems>1?'items':'item'})</Typography>
                   <Typography>₹{totalPrice}</Typography>
                 </Stack>
                 <Stack
@@ -214,13 +205,13 @@ export default function Cart() {
                     borderBottom: "1px dashed #e0e0e0",
                   }}
                 >
-                  <Typography>Discount</Typography>
+                  <Typography>Discount (<strong>10%</strong>)</Typography>
                   <Typography
                     sx={{
                       color: "#388e3c",
                     }}
                   >
-                    -₹{(totalPrice * 0.01).toFixed(2)}
+                    -₹{(totalPrice * 0.1).toFixed(2)}
                   </Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
@@ -229,13 +220,13 @@ export default function Cart() {
                   </Typography>
                   <Typography>
                     <strong>
-                      ₹{(totalPrice - totalPrice * 0.01).toFixed(2)}
+                      ₹{(totalPrice - totalPrice * 0.1).toFixed(2)}
                     </strong>
                   </Typography>
                 </Stack>
                 <Stack>
                   <Typography sx={{ color: "#388e3c" }}>
-                    You will save ₹{(totalPrice * 0.01).toFixed(2)} on this
+                    You will save ₹{(totalPrice * 0.1).toFixed(2)} on this
                     order
                   </Typography>
                 </Stack>
@@ -251,97 +242,6 @@ export default function Cart() {
               height: '43rem'
             }}
           >
-            {/* <Card
-              elevation={2}
-              sx={{
-                "&": {
-                  width: "100%",
-                  height: "30rem",
-                  backgroundColor: "#F5F3EF",
-                  padding: "0",
-                },
-                "& .MuiCardContent-root": {
-                  padding: "0",
-                },
-              }}
-            >
-              <CardContent
-                sx={{
-                  "& .MuiTypography-root": {
-                    padding: "13px 24px",
-                    fontSize: "1.8rem",
-                  },
-                }}
-              >
-                <Typography
-                  sx={{
-                    textTransform: "uppercase",
-                    color: "#878787",
-                    borderBottom: "1px solid #e0e0e0",
-                  }}
-                >
-                  PRICE DETAILS
-                </Typography>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography>Price ({totalItems} items)</Typography>
-                  <Typography>₹{totalPrice}</Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  sx={{
-                    borderBottom: "1px dashed #e0e0e0",
-                  }}
-                >
-                  <Typography>Discount</Typography>
-                  <Typography
-                    sx={{
-                      color: "#388e3c",
-                    }}
-                  >
-                    -₹{(totalPrice * 0.01).toFixed(2)}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography>
-                    <strong>Total Amount</strong>
-                  </Typography>
-                  <Typography>
-                    <strong>
-                      ₹{(totalPrice - totalPrice * 0.01).toFixed(2)}
-                    </strong>
-                  </Typography>
-                </Stack>
-                <Stack>
-                  <Typography sx={{ color: "#388e3c" }}>
-                    You will save ₹{(totalPrice * 0.01).toFixed(2)} on this
-                    order
-                  </Typography>
-                </Stack>
-              </CardContent>
-            </Card> */}
-            {/* <Button
-              variant="contained"
-              // color="primar"
-              sx={{
-                "&": {
-                  marginTop: "2rem",
-                  width: "100%",
-                  // height: "6rem",
-                  borderRadius: "0",
-                  // backgroundColor: "#F34237",
-                  // backgroundColor: 'var(--submit)',
-                  fontSize: "2rem",
-                },
-              }}
-              onClick={() => {
-                setPaymentClicked(!isPaymentCliked);
-                // alert("Thanks for shopping");
-                // window.location.href = "/nhome";
-              }}
-            >
-              Pay Now
-            </Button> */}
             <Typography
             sx={{
               fontSize: '2rem',
@@ -350,9 +250,8 @@ export default function Cart() {
               // background: 'white',
               padding: '1rem'
             }}
-            ><strong>Total Amount ₹{(totalPrice-totalPrice*.01).toFixed(2)}</strong></Typography>
+            ><strong>Total Amount ₹ {(totalPrice-totalPrice*.1).toFixed(2)}</strong></Typography>
             {
-              // isPaymentCliked &&
               <Card
                 sx={{
                   // width: "100%',
@@ -397,10 +296,16 @@ export default function Cart() {
                       >
                         Pay with Credit Card
                       </Typography>
-                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
+                      <ImageList sx={{ width: 200, }} cols={3} gap={8}>
                         {creditCard.map((item,index) => (
                           <ImageListItem
                             key={index}
+                            sx={{
+                              '.MuiImageListItem-img':{
+                                objectFit: 'contain',
+                                // width: '4rem'
+                              }
+                            }}
                           >
                             <img src={item.src} alt={item.alt} />
                           </ImageListItem>
@@ -462,13 +367,11 @@ export default function Cart() {
                         Pay with UPI QR Code
                       </Typography>
                       <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                        {onlinePaymentMethod.map((item,index) => (
                           <ImageListItem
-                            key={index}
                           >
-                            <img src={item.src} alt={item.alt} />
+                            <img src={paytm} alt='paytm logo' />
                           </ImageListItem>
-                        ))}
+                        {/* ))} */}
                       </ImageList>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -569,13 +472,13 @@ export default function Cart() {
               >
                 <Result
                   status="success"
-                  title={<code>Paid ₹{(totalPrice-totalPrice*0.01).toFixed(2)} Successfully </code>}
+                  title={<>Paid ₹{(totalPrice-totalPrice*0.1).toFixed(2)} Successfully </>}
                   subTitle="Thanks for Shopping! Visit again"
                   extra={[
-                    <Button >
+                    <Button variant="contained" key="print Bill" >
                       Print Bill
                     </Button>,
-                    <Button variant="contained" onClick={()=>navigate("/nhome")} color="success"> Home</Button>,
+                    <Button variant="contained" key="Home" onClick={()=>navigate("/nhome")} color="success"> Home</Button>,
                   ]}
                 />
               </Box>

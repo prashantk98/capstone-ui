@@ -10,7 +10,10 @@ import {
   Autocomplete,
   TextField,
   Typography,
+  Modal,
+  // MuiAlert
 } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 // import Navbar from "../components/Navbar";
@@ -22,6 +25,7 @@ import { NavLink } from "react-router-dom";
 import apple from "../images/apple.jpeg";
 import apples from "../images/apples.jpg";
 import mango from "../images/mango.jpeg";
+import mangos from "../images/mangos.jpeg";
 import pineApple from "../images/pineapple.jpeg";
 import Pomegranate from "../images/pomegranate.jpeg";
 import capscicumGreen from "../images/capscicum-green.jpeg";
@@ -45,6 +49,7 @@ export default function Ncart() {
   const [totalItems, setTotalItems] = useState(0);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [itemSelectedManually, setItemManually] = useState(null);
+  const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
     name: "",
     price: 0,
@@ -52,6 +57,7 @@ export default function Ncart() {
   const [authenticated, setauthenticated] = useState(
     sessionStorage.getItem("accessToken") || false
   );
+  const [orderID, setOrderId] = useState(null);
 
   // const handleChange = (panel) => (event, isExpanded) => {
   //   setExpanded(isExpanded ? panel : false);
@@ -61,20 +67,20 @@ export default function Ncart() {
   const defaultProps = {
     // options: fruitsFromDb,
     options: totalItemInDb,
-    getOptionLabel: (option) => option.name,
+    getOptionLabel: (option) => option.productName,
   };
   const flatProps = {
     // options: fruitsFromDb.map((option) => option.name),
-    options: totalItemInDb.map((option) => option.name),
+    options: totalItemInDb.map((option) => option.productName),
   };
 
   const addItemToCart = () => {
-    if (itemSelectedManuallyObj.name.trim() !== "") {
+    if (itemSelectedManuallyObj.productName.trim() !== "") {
       const obj = {
-        title: itemSelectedManuallyObj.name,
-        description: ` description of ${itemSelectedManuallyObj.name}`,
+        productName: itemSelectedManuallyObj.productName,
+        description: ` description of ${itemSelectedManuallyObj.productName}`,
         price: itemSelectedManuallyObj.price,
-        qty: 1,
+        quantity: 1,
         imgSrc: itemSelectedManuallyObj.imgSrc,
         probability: itemSelectedManuallyObj.probability,
       };
@@ -91,7 +97,7 @@ export default function Ncart() {
     setItems((prevState) => {
       return prevState.filter((currentValue, idx) => {
         if (idx === index) {
-          setTotalItems(totalItems - currentValue.qty);
+          setTotalItems(totalItems - currentValue.quantity);
         }
         return idx !== index;
       });
@@ -106,11 +112,43 @@ export default function Ncart() {
       console.error(err);
     }
   };
+  // const axios = require('axios');
+
   function addQuantity(index) {
+    console.log(itemsArray[index]);
+    let data = JSON.stringify({
+      productID: itemsArray[index].productID,
+      quantity: itemsArray[index].quantity,
+    });
+
+    let config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      url:
+        apiLocalPath +
+        "/orders/" +
+        itemsArray[index].orderID +
+        "/" +
+        itemsArray[index].orderItemID,
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setItems((prevState) => {
       return prevState.filter((current, idx) => {
         if (idx === index) {
-          current.qty = current.qty + 1;
+          current.quantity = current.quantity + 1;
         }
         return true;
       });
@@ -119,8 +157,18 @@ export default function Ncart() {
   function deleteQuantity(index) {
     setItems((prevState) => {
       return prevState.filter((current, idx) => {
-        if (idx === index && current.qty > 1) {
-          current.qty = current.qty - 1;
+        if (idx === index && current.quantity > 1) {
+          current.quantity = current.quantity - 1;
+        }
+        return true;
+      });
+    });
+  }
+  function changeQuantity(index, value) {
+    setItems((prevState) => {
+      return prevState.filter((current, idx) => {
+        if (idx === index) {
+          current.quantity = value;
         }
         return true;
       });
@@ -147,143 +195,120 @@ export default function Ncart() {
     // handleStopCaptureClick();
   };
 
-
   const [base64Image, setBase64Image] = useState(null);
-  const convertImageToBase64 = () => {
-    fetch(apples)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64String = reader.result;
-          setBase64Image(base64String);
-        };
-        reader.readAsDataURL(blob);
-      });
-      // return base64Image;
+  const fetchImage = async (imagePath) => {
+    // console.log(imagePath);
+
+    // const imageData = imagePath.split(",")[1];
+    // setBase64Image(imageData);
+    try {
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // console.log(reader);
+        const base64String = reader.result;
+        const imageData = base64String.split(",")[1];
+        setBase64Image(imageData);
+      };
+
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
   };
-
-
   useEffect(() => {
     handleStartCaptureClick();
-    const fetchImage = async () => {
-      try {
-        const response = await fetch(apples);
-        const blob = await response.blob();
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          console.log(reader);
-          const base64String = reader.result;
-
-          setBase64Image(base64String);
-        };
-
-        reader.readAsDataURL(blob);
-      } catch (error) {
-        console.error('Error fetching image:', error);
-      }
-    };
-    fetchImage();
+    // fetchImage();
   }, []);
   // if (authenticated) {
-    return (
-      <>
-        <section className="new-cart">
-          <AppBar
-            sx={{
-              paddingLeft: "1rem",
-              paddingRight: "2rem",
-              // backgroundColor: '#af9990'
-              // background: '#afff90'
-              background: "#558044",
-              fontWeight: "500",
-            }}
-          >
-            <Toolbar>
+  return (
+    <>
+      <section className="new-cart">
+        <AppBar
+          sx={{
+            paddingLeft: "1rem",
+            paddingRight: "2rem",
+            // backgroundColor: '#af9990'
+            // background: '#afff90'
+            background: "#558044",
+            fontWeight: "500",
+          }}
+        >
+          <Toolbar>
+            <Grid
+              container
+              sx={{
+                alignItems: "center",
+              }}
+            >
+              <Grid item>
+                <NavLink to="/" className="navbar__logo">
+                  {/* <img src={logo} alt="website logo" /> */}
+                  {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
+                  Smart Cart
+                </NavLink>
+              </Grid>
+              <Grid item sm></Grid>
+
+              <Grid item>
+                <NavLink to="/nhome" className="navbar__home">
+                  Home
+                </NavLink>
+              </Grid>
               <Grid
-                container
+                item
                 sx={{
-                  alignItems: "center",
+                  position: "relative",
                 }}
               >
-                <Grid item>
-                  <NavLink to="/" className="navbar__logo">
-                    {/* <img src={logo} alt="website logo" /> */}
-                    {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
-                    Smart Cart
-                  </NavLink>
-                </Grid>
-                <Grid item sm></Grid>
-
-                <Grid item>
-                  <NavLink to="/nhome" className="navbar__home">
-                    Home
-                  </NavLink>
-                </Grid>
-                <Grid
-                  item
-                  sx={{
-                    position: "relative",
-                  }}
-                >
-                  <NavLink to="/ncart" className="navbar__cart">
-                    <Badge
-                      badgeContent={itemsArray.reduce(
-                        (accumulator, currentValue) =>
-                          accumulator + currentValue.qty,
-                        0
-                      )}
+                <NavLink to="/ncart" className="navbar__cart">
+                  <Badge
+                    badgeContent={
+                      itemsArray.length === 0
+                        ? 0
+                        : itemsArray.reduce(
+                            (accumulator, currentValue) =>
+                              accumulator + currentValue.quantity,
+                            0
+                          )
+                    }
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        fontSize: "2rem",
+                        margin: "0 .8rem 0",
+                      },
+                    }}
+                  >
+                    <ShoppingCart
                       sx={{
-                        "& .MuiBadge-badge": {
-                          fontSize: "2rem",
-                          margin: "0 .8rem 0",
-                        },
+                        fontSize: "3rem",
+                        padding: "0 .8rem",
                       }}
-                    >
-                      <ShoppingCart
-                        sx={{
-                          fontSize: "3rem",
-                          padding: "0 .8rem",
-                        }}
-                      ></ShoppingCart>
-                    </Badge>
-                    {/* <Typography
-                  sx={{
-                    '&':{
-                      position: 'absolute',
-                      top: '-.5rem',
-                      left: '28%',
-                      fontSize: '1.8rem',
-                      background: '#ff0000d6',
-                      borderRadius: '50%',
-                      padding: '0px 8px'
-                    }
-                    ,
-                    '.navbar__cart:hover &':{
-                      color: 'white'
-                    }
-                  }}
-                  >0</Typography> */}
-                    Cart
-                  </NavLink>
-                </Grid>
-                <Grid item>
-                  <NavLink to="/admin" className="navbar__admin">
-                    Admin
-                  </NavLink>
-                </Grid>
+                    ></ShoppingCart>
+                  </Badge>
+                  Cart
+                </NavLink>
               </Grid>
-            </Toolbar>
-          </AppBar>
-          <Stack
-            direction="row"
-            sx={{
-              padding: "12rem 4rem 0rem",
-              justifyContent: "space-between",
-              height: "65rem",
-            }}
-          >
+              <Grid item>
+                <NavLink to="/admin" className="navbar__admin">
+                  Admin
+                </NavLink>
+              </Grid>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+        <Stack
+          direction="row"
+          sx={{
+            padding: "12rem 4rem 0rem",
+            justifyContent: "space-between",
+            height: "65rem",
+          }}
+        >
+          <Box>
             <Snackbar
               open={showSnackbar}
               autoHideDuration={1000}
@@ -295,282 +320,275 @@ export default function Ncart() {
                 },
               }}
             />
-            <Box>
-              {!image ? (
-                <div className="home__camera-screen">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    // playsInline
-                    // width={"100%"}
-                    // height={"100%"}
-                  ></video>
-                </div>
-              ) : (
-                <figure className="home__clicked-image">
-                  <img
-                    src={image}
-                    alt="click on take snapshot"
-                    style={{
-                      // width: "100%",
-                      // height: "99%",
-                      animation: "pulse .2s 1",
-                      // border: "2px solid salmon",
-                    }}
-                  />
-                </figure>
-              )}
-              <audio ref={audioRef} src={require("../shutter.wav")} />
-              
-            </Box>
-            <Box
-              sx={{
-                "&": {
-                  width: "50%",
-                  // background: '#f1f3f6',
-                  // backgroundColor: 'black',
-                  borderRadius: ".5rem",
-                  height: "50.6rem",
-                },
-                "& .MuiPaper-root": {
-                  // height: '5rem'
-                },
-              }}
-            >
-              <div className="cart__input">
-                <Autocomplete
-                  {...defaultProps}
-                  onChange={(event, newValue) => {
-                    setItemManuallyObj(newValue);
-                  }}
-                  autoHighlight
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Add item manually"
-                      variant="standard"
-                      sx={{
-                        "&": {
-                          // backgroundColor: 'white',
-                          // height:'3rem'
-                        },
-                        "& label": {
-                          fontSize: "1.8rem",
-                        },
-                      }}
-                    />
-                  )}
-                  sx={{
-                    width: "40%",
+
+            {!image ? (
+              <div className="home__camera-screen">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  // playsInline
+                  // width={"100%"}
+                  // height={"100%"}
+                ></video>
+              </div>
+            ) : (
+              <figure className="home__clicked-image">
+                <img
+                  src={image}
+                  alt="click on take snapshot"
+                  style={{
+                    width: "64rem",
+                    height: "48rem",
+                    animation: "pulse .2s 1",
+                    // border: "2px solid salmon",
                   }}
                 />
-
-                <Button
-                  variant="contained"
-                  startIcon={<AddCircleOutlineIcon />}
-                  onClick={addItemToCart}
-                  sx={{
-                    "&, & svg": {
-                      fontSize: "1.8rem",
-                    },
-                  }}
-                >
-                  Add
-                </Button>
-              </div>
-
-              <Stack
-                sx={{
-                  height: "44.3rem",
-                  overflowY: "scroll",
-                }}
-              >
-                {/* <Paper>Item 1</Paper>
-          <Paper>Item 2</Paper> */}
-                {/* {itemsArray.map((currentValue, index) => {
-                return (
-                  <CartItem
-                    id={index}
-                    key={index}
-                    onSelect={deleteItem}
-                    text={currentValue}
-                    title={currentValue.title}
-                    description={currentValue.description}
-                    price={currentValue.price}
-                    qty={currentValue.qty}
-                  />
-                );
-              })} */}
-
-                {itemsArray.map((currentValue, index) => {
-                  return (
-                    <CartItem
-                      index={index}
-                      item={currentValue}
-                      removeItemFromCart={removeItemFromCart}
-                      addQuantity={addQuantity}
-                      deleteQuantity={deleteQuantity}
-                      key={index}
-                    />
-                  );
-                })}
-              </Stack>
-              <Stack
-                direction={"row"}
-                // spacing={2}
-                justifyContent={'space-around'}
-                mt={2}
-                sx={{
-                  "& .MuiTypography-root": {
-                    fontSize: "1.8rem",
-                    // width: "10%",
-                    position: 'relative'
-                    // alignItems:'center'
-                    // display: 'block'
-                  },
-                  '.MuiTypography-root:: after':{
-                    content: "''",
-                    position: 'absolute',
-                    top: '-.2rem',
-                    right: '-3.2rem',
-                    width: "3rem",
-                    height: '3rem',
-                    borderRadius: "50%",
-                  }
-                }}
-              >
-                <Typography>Product Detection Probability</Typography>
-                <Typography
-                sx={{
-                  '&':{
-                    position: 'relative'
-                  },
-                  '&::after':{
-                    background:'red'
-                  }
-                }}
-                 >
-                  0-50%:-
-                </Typography>
-                <Typography
-                sx={{
-                  '&::after':{
-                    background:'orange'
-                  }
-                }}
-                >
-                  51-70%:-
-                  
-                </Typography>
-                <Typography
-                sx={{
-                  '&::after':{
-                    background:'green'
-                  }
-                }}
-                >
-                  71-100%:-{" "}
-                </Typography>
-              </Stack>
-            </Box>
-          </Stack>
-          <Stack
-            direction="row"
+              </figure>
+            )}
+            <audio ref={audioRef} src={require("../shutter.wav")} />
+          </Box>
+          <Box
             sx={{
               "&": {
-                margin: "0 4rem",
-                alignItems: "center",
-                mb: "1.4rem",
+                width: "50%",
+                // background: '#f1f3f6',
+                // backgroundColor: 'black',
+                borderRadius: ".5rem",
+                height: "50.6rem",
+              },
+              "& .MuiPaper-root": {
+                // height: '5rem'
               },
             }}
           >
+            <div className="cart__input">
+              <Autocomplete
+                {...defaultProps}
+                onChange={(event, newValue) => {
+                  setItemManuallyObj(newValue);
+                }}
+                autoHighlight
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Add item manually"
+                    variant="standard"
+                    sx={{
+                      "&": {
+                        // backgroundColor: 'white',
+                        // height:'3rem'
+                      },
+                      "& label": {
+                        fontSize: "1.8rem",
+                      },
+                    }}
+                  />
+                )}
+                sx={{
+                  width: "40%",
+                }}
+              />
+
+              <Button
+                variant="contained"
+                startIcon={<AddCircleOutlineIcon />}
+                onClick={addItemToCart}
+                sx={{
+                  "&, & svg": {
+                    fontSize: "1.8rem",
+                  },
+                }}
+              >
+                Add
+              </Button>
+            </div>
+
             <Stack
-              direction="row"
-              spacing={5}
               sx={{
-                "&": {
-                  // m: "2rem 0 0",
-                  width: "50%",
-                  // padding: "0 0 0 1rem",
-                  justifyContent: "space-around",
+                height: "44.3rem",
+                overflowY: "scroll",
+              }}
+            >
+              {itemsArray.map((currentValue, index) => {
+                return (
+                  <CartItem
+                    index={index}
+                    item={currentValue}
+                    removeItemFromCart={removeItemFromCart}
+                    addQuantity={addQuantity}
+                    deleteQuantity={deleteQuantity}
+                    key={index}
+                    changeQuantity={changeQuantity}
+                  />
+                );
+              })}
+            </Stack>
+            <Stack
+              direction={"row"}
+              // spacing={2}
+              justifyContent={"space-around"}
+              mt={2}
+              sx={{
+                "& .MuiTypography-root": {
+                  fontSize: "1.8rem",
+                  // width: "10%",
+                  position: "relative",
+                  // alignItems:'center'
+                  // display: 'block'
                 },
-                ".css-1jspvjo-MuiStack-root>:not(style)+:not(style)": {
-                  marginLeft: "0px",
+                ".MuiTypography-root:: after": {
+                  content: "''",
+                  position: "absolute",
+                  top: "-.2rem",
+                  right: "-3.2rem",
+                  width: "3rem",
+                  height: "3rem",
+                  borderRadius: "50%",
                 },
               }}
             >
-              <Button
-                variant="contained"
-                // color="orange"
-                type="reset"
+              <Typography>Product Detection Probability</Typography>
+              <Typography
                 sx={{
                   "&": {
-                    fontSize: "1.6rem",
-                    backgroundColor: "orange",
+                    position: "relative",
                   },
-                  "&:hover": {
-                    backgroundColor: "#ff7300",
+                  "&::after": {
+                    background: "red",
                   },
                 }}
-                // onClick={() => {
-                //   setNumber("");
-                //   setName("");
-                // }}
               >
-                Reset
+                0-50%:-
+              </Typography>
+              <Typography
+                sx={{
+                  "&::after": {
+                    background: "orange",
+                  },
+                }}
+              >
+                51-70%:-
+              </Typography>
+              <Typography
+                sx={{
+                  "&::after": {
+                    background: "green",
+                  },
+                }}
+              >
+                71-100%:-{" "}
+              </Typography>
+            </Stack>
+          </Box>
+        </Stack>
+        <Stack
+          direction="row"
+          sx={{
+            "&": {
+              margin: "0 4rem",
+              alignItems: "center",
+              mb: "1.4rem",
+            },
+          }}
+        >
+          <Stack
+            direction="row"
+            spacing={5}
+            sx={{
+              "&": {
+                // m: "2rem 0 0",
+                width: "50%",
+                // padding: "0 0 0 1rem",
+                justifyContent: "space-around",
+                alignItems: "center",
+              },
+              ".css-1jspvjo-MuiStack-root>:not(style)+:not(style)": {
+                marginLeft: "0px",
+              },
+              "& .MuiButton-root": {
+                fontSize: "1.4rem",
+              },
+            }}
+          >
+            <Button
+              variant="contained"
+              // color="orange"
+              type="reset"
+              sx={{
+                "&": {
+                  backgroundColor: "orange",
+                },
+                "&:hover": {
+                  backgroundColor: "#ff7300",
+                },
+              }}
+              onClick={() => {
+                setItems([]);
+              }}
+            >
+              Reset
+            </Button>
+            <input
+              type="file"
+              id="upload-button"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setUploadItemPhoto(reader.result);
+                    setImage(reader.result);
+                    const base64String = reader.result;
+                    const imageData = base64String.split(",")[1];
+                    setBase64Image(imageData);
+                  };
+                  reader.readAsDataURL(file);
+                }
+                // setUploadItemPhoto(file);
+                // console.log(uploadItemPhoto)
+              }}
+            />
+            <label htmlFor="upload-button">
+              <Button variant="contained" component="span">
+                Upload Image
               </Button>
-              {image !== null ? (
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{ fontSize: "1.6rem" }}
-                  onClick={handleStartCaptureClick}
-                >
-                  {image ? "Restart camera" : "Start Camera"}
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  sx={{ fontSize: "1.6rem" }}
-                  onClick={() => {
-                    handleCaptureClick();
-                  }}
-                >
-                  Take snapshot
-                </Button>
-              )}
+            </label>
+            {image !== null ? (
               <Button
                 variant="contained"
                 color="success"
-                sx={{ fontSize: "1.6rem" }}
-                // href="/cart"
+                onClick={handleStartCaptureClick}
+              >
+                {image ? "Restart camera" : "Start Camera"}
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
                 onClick={() => {
-                  if (image) {
-                    setItems([...itemsArray, ...cartObject]);
-                    itemsArrayGlobal.push(...cartObject);
-                    // setImage(null);
-                    setTotalItems(
-                      itemsArray.reduce(
-                        (accumulator, currentValue) =>
-                          accumulator + currentValue.qty,
-                        totalItems
-                      )
-                    );
-                    setShowSnackbar(true);
+                  handleCaptureClick();
+                }}
+              >
+                Take snapshot
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              color="success"
+              // href="/cart"
+              onClick={() => {
+                if (image) {
+                  if (!orderID) {
                     handleStartCaptureClick();
-
-
                     let data = JSON.stringify({
                       image: base64Image,
                     });
-                    // console.log(base64Image);
-                    // console.log(sessionStorage.getItem('userName'));
-                    // console.log(sessionStorage.getItem('accessToken'));
 
                     let config = {
                       method: "post",
                       maxBodyLength: Infinity,
-                      url: apiLocalPath+"/orders/addNew/",
+                      url: apiLocalPath + "/orders/addNew/",
                       headers: {
                         Authorization:
                           "Bearer " + sessionStorage.getItem("accessToken"),
@@ -581,90 +599,175 @@ export default function Ncart() {
                     axios
                       .request(config)
                       .then((response) => {
-                        console.log(JSON.stringify(response.data));
+                        console.log(response.data);
+                        // console.log(response.data.data.orderItems.available.reduce((accumulator,current)=>{
+                        //   return [...accumulator, current.fields]
+                        // },[]));
+
+                        // console.log(response.data.data);
+                        setShowSnackbar(true);
+                        setOrderId(response.data.data.order.pk);
+                        setItems([
+                          ...itemsArray,
+                          ...response.data.data.orderItems.available.reduce(
+                            (accumulator, current) => {
+                              return [...accumulator, current.fields];
+                            },
+                            []
+                          ),
+                        ]);
+
+                        setUploadItemPhoto(null);
                       })
                       .catch((error) => {
                         console.log(error);
                       });
-                  } else {
+                  }else{
+                    let data = JSON.stringify({
+                      "image": base64Image
+                    });
+                    
+                    let config = {
+                      method: 'put',
+                      maxBodyLength: Infinity,
+                      url: apiLocalPath+'/orders/'+orderID,
+                      headers: { 
+                        'Authorization': 'Bearer '+sessionStorage.getItem('accessToken'), 
+                        'Content-Type': 'application/json'
+                      },
+                      data : data
+                    };
+                    
+                    axios.request(config)
+                    .then((response) => {
+                      // console.log(JSON.stringify(response.data));
+                      setShowSnackbar(true);
+                        setItems([
+                          ...itemsArray,
+                          ...response.data.data.orderItems.available.reduce(
+                            (accumulator, current) => {
+                              return [...accumulator, current.fields];
+                            },
+                            []
+                          ),
+                        ]);
+                        setUploadItemPhoto(null);
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
                   }
-                }}
-              >
-                Add to cart
-              </Button>
-            </Stack>
-            <Button
-              variant="contained"
-              // color="primar"
-              sx={{
-                "&": {
-                  width: "50%",
-                  height: "4rem",
-                  fontSize: "2rem",
-                },
-              }}
-              onClick={() => {
-                setPaymentClicked(!isPaymentCliked);
-                sessionStorage.setItem(
-                  "itemsArray",
-                  JSON.stringify(itemsArray)
-                );
-                navigate("/cart");
-                // window.location.href = "/cart";
+                } else {
+                }
               }}
             >
-              Checkout
+              Add to cart
             </Button>
           </Stack>
+          <Button
+            variant="contained"
+            // color="primar"
+            sx={{
+              "&": {
+                width: "50%",
+                height: "4rem",
+                fontSize: "2rem",
+              },
+            }}
+            onClick={() => {
+              setPaymentClicked(!isPaymentCliked);
+              sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
+              navigate("/cart");
+              // window.location.href = "/cart";
+            }}
+          >
+            Checkout
+          </Button>
+        </Stack>
 
-          {/* <ImageToBase64Converter/> */}
-        </section>
-        <Footer />
-      </>
-    );
+        {/* <ImageToBase64Converter/> */}
+      </section>
+      <Footer />
+    </>
+  );
   // } else {
-    // return <Navigate replace to="/nhome" />;
+  //   return (
+  //     <>
+  //       <Modal open={!sessionStorage.getItem("accessToken")}>
+  //         <Box
+  //           style={{
+  //             position: "absolute",
+  //             top: "50%",
+  //             left: "50%",
+  //             transform: "translate(-50%, -50%)",
+  //             backgroundColor: "#fff",
+  //             padding: "2rem",
+  //             height: "20rem",
+  //           }}
+  //         >
+  //           <Typography variant="h2" gutterBottom>
+  //             Please Login
+  //           </Typography>
+  //           <Typography variant="body1" color="textSecondary" fontSize="3rem">
+  //             You need to log in to access this page.
+  //           </Typography>
+  //           <Button
+  //             variant="contained"
+  //             onClick={
+  //               () => (window.location.href = "nhome")
+  //               // <Navigate replace to="/nhome" />
+  //             }
+  //             style={{ marginTop: "1rem", fontSize: "1.8rem" }}
+  //           >
+  //             Go to home
+  //           </Button>
+  //         </Box>
+  //       </Modal>
+
+  //       {/* <Navigate replace to="/nhome" /> */}
+  //     </>
+  //   );
   // }
 }
 
 export const cartObject = [
   {
-    title: "Lorem Item1",
+    productName: "Lorem Item1",
     description: "Lorem Item description",
     price: 190.0,
-    qty: 1,
+    quantity: 1,
     imgSrc: apple,
     probability: 81,
   },
   {
-    title: "Lorem Item2",
+    productName: "Lorem Item2",
     description: "Lorem Item description",
     price: 90.0,
-    qty: 2,
+    quantity: 2,
     imgSrc: pineApple,
     probability: 52,
   },
   {
-    title: "Lorem Item3",
+    productName: "Lorem Item3",
     description: "Lorem Item description",
     price: 93.0,
-    qty: 1,
+    quantity: 1,
     imgSrc: Pomegranate,
     probability: 58,
   },
   {
-    title: "Lorem Item4",
+    productName: "Lorem Item4",
     description: "Lorem Item description",
     price: 32.0,
-    qty: 3,
+    quantity: 3,
     imgSrc: mango,
     probability: 91,
   },
   {
-    title: "Lorem Item5",
+    productName: "Lorem Item5",
     description: "Lorem Item description",
     price: 93.0,
-    qty: Math.floor(Math.random() * 8) + 1,
+    quantity: Math.floor(Math.random() * 8) + 1,
     imgSrc: capscicumGreen,
     probability: 50,
   },
