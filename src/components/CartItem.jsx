@@ -6,6 +6,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
+import { useRef } from "react";
 
 const LightTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -198,7 +199,7 @@ export default function CartItem(prop) {
             size="large"
             onClick={() => {
               handleDecrement();
-              prop.deleteQuantity(prop.index);
+              prop.handleDecrement(prop.index);
             }}
           >
             <RemoveIcon />
@@ -207,22 +208,32 @@ export default function CartItem(prop) {
             type="number"
             min="1"
             height="2rem"
+            // value={prop.item.quantity}
             value={prop.item.quantity}
             onWheel={(e) => e.target.blur()}
             onChange={(event) => {
-              setValue(Math.floor(event.target.value));
+              // prop.changeQuantity(prop.index, Math.floor(+event.target.value));
+              // setValue(event.target.value);
+              setValue((preValue)=>{
+                // prop.changeQuantity(prop.index,+event.target.value);
+                return event.target.value;
+              })
               if (+value <= 0) {
                 event.target.value = 1;
                 setValue(1);
+                // prop.changeQuantity(prop.index, 0);
               }
-              prop.changeQuantity(prop.index, value);
+              // prop.changeQuantity(prop.index, +value);
+              // setTimeout(() => {
+              //   prop.changeQuantity(prop.index, Math.floor(+event.target.value));
+              // }, 2000);
             }}
           />
           <IconButton
             size="large"
             onClick={() => {
               handleIncrement();
-              prop.addQuantity(prop.index);
+              prop.handleIncrement(prop.index);
             }}
           >
             <AddIcon />

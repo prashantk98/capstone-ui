@@ -11,6 +11,10 @@ import {
   TextField,
   Typography,
   Modal,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
   // MuiAlert
 } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
@@ -20,6 +24,8 @@ import { useState } from "react";
 // import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import CloseIcon from "@mui/icons-material/Close";
 import CartItem from "../components/CartItem";
 import { NavLink } from "react-router-dom";
 import apple from "../images/apple.jpeg";
@@ -33,6 +39,7 @@ import totalItemInDb, { apiLocalPath } from "../rowData";
 import { useNavigate, Navigate } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
+import { Result } from "antd";
 
 // let totalItemsGlobal;
 // let itemsArrayGlobal;
@@ -50,14 +57,15 @@ export default function Ncart() {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [itemSelectedManually, setItemManually] = useState(null);
   const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
+  const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
-    name: "",
-    price: 0,
+    productName: "",
   });
   const [authenticated, setauthenticated] = useState(
     sessionStorage.getItem("accessToken") || false
   );
   const [orderID, setOrderId] = useState(null);
+  const [unAvailable, setUnAvailable] = useState([]);
 
   // const handleChange = (panel) => (event, isExpanded) => {
   //   setExpanded(isExpanded ? panel : false);
@@ -73,22 +81,55 @@ export default function Ncart() {
     // options: fruitsFromDb.map((option) => option.name),
     options: totalItemInDb.map((option) => option.productName),
   };
+  function addItemToCartApi(productName, quantity) {
+    let data = JSON.stringify({
+      newOrderItem: {
+        name: productName,
+        quantity: quantity,
+      },
+    });
+
+    let config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      url: apiLocalPath + "/orders/" + orderID,
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(response.data);
+        setItems([...itemsArray, response.data.data.available]);
+        setItemManually(null);
+        // itemsArrayGlobal.push(obj);
+        setShowSnackbar(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const addItemToCart = () => {
     if (itemSelectedManuallyObj.productName.trim() !== "") {
-      const obj = {
-        productName: itemSelectedManuallyObj.productName,
-        description: ` description of ${itemSelectedManuallyObj.productName}`,
-        price: itemSelectedManuallyObj.price,
-        quantity: 1,
-        imgSrc: itemSelectedManuallyObj.imgSrc,
-        probability: itemSelectedManuallyObj.probability,
-      };
-      setTotalItems(totalItems + 1);
-      setItems([...itemsArray, obj]);
-      setItemManually(null);
-      itemsArrayGlobal.push(obj);
-      setShowSnackbar(true);
+      // const obj = {
+      //   productName: itemSelectedManuallyObj.productName,
+      //   description: ` description of ${itemSelectedManuallyObj.productName}`,
+      //   price: itemSelectedManuallyObj.price,
+      //   quantity: 1,
+      //   imgSrc: itemSelectedManuallyObj.imgSrc,
+      //   probability: itemSelectedManuallyObj.probability,
+      // };
+      // setTotalItems(totalItems + 1);
+      // setItems([...itemsArray, obj]);
+      // setItemManually(null);
+      // itemsArrayGlobal.push(obj);
+      // setShowSnackbar(true);
+      addItemToCartApi(itemSelectedManuallyObj.productName, 1);
     }
     // console.log(itemsArray);
   };
@@ -98,10 +139,14 @@ export default function Ncart() {
     let config = {
       method: "delete",
       maxBodyLength: Infinity,
-      url: apiLocalPath+"/orders/"+itemsArray[index].orderID+"/"+itemsArray[index].orderItemID,
+      url:
+        apiLocalPath +
+        "/orders/" +
+        itemsArray[index].orderID +
+        "/" +
+        itemsArray[index].orderItemID,
       headers: {
-        Authorization:
-          "Bearer "+sessionStorage.getItem('accessToken'),
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
       },
       data: data,
     };
@@ -123,7 +168,6 @@ export default function Ncart() {
         console.log(error);
       });
     // setTotalItems(totalItems - 1);
-    
   };
   const handleStartCaptureClick = async () => {
     try {
@@ -136,135 +180,11 @@ export default function Ncart() {
   };
   // const axios = require('axios');
 
-  function addQuantity(index) {
-    // console.log(itemsArray[index]);
-    // let data = JSON.stringify({
-    //   productID: itemsArray[index].productID,
-    //   quantity: itemsArray[index].quantity,
-    // });
-
-    // let config = {
-    //   method: "put",
-    //   maxBodyLength: Infinity,
-    //   url:
-    //     apiLocalPath +
-    //     "/orders/" +
-    //     itemsArray[index].orderID +
-    //     "/" +
-    //     itemsArray[index].orderItemID,
-    //   headers: {
-    //     Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-    //     "Content-Type": "application/json",
-    //   },
-    //   data: data,
-    // };
-
-    // axios
-    //   .request(config)
-    //   .then((response) => {
-    //     setItems((prevState) => {
-    //       return prevState.filter((current, idx) => {
-    //         if (idx === index) {
-    //           current.quantity = current.quantity + 1;
-    //           current.total=(+current.total)+(+current.price);
-    //         }
-    //         return true;
-    //       });
-    //     });
-    //     // setItems([...response.data.data]);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-
-    let data = JSON.stringify({
-      "productID": itemsArray[index].productID,
-      "quantity": itemsArray[index].quantity+1
-    });
-    
-    let config = {
-      method: 'put',
-      maxBodyLength: Infinity,
-      url: apiLocalPath+'/orders/'+itemsArray[index].orderID +"/" +itemsArray[index].orderItemID,
-      headers: { 
-        'Authorization': 'Bearer '+ sessionStorage.getItem('accessToken'), 
-        'Content-Type': 'application/json'
-      },
-      data : data
-    };
-    
-    axios.request(config)
-    .then((response) => {
-      console.log(response.data.data);
-      // setItems((prevState) => {
-      //         return prevState.filter((current, idx) => {
-      //           if (idx === index) {
-      //             current= response.data.data;
-      //           }
-      //           return true;
-      //         });
-      //       });
-      // setItems([...itemsArray.slice(0,index),response.data.data, ...itemsArray.slice(index+1)])
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-  function deleteQuantity(index) {
-    // console.log(itemsArray[index]);
-    let data = JSON.stringify({
-      productID: itemsArray[index].productID,
-      quantity: itemsArray[index].quantity,
-    });
-
-    let config = {
-      method: "put",
-      maxBodyLength: Infinity,
-      url:
-        apiLocalPath +
-        "/orders/" +
-        itemsArray[index].orderID +
-        "/" +
-        itemsArray[index].orderItemID,
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        // console.log(response.data.data);
-        // setItems((prevState) => {
-        //   return prevState.filter((current, idx) => {
-        //     if (idx === index) {
-        //       current.quantity = current.quantity+1;
-        //     }
-        //     return true;
-        //   });
-        // });
-
-        setItems((prevState) => {
-          return prevState.filter((current, idx) => {
-            if (idx === index && current.quantity > 1) {
-              current.quantity = current.quantity - 1;
-              current.total=(+current.total)-(+current.price);
-            }
-            return true;
-          });
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  function changeQuantity(index, value) {
+  function QuantityApi(index, quantity) {
     console.log(itemsArray[index]);
     let data = JSON.stringify({
       productID: itemsArray[index].productID,
-      quantity: itemsArray[index].quantity,
+      quantity: quantity,
     });
 
     let config = {
@@ -290,7 +210,7 @@ export default function Ncart() {
         setItems((prevState) => {
           return prevState.filter((current, idx) => {
             if (idx === index) {
-              current.quantity = value;
+              Object.assign(current, response.data.data);
             }
             return true;
           });
@@ -299,6 +219,16 @@ export default function Ncart() {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  function handleIncrement(index) {
+    QuantityApi(index, +itemsArray[index].quantity + 1);
+  }
+  function handleDecrement(index) {
+    QuantityApi(index, +itemsArray[index].quantity - 1);
+  }
+  function changeQuantity(index, value) {
+    QuantityApi(index, +value);
   }
   // const handleStopCaptureClick = () => {
   //   const stream = videoRef.current.srcObject;
@@ -352,7 +282,7 @@ export default function Ncart() {
 
     // fetchImage();
   }, []);
-  // if (authenticated) {
+  if (authenticated) {
   return (
     <>
       <section className="new-cart">
@@ -544,8 +474,8 @@ export default function Ncart() {
                     index={index}
                     item={currentValue}
                     removeItemFromCart={removeItemFromCart}
-                    addQuantity={addQuantity}
-                    deleteQuantity={deleteQuantity}
+                    handleIncrement={handleIncrement}
+                    handleDecrement={handleDecrement}
                     key={index}
                     changeQuantity={changeQuantity}
                   />
@@ -739,6 +669,7 @@ export default function Ncart() {
                         // console.log(response.data.data);
                         setShowSnackbar(true);
                         setOrderId(response.data.data.order.pk);
+                        console.log(response.data.data.orderItems.available);
                         setItems([
                           ...itemsArray,
                           ...response.data.data.orderItems.available.reduce(
@@ -748,6 +679,10 @@ export default function Ncart() {
                             []
                           ),
                         ]);
+                        if (response.data.data.orderItems.unavailable.length !== 0) {
+                          setUnAvailable([...response.data.data.orderItems.unavailable]);
+                          setOpenUnAvailableModal(true);
+                        }
 
                         setUploadItemPhoto(null);
                       })
@@ -777,10 +712,13 @@ export default function Ncart() {
                     axios
                       .request(config)
                       .then((response) => {
-                        console.log(response.data.data.available);
+                        console.log(response.data);
                         setShowSnackbar(true);
                         setItems([...response.data.data.available]);
-
+                        if (response.data.data.unavailable.length !== 0) {
+                          setUnAvailable([...response.data.data.unavailable]);
+                          setOpenUnAvailableModal(true);
+                        }
                         setUploadItemPhoto(null);
                       })
                       .catch((error) => {
@@ -816,49 +754,143 @@ export default function Ncart() {
         </Stack>
 
         {/* <ImageToBase64Converter/> */}
+        <Modal
+          open={Boolean(openUnAvailableModal)}
+          onClose={() => {
+            setUnAvailable(false);
+          }}
+        >
+          <Box sx={addItemModalStyle}>
+            {/* <h2></h2>
+
+            
+             */}
+            <IconButton
+              onClick={(e) => setOpenUnAvailableModal(false)}
+              sx={{
+                position: "absolute",
+                right: "0",
+                top: "0",
+                "&: hover": {
+                  color: "red",
+                },
+                "& svg": {
+                  fontSize: "2.4rem",
+                },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            <Result
+              icon={
+                <SentimentVeryDissatisfiedIcon
+                  sx={{ fontSize: "5rem", color: "#ff7416" }}
+                />
+              }
+              title={<>Sorry, {unAvailable.length===1?<>This item is not</>:<>These items are not</>} unavailable</>}
+              extra={
+                <>
+                  <List sx={{
+                    '& .MuiTypography-root':{
+                      fontSize: '2rem',
+                      textAlign: 'center',
+                      textTransform: 'capitalize'
+                    }
+                  }}>
+                    { unAvailable.map((currentValue, index) => {
+                      return (
+                        <ListItem key={index}>
+                          {Object.entries(currentValue).map(([key, value]) => (
+                            <ListItemText key={key}>
+                              {value}
+                            </ListItemText>
+                            
+                          ))}
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </>
+              }
+            />
+            {/* <Button
+              type="primary"
+              onClick={() => setOpenUnAvailableModal(false)}
+            >
+              Close It
+            </Button> */}
+          </Box>
+        </Modal>
       </section>
       <Footer />
     </>
   );
-  // } else {
-  //   return (
-  //     <>
-  //       <Modal open={!sessionStorage.getItem("accessToken")}>
-  //         <Box
-  //           style={{
-  //             position: "absolute",
-  //             top: "50%",
-  //             left: "50%",
-  //             transform: "translate(-50%, -50%)",
-  //             backgroundColor: "#fff",
-  //             padding: "2rem",
-  //             height: "20rem",
-  //           }}
-  //         >
-  //           <Typography variant="h2" gutterBottom>
-  //             Please Login
-  //           </Typography>
-  //           <Typography variant="body1" color="textSecondary" fontSize="3rem">
-  //             You need to log in to access this page.
-  //           </Typography>
-  //           <Button
-  //             variant="contained"
-  //             onClick={
-  //               () => (window.location.href = "nhome")
-  //               // <Navigate replace to="/nhome" />
-  //             }
-  //             style={{ marginTop: "1rem", fontSize: "1.8rem" }}
-  //           >
-  //             Go to home
-  //           </Button>
-  //         </Box>
-  //       </Modal>
+  } else {
+    return (
+      <>
+        <Modal open={!sessionStorage.getItem("accessToken")}>
+          <Box
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              backgroundColor: "#fff",
+              padding: "2rem",
+              height: "20rem",
+            }}
+          >
+            <Typography variant="h2" gutterBottom>
+              Please Login
+            </Typography>
+            <Typography variant="body1" color="textSecondary" fontSize="3rem">
+              You need to log in to access this page.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={
+                () => (window.location.href = "nhome")
+                // <Navigate replace to="/nhome" />
+              }
+              style={{ marginTop: "1rem", fontSize: "1.8rem" }}
+            >
+              Go to home
+            </Button>
+          </Box>
+        </Modal>
 
-  //       {/* <Navigate replace to="/nhome" /> */}
-  //     </>
-  //   );
-  // }
+        {/* <Navigate replace to="/nhome" /> */}
+      </>
+    );
+  }
 }
+
+const addItemModalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  // border: "2px solid #000",
+  boxShadow: 24,
+  // p: 4,
+  display: "flex",
+  flexDirection: "column",
+  gap: "2.4rem",
+  margin: "0 auto",
+  fontSize: "1.8rem",
+  textAlign: "center",
+  "& .MuiButton-root": {
+    fontSize: "1.4rem",
+  },
+  "& .ant-result": {
+    // padding: 0
+  },
+  // "& button, & .MuiSelect-select, & input, & label": {
+  //   fontSize: "1.8rem",
+  // },
+};
 
 export const cartObject = [
   {
