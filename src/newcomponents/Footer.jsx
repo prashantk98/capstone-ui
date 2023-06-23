@@ -84,9 +84,12 @@ export default function Footer() {
               "& .MuiTypography-root": {
                 // textAlign: "left",
               },
+              '& a':{
+                fontSize: '1.8rem'
+              }
             }}
           >
-            <Typography fontSize="2rem" >Useful Links</Typography>
+            <Typography fontSize="1.6rem" >Useful Links</Typography>
             <Link to="/home">Home</Link>
             <Link href="/nhome">About</Link>
             <Link to="/nhome">Support</Link>
@@ -97,7 +100,7 @@ export default function Footer() {
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: "1.4rem",
+              gap: "1.2rem",
               width: "20%",
               '& button':{
                 fontSize: '1.2rem'
@@ -113,10 +116,10 @@ export default function Footer() {
                 fontSize: "1.8rem",
                 "& .MuiFilledInput-root": {
                   backgroundColor: "white",
-                  fontSize: '1.8rem'
+                  fontSize: '1.4rem'
                 },
                 '& label':{
-                  fontSize: '1.8rem'
+                  fontSize: '1.4rem'
                 }
               }}
             />
@@ -164,7 +167,7 @@ export default function Footer() {
         </Grid>
         <Typography
           sx={{
-            fontSize: "2rem",
+            fontSize: "1.6rem",
             color: "#404646",
             marginTop: "3rem",
           }}

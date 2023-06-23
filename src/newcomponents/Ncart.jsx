@@ -93,15 +93,37 @@ export default function Ncart() {
     // console.log(itemsArray);
   };
   const removeItemFromCart = (index) => {
-    setTotalItems(totalItems - 1);
-    setItems((prevState) => {
-      return prevState.filter((currentValue, idx) => {
-        if (idx === index) {
-          setTotalItems(totalItems - currentValue.quantity);
-        }
-        return idx !== index;
+    let data = "";
+
+    let config = {
+      method: "delete",
+      maxBodyLength: Infinity,
+      url: apiLocalPath+"/orders/"+itemsArray[index].orderID+"/"+itemsArray[index].orderItemID,
+      headers: {
+        Authorization:
+          "Bearer "+sessionStorage.getItem('accessToken'),
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(response.data);
+        setItems((prevState) => {
+          return prevState.filter((currentValue, idx) => {
+            if (idx === index) {
+              setTotalItems(totalItems - currentValue.quantity);
+            }
+            return idx !== index;
+          });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
       });
-    });
+    // setTotalItems(totalItems - 1);
+    
   };
   const handleStartCaptureClick = async () => {
     try {
@@ -115,6 +137,130 @@ export default function Ncart() {
   // const axios = require('axios');
 
   function addQuantity(index) {
+    // console.log(itemsArray[index]);
+    // let data = JSON.stringify({
+    //   productID: itemsArray[index].productID,
+    //   quantity: itemsArray[index].quantity,
+    // });
+
+    // let config = {
+    //   method: "put",
+    //   maxBodyLength: Infinity,
+    //   url:
+    //     apiLocalPath +
+    //     "/orders/" +
+    //     itemsArray[index].orderID +
+    //     "/" +
+    //     itemsArray[index].orderItemID,
+    //   headers: {
+    //     Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+    //     "Content-Type": "application/json",
+    //   },
+    //   data: data,
+    // };
+
+    // axios
+    //   .request(config)
+    //   .then((response) => {
+    //     setItems((prevState) => {
+    //       return prevState.filter((current, idx) => {
+    //         if (idx === index) {
+    //           current.quantity = current.quantity + 1;
+    //           current.total=(+current.total)+(+current.price);
+    //         }
+    //         return true;
+    //       });
+    //     });
+    //     // setItems([...response.data.data]);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+
+    let data = JSON.stringify({
+      "productID": itemsArray[index].productID,
+      "quantity": itemsArray[index].quantity+1
+    });
+    
+    let config = {
+      method: 'put',
+      maxBodyLength: Infinity,
+      url: apiLocalPath+'/orders/'+itemsArray[index].orderID +"/" +itemsArray[index].orderItemID,
+      headers: { 
+        'Authorization': 'Bearer '+ sessionStorage.getItem('accessToken'), 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(response.data.data);
+      // setItems((prevState) => {
+      //         return prevState.filter((current, idx) => {
+      //           if (idx === index) {
+      //             current= response.data.data;
+      //           }
+      //           return true;
+      //         });
+      //       });
+      // setItems([...itemsArray.slice(0,index),response.data.data, ...itemsArray.slice(index+1)])
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+  function deleteQuantity(index) {
+    // console.log(itemsArray[index]);
+    let data = JSON.stringify({
+      productID: itemsArray[index].productID,
+      quantity: itemsArray[index].quantity,
+    });
+
+    let config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      url:
+        apiLocalPath +
+        "/orders/" +
+        itemsArray[index].orderID +
+        "/" +
+        itemsArray[index].orderItemID,
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        // console.log(response.data.data);
+        // setItems((prevState) => {
+        //   return prevState.filter((current, idx) => {
+        //     if (idx === index) {
+        //       current.quantity = current.quantity+1;
+        //     }
+        //     return true;
+        //   });
+        // });
+
+        setItems((prevState) => {
+          return prevState.filter((current, idx) => {
+            if (idx === index && current.quantity > 1) {
+              current.quantity = current.quantity - 1;
+              current.total=(+current.total)-(+current.price);
+            }
+            return true;
+          });
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  function changeQuantity(index, value) {
     console.log(itemsArray[index]);
     let data = JSON.stringify({
       productID: itemsArray[index].productID,
@@ -140,39 +286,19 @@ export default function Ncart() {
     axios
       .request(config)
       .then((response) => {
-        console.log(response.data.data);
+        // console.log(response.data.data);
+        setItems((prevState) => {
+          return prevState.filter((current, idx) => {
+            if (idx === index) {
+              current.quantity = value;
+            }
+            return true;
+          });
+        });
       })
       .catch((error) => {
         console.log(error);
       });
-    setItems((prevState) => {
-      return prevState.filter((current, idx) => {
-        if (idx === index) {
-          current.quantity = current.quantity + 1;
-        }
-        return true;
-      });
-    });
-  }
-  function deleteQuantity(index) {
-    setItems((prevState) => {
-      return prevState.filter((current, idx) => {
-        if (idx === index && current.quantity > 1) {
-          current.quantity = current.quantity - 1;
-        }
-        return true;
-      });
-    });
-  }
-  function changeQuantity(index, value) {
-    setItems((prevState) => {
-      return prevState.filter((current, idx) => {
-        if (idx === index) {
-          current.quantity = value;
-        }
-        return true;
-      });
-    });
   }
   // const handleStopCaptureClick = () => {
   //   const stream = videoRef.current.srcObject;
@@ -192,6 +318,9 @@ export default function Ncart() {
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const capturedImage = canvas.toDataURL();
     setImage(capturedImage);
+
+    const imageData = capturedImage.split(",")[1];
+    setBase64Image(imageData);
     // handleStopCaptureClick();
   };
 
@@ -423,7 +552,8 @@ export default function Ncart() {
                 );
               })}
             </Stack>
-            <Stack
+            {/* production Detection probability */}
+            {/* <Stack
               direction={"row"}
               // spacing={2}
               justifyContent={"space-around"}
@@ -478,7 +608,7 @@ export default function Ncart() {
               >
                 71-100%:-{" "}
               </Typography>
-            </Stack>
+            </Stack> */}
           </Box>
         </Stack>
         <Stack
@@ -541,6 +671,7 @@ export default function Ncart() {
                     setUploadItemPhoto(reader.result);
                     setImage(reader.result);
                     const base64String = reader.result;
+                    // console.log(base64String);
                     const imageData = base64String.split(",")[1];
                     setBase64Image(imageData);
                   };
@@ -548,6 +679,7 @@ export default function Ncart() {
                 }
                 // setUploadItemPhoto(file);
                 // console.log(uploadItemPhoto)
+                e.target.value = null;
               }}
             />
             <label htmlFor="upload-button">
@@ -622,40 +754,38 @@ export default function Ncart() {
                       .catch((error) => {
                         console.log(error);
                       });
-                  }else{
+                  } else {
+                    handleStartCaptureClick();
+                    console.log(itemsArray);
                     let data = JSON.stringify({
-                      "image": base64Image
+                      image: base64Image,
+                      existingOrderItems: itemsArray,
                     });
-                    
+
                     let config = {
-                      method: 'put',
+                      method: "put",
                       maxBodyLength: Infinity,
-                      url: apiLocalPath+'/orders/'+orderID,
-                      headers: { 
-                        'Authorization': 'Bearer '+sessionStorage.getItem('accessToken'), 
-                        'Content-Type': 'application/json'
+                      url: apiLocalPath + "/orders/" + orderID,
+                      headers: {
+                        Authorization:
+                          "Bearer " + sessionStorage.getItem("accessToken"),
+                        "Content-Type": "application/json",
                       },
-                      data : data
+                      data: data,
                     };
-                    
-                    axios.request(config)
-                    .then((response) => {
-                      // console.log(JSON.stringify(response.data));
-                      setShowSnackbar(true);
-                        setItems([
-                          ...itemsArray,
-                          ...response.data.data.orderItems.available.reduce(
-                            (accumulator, current) => {
-                              return [...accumulator, current.fields];
-                            },
-                            []
-                          ),
-                        ]);
+
+                    axios
+                      .request(config)
+                      .then((response) => {
+                        console.log(response.data.data.available);
+                        setShowSnackbar(true);
+                        setItems([...response.data.data.available]);
+
                         setUploadItemPhoto(null);
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                    });
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
                   }
                 } else {
                 }

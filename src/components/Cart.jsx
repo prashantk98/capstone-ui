@@ -24,6 +24,8 @@ import QrCodeIcon from '@mui/icons-material/QrCode';
 // import logo from "../images/logo.svg";
 // import { itemsArrayGlobal } from "../newcomponents/Ncart";
 import { cartObject } from "../newcomponents/Ncart";
+import Gpay from "../images/google_pay.svg";
+import phonePe from "../images/Phonepe.svg";
 import paytm from "../images/paytmLogo.svg";
 import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
@@ -33,6 +35,11 @@ const creditCard = [
   { src: visa, alt: "visa card" },
   { src: mastercard, alt: "mastercard card" },
   { src: rupay, alt: "rupay card" },
+];
+const onlinePaymentMethod = [
+  { src: Gpay, alt: "Google pay" },
+  { src: phonePe, alt: "PhonePe" },
+  { src: paytm, alt: "Payment pay" },
 ];
 export default function Cart() {
   const [itemsArray, setItems] = useState(!JSON.parse(sessionStorage.getItem('itemsArray'))?[]:JSON.parse(sessionStorage.getItem('itemsArray')));
@@ -367,10 +374,23 @@ export default function Cart() {
                         Pay with UPI QR Code
                       </Typography>
                       <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                          <ImageListItem
+                          {/* <ImageListItem
                           >
                             <img src={paytm} alt='paytm logo' />
+                          </ImageListItem> */}
+                          {onlinePaymentMethod.map((item,index) => (
+                          <ImageListItem
+                            key={index}
+                            sx={{
+                              '.MuiImageListItem-img':{
+                                objectFit: 'contain',
+                                // width: '4rem'
+                              }
+                            }}
+                          >
+                            <img src={item.src} alt={item.alt} />
                           </ImageListItem>
+                        ))}
                         {/* ))} */}
                       </ImageList>
                     </AccordionSummary>
