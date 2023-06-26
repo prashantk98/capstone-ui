@@ -9,7 +9,6 @@ import {
   Snackbar,
   Autocomplete,
   TextField,
-  Typography,
   Modal,
   List,
   ListItem,
@@ -17,25 +16,16 @@ import {
   IconButton,
   // MuiAlert
 } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 // import Navbar from "../components/Navbar";
-// import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import CloseIcon from "@mui/icons-material/Close";
 import CartItem from "../components/CartItem";
 import { NavLink } from "react-router-dom";
-import apple from "../images/apple.jpeg";
-import apples from "../images/apples.jpg";
-import mango from "../images/mango.jpeg";
-import mangos from "../images/mangos.jpeg";
-import pineApple from "../images/pineapple.jpeg";
-import Pomegranate from "../images/pomegranate.jpeg";
-import capscicumGreen from "../images/capscicum-green.jpeg";
-import totalItemInDb, { apiLocalPath } from "../rowData";
+import { apiLocalPath, ShowItemToAddManually } from "../rowData";
 import { useNavigate, Navigate } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
@@ -50,12 +40,15 @@ export default function Ncart() {
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
-  const [itemsArray, setItems] = useState([]);
+  const [itemsArray, setItems] = useState(()=> {
+    const storedItems = sessionStorage.getItem('itemsArray');
+   return storedItems ? JSON.parse(storedItems) : [];
+  });
   // const [itemName, setItemName] = useState();
   // const [expanded, setExpanded] = useState(false);
   const [totalItems, setTotalItems] = useState(0);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [itemSelectedManually, setItemManually] = useState(null);
+  // const [itemSelectedManually, setItemManually] = useState(null);
   const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
   const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
@@ -67,20 +60,16 @@ export default function Ncart() {
   const [orderID, setOrderId] = useState(null);
   const [unAvailable, setUnAvailable] = useState([]);
 
-  // const handleChange = (panel) => (event, isExpanded) => {
-  //   setExpanded(isExpanded ? panel : false);
-  // };
-  const [isPaymentCliked, setPaymentClicked] = useState(false);
 
   const defaultProps = {
     // options: fruitsFromDb,
-    options: totalItemInDb,
+    options: ShowItemToAddManually,
     getOptionLabel: (option) => option.productName,
   };
-  const flatProps = {
-    // options: fruitsFromDb.map((option) => option.name),
-    options: totalItemInDb.map((option) => option.productName),
-  };
+  // const flatProps = {
+  //   // options: fruitsFromDb.map((option) => option.name),
+  //   options: ShowItemToAddManually.map((option) => option.productName),
+  // };
   function addItemToCartApi(productName, quantity) {
     let data = JSON.stringify({
       newOrderItem: {
@@ -105,7 +94,10 @@ export default function Ncart() {
       .then((response) => {
         console.log(response.data);
         setItems([...itemsArray, response.data.data.available]);
-        setItemManually(null);
+        // setItemManually(null);
+        setItemManuallyObj({
+          productName: "",
+        });
         // itemsArrayGlobal.push(obj);
         setShowSnackbar(true);
       })
@@ -116,22 +108,8 @@ export default function Ncart() {
 
   const addItemToCart = () => {
     if (itemSelectedManuallyObj.productName.trim() !== "") {
-      // const obj = {
-      //   productName: itemSelectedManuallyObj.productName,
-      //   description: ` description of ${itemSelectedManuallyObj.productName}`,
-      //   price: itemSelectedManuallyObj.price,
-      //   quantity: 1,
-      //   imgSrc: itemSelectedManuallyObj.imgSrc,
-      //   probability: itemSelectedManuallyObj.probability,
-      // };
-      // setTotalItems(totalItems + 1);
-      // setItems([...itemsArray, obj]);
-      // setItemManually(null);
-      // itemsArrayGlobal.push(obj);
-      // setShowSnackbar(true);
       addItemToCartApi(itemSelectedManuallyObj.productName, 1);
     }
-    // console.log(itemsArray);
   };
   const removeItemFromCart = (index) => {
     let data = "";
@@ -255,34 +233,12 @@ export default function Ncart() {
   };
 
   const [base64Image, setBase64Image] = useState(null);
-  const fetchImage = async (imagePath) => {
-    // console.log(imagePath);
 
-    // const imageData = imagePath.split(",")[1];
-    // setBase64Image(imageData);
-    try {
-      const response = await fetch(imagePath);
-      const blob = await response.blob();
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        // console.log(reader);
-        const base64String = reader.result;
-        const imageData = base64String.split(",")[1];
-        setBase64Image(imageData);
-      };
-
-      reader.readAsDataURL(blob);
-    } catch (error) {
-      console.error("Error fetching image:", error);
-    }
-  };
   useEffect(() => {
     handleStartCaptureClick();
 
-    // fetchImage();
   }, []);
-  if (authenticated) {
+  // if (authenticated) {
   return (
     <>
       <section className="new-cart">
@@ -313,7 +269,7 @@ export default function Ncart() {
               <Grid item sm></Grid>
 
               <Grid item>
-                <NavLink to="/nhome" className="navbar__home">
+                <NavLink to="/" className="navbar__home">
                   Home
                 </NavLink>
               </Grid>
@@ -743,7 +699,6 @@ export default function Ncart() {
               },
             }}
             onClick={() => {
-              setPaymentClicked(!isPaymentCliked);
               sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
               navigate("/cart");
               // window.location.href = "/cart";
@@ -825,44 +780,44 @@ export default function Ncart() {
       <Footer />
     </>
   );
-  } else {
-    return (
-      <>
-        <Modal open={!sessionStorage.getItem("accessToken")}>
-          <Box
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              backgroundColor: "#fff",
-              padding: "2rem",
-              height: "20rem",
-            }}
-          >
-            <Typography variant="h2" gutterBottom>
-              Please Login
-            </Typography>
-            <Typography variant="body1" color="textSecondary" fontSize="3rem">
-              You need to log in to access this page.
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={
-                () => (window.location.href = "nhome")
-                // <Navigate replace to="/nhome" />
-              }
-              style={{ marginTop: "1rem", fontSize: "1.8rem" }}
-            >
-              Go to home
-            </Button>
-          </Box>
-        </Modal>
+  // } else {
+  //   return (
+  //     <>
+  //       <Modal open={!sessionStorage.getItem("accessToken")}>
+  //         <Box
+  //           style={{
+  //             position: "absolute",
+  //             top: "50%",
+  //             left: "50%",
+  //             transform: "translate(-50%, -50%)",
+  //             backgroundColor: "#fff",
+  //             padding: "2rem",
+  //             height: "20rem",
+  //           }}
+  //         >
+  //           <Typography variant="h2" gutterBottom>
+  //             Please Login
+  //           </Typography>
+  //           <Typography variant="body1" color="textSecondary" fontSize="3rem">
+  //             You need to log in to access this page.
+  //           </Typography>
+  //           <Button
+  //             variant="contained"
+  //             onClick={
+  //               () => (window.location.href = "nhome")
+  //               // <Navigate replace to="/nhome" />
+  //             }
+  //             style={{ marginTop: "1rem", fontSize: "1.8rem" }}
+  //           >
+  //             Go to home
+  //           </Button>
+  //         </Box>
+  //       </Modal>
 
-        {/* <Navigate replace to="/nhome" /> */}
-      </>
-    );
-  }
+  //       {/* <Navigate replace to="/nhome" /> */}
+  //     </>
+  //   );
+  // }
 }
 
 const addItemModalStyle = {
@@ -892,74 +847,6 @@ const addItemModalStyle = {
   // },
 };
 
-export const cartObject = [
-  {
-    productName: "Lorem Item1",
-    description: "Lorem Item description",
-    price: 190.0,
-    quantity: 1,
-    imgSrc: apple,
-    probability: 81,
-  },
-  {
-    productName: "Lorem Item2",
-    description: "Lorem Item description",
-    price: 90.0,
-    quantity: 2,
-    imgSrc: pineApple,
-    probability: 52,
-  },
-  {
-    productName: "Lorem Item3",
-    description: "Lorem Item description",
-    price: 93.0,
-    quantity: 1,
-    imgSrc: Pomegranate,
-    probability: 58,
-  },
-  {
-    productName: "Lorem Item4",
-    description: "Lorem Item description",
-    price: 32.0,
-    quantity: 3,
-    imgSrc: mango,
-    probability: 91,
-  },
-  {
-    productName: "Lorem Item5",
-    description: "Lorem Item description",
-    price: 93.0,
-    quantity: Math.floor(Math.random() * 8) + 1,
-    imgSrc: capscicumGreen,
-    probability: 50,
-  },
-];
-// console.log(totalItemsGlobal);
-// export { totalItemsGlobal, itemsArrayGlobal };
-
-// const fruitsFromDb = [
-//   {name: 'Litchi',price: 32, imgSrc: litchi, probability: 46},
-//   { name: 'Apple', price: 20, imgSrc: apple,probability: 61},
-//   { name: 'Banana', price: 21,imgSrc: banana,probability: 54 },
-//   { name: 'Orange', price: 22, imgSrc: orange,probability: 76},
-//   { name: 'Grapes', price: 23, imgSrc: grapes,probability: 73 },
-//   { name: 'Mango', price: 24, imgSrc: mango,probability: 90 },
-//   { name: 'Pineapple', price: 25, imgSrc: pineApple, probability: 84 },
-//   { name: 'Watermelon', price: 26, imgSrc: Watermelon, probability: 81 },
-//   { name: 'Strawberry', price: 27, imgSrc: strawberry, probability: 63 },
-//   { name: 'Cherry', price: 28, imgSrc: strawberry, probability: 42 },
-//   { name: 'Blueberry', price: 29, imgSrc: grapes, probability: 81 },
-//   { name: 'Peach', price: 30, imgSrc: orange, probability: 47 },
-//   { name: 'Pear', price: 31, imgSrc: mango, probability: 90 },
-//   { name: 'Plum', price: 32, imgSrc: litchi,probability: 69 },
-//   { name: 'Kiwi', price: 33 , imgSrc: apple, probability: 49},
-//   { name: 'Lemon', price: 34, imgSrc:orange,probability: 59 },
-//   { name: 'Lime', price: 35, imgSrc: pineApple, probability: 70 },
-//   { name: 'Raspberry', price: 36 , imgSrc: grapes, probability: 84},
-//   { name: 'Blackberry', price: 37, imgSrc: grapes, probability: 66 },
-//   { name: 'Cantaloupe', price: 38, imgSrc: Watermelon, probability: 43 },
-//   { name: 'Pomegranate', price: 39, imgSrc: Pomegranate, probability: 67 },
-// ];
 
 // const ImageToBase64Converter = () => {
 

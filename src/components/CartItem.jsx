@@ -6,13 +6,12 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
-import { useRef } from "react";
+// import { useRef } from "react";
 
 const LightTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
-    // backgroundColor: theme.palette.common.white,
     backgroundColor: 'white',
     color: "rgba(0, 0, 0, 0.87)",
     fontSize: "1.2rem",

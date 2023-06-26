@@ -39,7 +39,7 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  NativeSelect,
+  FormControl,
 } from "@mui/material";
 // import PaidIcon from '@mui/icons-material/Paid';
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -574,7 +574,7 @@ export default function Admin() {
             </Table>
           </TableContainer>
           {/* <EditItemDetails/> */}
-
+          <LoginAdminModal/>
           <Footer />
         </Box>
       </Box>
@@ -785,8 +785,6 @@ function EditItemDetails(prop) {
             Item Available
           </InputLabel>
           <Select
-            // labelId="demo-simple-select-standard-label"
-            // id="demo-simple-select-standard"
             name="itemAvailable"
             label="Item Available"
             variant="filled"
@@ -811,6 +809,72 @@ function EditItemDetails(prop) {
           </Button>
         </Box>
       </Modal>
+    </>
+  );
+}
+
+
+const addLoginModalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 600,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 2,
+  display: "flex",
+  flexDirection: "column",
+  gap: "2.4rem",
+  margin: "0 auto",
+  "& .MuiTypography-root": {
+    fontSize: "2rem",
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+  "& button, & .MuiSelect-select, & input, & label": {
+    fontSize: "1.8rem",
+  },
+  '& .MuiPaper-root':{
+    '& input':{
+      display: 'none',
+    },
+    '& label':{
+      display: 'inline-block',
+      width: '50%',
+      textAlign:'center',
+      p: 2,
+      backgroundColor: '#ddd'
+    },
+    '& input:checked+label':{
+      borderTop: '2px solid blue',
+      backgroundColor: 'white'
+    }
+  }
+};
+
+function LoginAdminModal(){
+  const [openLoginAdminModal, setOpenLoginAdminModal]= useState(true);
+  return(
+    <>
+    <Modal open={openLoginAdminModal}>
+      <Box sx={addLoginModalStyle} >
+        <Typography>Please Login To Continue In Admin Page</Typography>
+        <Paper>
+          {/* <TextField></TextField> */}
+          <input type="radio" name="tabs" id="admin-login"  checked/>
+          <label for='admin-login'>Login</label>
+          <input type="radio" name="tabs" id="admin-signup" />
+          <label for='admin-signup'>Sign Up</label>
+          <FormControl>
+            <TextField
+            
+            />
+          </FormControl>
+        </Paper>
+      </Box>
+    </Modal>
     </>
   );
 }

@@ -6,6 +6,9 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import MessageIcon from "@mui/icons-material/Message";
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import EmailIcon from '@mui/icons-material/Email';
 import Button from '@mui/material/Button';
 
 export default function Footer() {
@@ -50,17 +53,20 @@ export default function Footer() {
               "& .footer__logo": {
                 padding: ".8rem",
                 textAlign: "left",
+                color: 'black',
+                fontWeight: '600'
               },
               "& .MuiTypography-root": {
                 fontSize: "1.2rem",
                 textAlign: "left",
                 fontWeight: 300,
                 lineHeight: '2.4rem',
-                wordSpacing: '.2rem'
+                wordSpacing: '.2rem',
+                // color: 'rgba(0, 0, 0, 0.6)'
               },
             }}
           >
-            <NavLink to="/" className="footer__logo">
+            <NavLink to="/#" className="footer__logo">
               <img src={logo} alt="website logo" />
               Smart Cart
             </NavLink>
@@ -69,7 +75,7 @@ export default function Footer() {
               technology, eliminating queues and enhancing convenience for a
               faster and smoother transaction process.
             </Typography>
-            <Link href="/nhome" textAlign="left">
+            <Link href="/#" textAlign="left">
               Privacy Policy
             </Link>
           </Grid>
@@ -82,18 +88,48 @@ export default function Footer() {
               flexDirection: "column",
               gap: ".8rem",
               "& .MuiTypography-root": {
-                // textAlign: "left",
+                textAlign: "left",
               },
               '& a':{
-                fontSize: '1.8rem'
+                fontSize: '1.6rem'
               }
             }}
           >
-            <Typography fontSize="1.6rem" >Useful Links</Typography>
-            <Link to="/home">Home</Link>
-            <Link href="/nhome">About</Link>
-            <Link to="/nhome">Support</Link>
-            <Link to="/nhome">Products</Link>
+            <Typography fontSize="1.8rem" fontWeight='600' >Useful Links</Typography>
+            <Link href="/#">Home</Link>
+            <Link href="/#">About</Link>
+            <Link href="/#">Support</Link>
+            <Link href="/#">Products</Link>
+          </Grid>
+          <Grid
+            item
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: ".8rem",
+              "& p": {
+                textAlign: "left",
+                fontSize: '1.4rem',
+                color: 'rgba(0, 0, 0, 0.6)'
+              },
+              '& a':{
+                fontSize: '1.4rem',
+              },
+              '& svg':{
+                fontSize: '2rem'
+              },
+              '& .MuiTypography-root':{
+                fontSize:"1.8rem",
+                 fontWeight:'600',
+                 color: 'black'
+              },
+            }}
+          >
+            <Typography>Contect Us</Typography>
+            <p>
+              <LocationOnIcon sx={{verticalAlign: 'top',}}/> <span style ={{display: 'inline-block',maxWidth: '20rem'}}> 5th Floor, Silpa Gram Craft Village, HITEC City, Hyderabad, Telangana 500081 </span></p>
+            <p><LocalPhoneIcon sx={{verticalAlign: 'top',}}/>  +1 (650) 523-5000</p>
+            <p><EmailIcon sx={{verticalAlign: 'top',}}/>  info.india@griddynamics.com</p>
           </Grid>
           <Grid
             item
@@ -143,22 +179,22 @@ export default function Footer() {
             >
               <Grid item
               >
-                <Link href="/nhome">
+                <Link href="/#">
                 <FacebookIcon />
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/nhome">
+                <Link href="/#">
                 <InstagramIcon/>
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/nhome">
+                <Link href="/#">
                 <TwitterIcon/>
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/nhome">
+                <Link href="/#">
                 <MessageIcon />
                 </Link>
               </Grid>

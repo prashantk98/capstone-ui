@@ -16,21 +16,24 @@ import {
   Stack,
   Box,
   Modal,
+  Grid,
+  AppBar,
+  Toolbar,
 } from "@mui/material";
 import { Result } from "antd";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import QrCodeIcon from '@mui/icons-material/QrCode';
-// import logo from "../images/logo.svg";
-// import { itemsArrayGlobal } from "../newcomponents/Ncart";
-import { cartObject } from "../newcomponents/Ncart";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import QrCodeIcon from "@mui/icons-material/QrCode";
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import Gpay from "../images/google_pay.svg";
 import phonePe from "../images/Phonepe.svg";
 import paytm from "../images/paytmLogo.svg";
 import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import Footer from "../newcomponents/Footer";
 const creditCard = [
   { src: visa, alt: "visa card" },
   { src: mastercard, alt: "mastercard card" },
@@ -42,92 +45,118 @@ const onlinePaymentMethod = [
   { src: paytm, alt: "Payment pay" },
 ];
 export default function Cart() {
-  const [itemsArray, setItems] = useState(!JSON.parse(sessionStorage.getItem('itemsArray'))?[]:JSON.parse(sessionStorage.getItem('itemsArray')));
+  const [itemsArray, setItems] = useState(
+    !JSON.parse(sessionStorage.getItem("itemsArray"))
+      ? []
+      : JSON.parse(sessionStorage.getItem("itemsArray"))
+  );
   // const [itemName, setItemName] = useState("");
   const [expanded, setExpanded] = useState(false);
-  const [totalItems, setTotalItems] = useState(itemsArray.length!==0?itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.quantity,0):0);
+  const [totalItems, setTotalItems] = useState(
+    itemsArray.length !== 0
+      ? itemsArray.reduce(
+          (accumulator, currentValue) => accumulator + currentValue.quantity,
+          0
+        )
+      : 0
+  );
   // const [isPaymentCliked, setPaymentClicked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(
     itemsArray.reduce(
-    (accumulator, currentValue) =>
-      accumulator + currentValue.price * currentValue.quantity,
-    0
-  )
+      (accumulator, currentValue) =>
+        accumulator + currentValue.price * currentValue.quantity,
+      0
+    )
   );
-  
+
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
-  // const [totalDiscout, setTotalDiscount] = useState(0);
 
-  // const defaultProps = {
-  //   options: itemsFromDb,
-  //   getOptionLabel: (option) => option.title,
-  // };
-  // const flatProps = {
-  //   options: itemsFromDb.map((option) => option.title),
-  // };
-  // useEffect(() => {
-  //   // Retrieve data from session storage on component mount
-  //   const storedData = JSON.parse(sessionStorage.getItem('itemsArray'));
-  //   console.log(storedData);
-  //   if (storedData) {
-  //     setItems(storedData);
-  //   }
-  // }, []);
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
-  // const addItemToCart = () => {
-  //   if (itemName.trim() !== '') {
-  //     const obj = {
-  //       title: itemName,
-  //     description: ` description of ${itemName}`,
-  //     price: Math.floor(Math.random() * 8) +9.0,
-  //     qty:  1,
-  //     }
-  //     setItems([...itemsArray, obj]);
-  //     setItemName('');
-  //   }
-
-  //   console.log(itemsArray);
-  // };
-
-  // const addInput = () => {
-  //   const newItem = {
-  //     title: "Lorem Item",
-  //     description: "Lorem Item description",
-  //     price: 90.0 + Math.floor(Math.random() * 10),
-  //     qty: Math.floor(Math.random() * 8) + 1,
-  //   };
-  //   setTotalItems(totalItems+1);
-  //   setItems((prevState) => {
-  //     // return [...prevState, itemName];
-  //     return [...prevState, newItem];
-  //   });
-  //   setItemName("");
-  //   console.log(itemsArray);
-  // };
-
-  // const removeItemFromCart = (index) => {
-  //   // const element = document.getElementById(`${index}`);
-  //   // element.remove();
-  //   setTotalItems(totalItems-1);
-  //   setItems((prevState) => {
-  //     return prevState.filter((currentValue, idx) => {
-  //       return idx !== index;
-  //     });
-  //   });
-  //   // console.log(itemsArray);
-  // };
-  // setItem(3);
   return (
     <>
+      <AppBar
+        sx={{
+          paddingLeft: "1rem",
+          paddingRight: "2rem",
+          // backgroundColor: '#af9990'
+          // background: '#afff90'
+          background: "#558044",
+          fontWeight: "500",
+        }}
+      >
+        <Toolbar>
+          <Grid
+            container
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            <Grid item>
+              <Button
+                sx={{
+                  "&": {
+                    fontSize: "1.8rem",
+                    // color: "black",
+                    color: 'white'
+                  },
+                  "& svg": {
+                    fontSize: "2rem",
+                  },
+                  '&:hover':{
+                    color: 'black'
+                  }
+                }}
+                onClick={() => {
+                  window.history.back();
+                  // navigate(-1);
+                }}
+              >
+                <KeyboardDoubleArrowLeftIcon /> Go Back
+              </Button>
+            </Grid>
+            <Grid item sm></Grid>
+
+            <Grid item>
+              <NavLink to="/nhome" className="navbar__home">
+                Home
+              </NavLink>
+            </Grid>
+            <Grid
+              item
+              sx={{
+                position: "relative",
+              }}
+            >
+              <NavLink to="/ncart" className="navbar__cart">
+                <ShoppingCart
+                  sx={{
+                    fontSize: "3rem",
+                    padding: "0 .8rem",
+                    verticalAlign: "middle",
+                  }}
+                ></ShoppingCart>
+                Cart
+              </NavLink>
+            </Grid>
+            <Grid item>
+              <NavLink to="/admin" className="navbar__admin">
+                Admin
+              </NavLink>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
       <section className="cart">
-        <h3 className="cart__title">Hello {sessionStorage.getItem('userName')}</h3>
+        <h3 className="cart__title">
+          Hello {sessionStorage.getItem("userName")}
+        </h3>
         {/* <h4 className="cart__title">Shopping cart</h4> */}
         <p className="cart__description">
-          You have {totalItems} {totalItems>1?'items':'item'} in your cart
+          You have {totalItems} {totalItems > 1 ? "items" : "item"} in your cart
         </p>
 
         <div className="cart__container">
@@ -156,15 +185,22 @@ export default function Cart() {
               {itemsArray.map((currentValue, index) => {
                 return (
                   <div className="bill-item" key={index}>
-                    <img src={'data:image/jpeg;base64,'+currentValue.imgSrc} alt={currentValue.imgSrc} />
+                    <img
+                      src={"data:image/jpeg;base64," + currentValue.imgSrc}
+                      alt={currentValue.imgSrc}
+                    />
                     <div className="bill-item__details">
-                      <h3 className="bill-item__title">{currentValue.productName}</h3>
+                      <h3 className="bill-item__title">
+                        {currentValue.productName}
+                      </h3>
                       <p className="bill-item__description">
                         Description Of {currentValue.productName}
                       </p>
                     </div>
                     <p className="bill__quantity">{currentValue.quantity}</p>
-                    <p className="bill-item__price">₹{currentValue.price*currentValue.quantity}</p>
+                    <p className="bill-item__price">
+                      ₹{currentValue.price * currentValue.quantity}
+                    </p>
                   </div>
                 );
               })}
@@ -177,7 +213,7 @@ export default function Cart() {
                   height: "30rem",
                   backgroundColor: "#F5F3EF",
                   padding: "0",
-                  marginTop: '2rem'
+                  marginTop: "2rem",
                 },
                 "& .MuiCardContent-root": {
                   padding: "0",
@@ -202,7 +238,9 @@ export default function Cart() {
                   PRICE DETAILS
                 </Typography>
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography>Price ({totalItems} {totalItems>1?'items':'item'})</Typography>
+                  <Typography>
+                    Price ({totalItems} {totalItems > 1 ? "items" : "item"})
+                  </Typography>
                   <Typography>₹{totalPrice}</Typography>
                 </Stack>
                 <Stack
@@ -212,7 +250,9 @@ export default function Cart() {
                     borderBottom: "1px dashed #e0e0e0",
                   }}
                 >
-                  <Typography>Discount (<strong>10%</strong>)</Typography>
+                  <Typography>
+                    Discount (<strong>10%</strong>)
+                  </Typography>
                   <Typography
                     sx={{
                       color: "#388e3c",
@@ -233,31 +273,33 @@ export default function Cart() {
                 </Stack>
                 <Stack>
                   <Typography sx={{ color: "#388e3c" }}>
-                    You will save ₹{(totalPrice * 0.1).toFixed(2)} on this
-                    order
+                    You will save ₹{(totalPrice * 0.1).toFixed(2)} on this order
                   </Typography>
                 </Stack>
               </CardContent>
             </Card>
-            
           </Box>
 
           <Box
             sx={{
               width: "40%",
-              backgroundColor: 'white',
-              height: '43rem'
+              backgroundColor: "white",
+              height: "43rem",
             }}
           >
             <Typography
-            sx={{
-              fontSize: '2rem',
-              color: 'black',
-              textAlign: 'center',
-              // background: 'white',
-              padding: '1rem'
-            }}
-            ><strong>Total Amount ₹ {(totalPrice-totalPrice*.1).toFixed(2)}</strong></Typography>
+              sx={{
+                fontSize: "2rem",
+                color: "black",
+                textAlign: "center",
+                // background: 'white',
+                padding: "1rem",
+              }}
+            >
+              <strong>
+                Total Amount ₹ {(totalPrice - totalPrice * 0.1).toFixed(2)}
+              </strong>
+            </Typography>
             {
               <Card
                 sx={{
@@ -285,7 +327,7 @@ export default function Cart() {
                     <AccordionSummary
                       expandIcon={
                         expanded === "panel3" ? (
-                          <RadioButtonCheckedIcon color="success"/>
+                          <RadioButtonCheckedIcon color="success" />
                         ) : (
                           <RadioButtonUncheckedIcon />
                         )
@@ -303,15 +345,15 @@ export default function Cart() {
                       >
                         Pay with Credit Card
                       </Typography>
-                      <ImageList sx={{ width: 200, }} cols={3} gap={8}>
-                        {creditCard.map((item,index) => (
+                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
+                        {creditCard.map((item, index) => (
                           <ImageListItem
                             key={index}
                             sx={{
-                              '.MuiImageListItem-img':{
-                                objectFit: 'contain',
+                              ".MuiImageListItem-img": {
+                                objectFit: "contain",
                                 // width: '4rem'
-                              }
+                              },
                             }}
                           >
                             <img src={item.src} alt={item.alt} />
@@ -321,7 +363,8 @@ export default function Cart() {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography sx={{ fontSize: "1.4rem" }}>
-                      Seamless and Secure Payments: Pay with Confidence Using Your Credit Card!
+                        Seamless and Secure Payments: Pay with Confidence Using
+                        Your Credit Card!
                       </Typography>
 
                       <Button
@@ -374,18 +417,18 @@ export default function Cart() {
                         Pay with UPI QR Code
                       </Typography>
                       <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                          {/* <ImageListItem
+                        {/* <ImageListItem
                           >
                             <img src={paytm} alt='paytm logo' />
                           </ImageListItem> */}
-                          {onlinePaymentMethod.map((item,index) => (
+                        {onlinePaymentMethod.map((item, index) => (
                           <ImageListItem
                             key={index}
                             sx={{
-                              '.MuiImageListItem-img':{
-                                objectFit: 'contain',
+                              ".MuiImageListItem-img": {
+                                objectFit: "contain",
                                 // width: '4rem'
-                              }
+                              },
                             }}
                           >
                             <img src={item.src} alt={item.alt} />
@@ -396,7 +439,8 @@ export default function Cart() {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography sx={{ fontSize: "1.4rem" }}>
-                      Seamless and Secure Payments: Pay with Confidence Using Online Payments Method!
+                        Seamless and Secure Payments: Pay with Confidence Using
+                        Online Payments Method!
                       </Typography>
 
                       <Button
@@ -410,8 +454,8 @@ export default function Cart() {
                           setOpenModal(true);
                         }}
                       >
-                        <QrCodeIcon/>
-                         Show QR
+                        <QrCodeIcon />
+                        Show QR
                       </Button>
                     </AccordionDetails>
                   </Accordion>
@@ -451,7 +495,9 @@ export default function Cart() {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography sx={{ fontSize: "1.4rem" }}>Flexible and Traditional: Experience the Ease of Cash Payments!
+                      <Typography sx={{ fontSize: "1.4rem" }}>
+                        Flexible and Traditional: Experience the Ease of Cash
+                        Payments!
                       </Typography>
                       <Button
                         variant="contained"
@@ -492,13 +538,26 @@ export default function Cart() {
               >
                 <Result
                   status="success"
-                  title={<>Paid ₹{(totalPrice-totalPrice*0.1).toFixed(2)} Successfully </>}
+                  title={
+                    <>
+                      Paid ₹{(totalPrice - totalPrice * 0.1).toFixed(2)}{" "}
+                      Successfully{" "}
+                    </>
+                  }
                   subTitle="Thanks for Shopping! Visit again"
                   extra={[
-                    <Button variant="contained" key="print Bill" >
+                    <Button variant="contained" key="print Bill">
                       Print Bill
                     </Button>,
-                    <Button variant="contained" key="Home" onClick={()=>navigate("/nhome")} color="success"> Home</Button>,
+                    <Button
+                      variant="contained"
+                      key="Home"
+                      onClick={() => navigate("/nhome")}
+                      color="success"
+                    >
+                      {" "}
+                      Home
+                    </Button>,
                   ]}
                 />
               </Box>
@@ -506,8 +565,7 @@ export default function Cart() {
           </Box>
         </div>
       </section>
+      <Footer />
     </>
   );
 }
-
-
