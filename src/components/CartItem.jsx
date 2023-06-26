@@ -107,7 +107,7 @@ export default function CartItem(prop) {
         <LightTooltip
           title={
             <Stack
-              direction={"column"}
+              direction={"row"}
               // spacing={2}
               // width={'50rem'}
               justifyContent={"space-around"}

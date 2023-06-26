@@ -34,6 +34,8 @@ import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
 import { useNavigate, NavLink } from "react-router-dom";
 import Footer from "../newcomponents/Footer";
+import { apiLocalPath } from "../rowData";
+import axios from "axios";
 const creditCard = [
   { src: visa, alt: "visa card" },
   { src: mastercard, alt: "mastercard card" },
@@ -44,6 +46,33 @@ const onlinePaymentMethod = [
   { src: phonePe, alt: "PhonePe" },
   { src: paytm, alt: "Payment pay" },
 ];
+
+function paymentAPI(price) {
+  let data = JSON.stringify({
+    orderID: sessionStorage.getItem('orderId'),
+    amount: price,
+  });
+
+  let config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: apiLocalPath+"/payments/addNew/",
+    headers: {
+      Authorization:
+        "Bearer "+sessionStorage.getItem('accessToken'),
+    },
+    data: data,
+  };
+
+  axios
+    .request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 export default function Cart() {
   const [itemsArray, setItems] = useState(
     !JSON.parse(sessionStorage.getItem("itemsArray"))
@@ -101,14 +130,14 @@ export default function Cart() {
                   "&": {
                     fontSize: "1.8rem",
                     // color: "black",
-                    color: 'white'
+                    color: "white",
                   },
                   "& svg": {
                     fontSize: "2rem",
                   },
-                  '&:hover':{
-                    color: 'black'
-                  }
+                  "&:hover": {
+                    color: "black",
+                  },
                 }}
                 onClick={() => {
                   window.history.back();
@@ -121,7 +150,7 @@ export default function Cart() {
             <Grid item sm></Grid>
 
             <Grid item>
-              <NavLink to="/nhome" className="navbar__home">
+              <NavLink to="/" className="navbar__home">
                 Home
               </NavLink>
             </Grid>
@@ -376,6 +405,8 @@ export default function Cart() {
                         }}
                         onClick={() => {
                           setOpenModal(true);
+                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                          sessionStorage.clear();
                         }}
                       >
                         Pay Now
@@ -452,6 +483,8 @@ export default function Cart() {
                         }}
                         onClick={() => {
                           setOpenModal(true);
+                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                          sessionStorage.clear();
                         }}
                       >
                         <QrCodeIcon />
@@ -508,6 +541,8 @@ export default function Cart() {
                         }}
                         onClick={() => {
                           setOpenModal(true);
+                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                          sessionStorage.clear();
                         }}
                       >
                         Pay Now
@@ -519,7 +554,7 @@ export default function Cart() {
             }
             <Modal
               open={openModal}
-              onClose={() => setOpenModal(false)}
+              // onClose={() => setOpenModal(false)}
               aria-labelledby="modal-modal-title"
               aria-describedby="modal-modal-description"
             >
@@ -552,7 +587,7 @@ export default function Cart() {
                     <Button
                       variant="contained"
                       key="Home"
-                      onClick={() => navigate("/nhome")}
+                      onClick={() => navigate("/")}
                       color="success"
                     >
                       {" "}

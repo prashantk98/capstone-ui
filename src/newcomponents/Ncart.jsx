@@ -40,9 +40,9 @@ export default function Ncart() {
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
-  const [itemsArray, setItems] = useState(()=> {
-    const storedItems = sessionStorage.getItem('itemsArray');
-   return storedItems ? JSON.parse(storedItems) : [];
+  const [itemsArray, setItems] = useState(() => {
+    const storedItems = sessionStorage.getItem("itemsArray");
+    return storedItems ? JSON.parse(storedItems) : [];
   });
   // const [itemName, setItemName] = useState();
   // const [expanded, setExpanded] = useState(false);
@@ -57,19 +57,74 @@ export default function Ncart() {
   const [authenticated, setauthenticated] = useState(
     sessionStorage.getItem("accessToken") || false
   );
-  const [orderID, setOrderId] = useState(null);
+  const [orderID, setOrderId] = useState(() => {
+    const sessionOrderId = sessionStorage.getItem("orderId");
+    return sessionOrderId ? JSON.parse(sessionOrderId) : null;
+  });
   const [unAvailable, setUnAvailable] = useState([]);
 
-
   const defaultProps = {
-    // options: fruitsFromDb,
-    options: ShowItemToAddManually,
+    options: ShowItemToAddManually.sort((a, b) => {
+      return (a.productName < b.productName) ? -1: ((a.productName > b.productName)?  1: 0)
+    }),
     getOptionLabel: (option) => option.productName,
   };
-  // const flatProps = {
-  //   // options: fruitsFromDb.map((option) => option.name),
-  //   options: ShowItemToAddManually.map((option) => option.productName),
-  // };
+
+  function resetCartApi(){
+    console.log(orderID);
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: apiLocalPath+'/orders/orderItems/'+orderID,
+      headers: { 
+        'Authorization': 'Bearer '+sessionStorage.getItem('accessToken')
+      }
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  function UpdateCartApi(base64Image) {
+    console.log(itemsArray);
+    let data = JSON.stringify({
+      image: base64Image,
+      existingOrderItems: itemsArray,
+    });
+
+    let config = {
+      method: "put",
+      maxBodyLength: Infinity,
+      url: apiLocalPath + "/orders/" + orderID,
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(response.data);
+        setShowSnackbar(true);
+        setItems([...response.data.data.available]);
+        if (response.data.data.unavailable.length !== 0) {
+          setUnAvailable([...response.data.data.unavailable]);
+          setOpenUnAvailableModal(true);
+        }
+        setUploadItemPhoto(null);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   function addItemToCartApi(productName, quantity) {
     let data = JSON.stringify({
       newOrderItem: {
@@ -93,12 +148,22 @@ export default function Ncart() {
       .request(config)
       .then((response) => {
         console.log(response.data);
-        setItems([...itemsArray, response.data.data.available]);
-        // setItemManually(null);
-        setItemManuallyObj({
-          productName: "",
-        });
-        // itemsArrayGlobal.push(obj);
+        let indexOfItem = -1;
+        for (let index = 0; index < itemsArray.length; index++) {
+          console.log(itemsArray[index].productID, productName);
+          if (itemsArray[index].productID === productName) {
+            indexOfItem = index;
+          }
+        }
+        if (indexOfItem !== -1) {
+          // console.log('This is called')
+          QuantityApi(indexOfItem, itemsArray[indexOfItem].quantity + 1);
+        } else {
+          setItems([...itemsArray, response.data.data.available]);
+        }
+        // setItemManuallyObj({
+        //   productName: "",
+        // });
         setShowSnackbar(true);
       })
       .catch((error) => {
@@ -152,6 +217,9 @@ export default function Ncart() {
       setImage(null);
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
+      videoRef.current.style.transform = "scaleX(-1)";
+      videoRef.current.style.width = "100%";
+      videoRef.current.style.height = "100%";
     } catch (err) {
       console.error(err);
     }
@@ -203,7 +271,8 @@ export default function Ncart() {
     QuantityApi(index, +itemsArray[index].quantity + 1);
   }
   function handleDecrement(index) {
-    QuantityApi(index, +itemsArray[index].quantity - 1);
+    if (itemsArray[index].quantity > 1)
+      QuantityApi(index, +itemsArray[index].quantity - 1);
   }
   function changeQuantity(index, value) {
     QuantityApi(index, +value);
@@ -235,8 +304,33 @@ export default function Ncart() {
   const [base64Image, setBase64Image] = useState(null);
 
   useEffect(() => {
-    handleStartCaptureClick();
+    let data = "";
 
+    if (sessionStorage.getItem("orderId") === null) {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: apiLocalPath + "/orders/addNew/",
+        headers: {
+          Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+        },
+        data: data,
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          // console.log(response.data);
+
+          setOrderId(response.data.data.order.pk);
+          sessionStorage.setItem('orderId', response.data.data.order.pk);
+          // sessionStorage.clear();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    handleStartCaptureClick();
   }, []);
   // if (authenticated) {
   return (
@@ -540,6 +634,7 @@ export default function Ncart() {
               }}
               onClick={() => {
                 setItems([]);
+                resetCartApi();
               }}
             >
               Reset
@@ -597,90 +692,61 @@ export default function Ncart() {
               // href="/cart"
               onClick={() => {
                 if (image) {
-                  if (!orderID) {
-                    handleStartCaptureClick();
-                    let data = JSON.stringify({
-                      image: base64Image,
-                    });
+                  // if (!orderID) {
+                  //   handleStartCaptureClick();
+                  //   let data = JSON.stringify({
+                  //     image: base64Image,
+                  //   });
 
-                    let config = {
-                      method: "post",
-                      maxBodyLength: Infinity,
-                      url: apiLocalPath + "/orders/addNew/",
-                      headers: {
-                        Authorization:
-                          "Bearer " + sessionStorage.getItem("accessToken"),
-                      },
-                      data: data,
-                    };
+                  //   let config = {
+                  //     method: "post",
+                  //     maxBodyLength: Infinity,
+                  //     url: apiLocalPath + "/orders/addNew/",
+                  //     headers: {
+                  //       Authorization:
+                  //         "Bearer " + sessionStorage.getItem("accessToken"),
+                  //     },
+                  //     data: data,
+                  //   };
 
-                    axios
-                      .request(config)
-                      .then((response) => {
-                        console.log(response.data);
-                        // console.log(response.data.data.orderItems.available.reduce((accumulator,current)=>{
-                        //   return [...accumulator, current.fields]
-                        // },[]));
+                  //   axios
+                  //     .request(config)
+                  //     .then((response) => {
+                  //       console.log(response.data);
+                  //       // console.log(response.data.data.orderItems.available.reduce((accumulator,current)=>{
+                  //       //   return [...accumulator, current.fields]
+                  //       // },[]));
 
-                        // console.log(response.data.data);
-                        setShowSnackbar(true);
-                        setOrderId(response.data.data.order.pk);
-                        console.log(response.data.data.orderItems.available);
-                        setItems([
-                          ...itemsArray,
-                          ...response.data.data.orderItems.available.reduce(
-                            (accumulator, current) => {
-                              return [...accumulator, current.fields];
-                            },
-                            []
-                          ),
-                        ]);
-                        if (response.data.data.orderItems.unavailable.length !== 0) {
-                          setUnAvailable([...response.data.data.orderItems.unavailable]);
-                          setOpenUnAvailableModal(true);
-                        }
+                  //       // console.log(response.data.data);
+                  //       setShowSnackbar(true);
+                  //       console.log(response.data.data.orderItems.available);
+                  //       setItems([
+                  //         ...itemsArray,
+                  //         ...response.data.data.orderItems.available.reduce(
+                  //           (accumulator, current) => {
+                  //             return [...accumulator, current.fields];
+                  //           },
+                  //           []
+                  //         ),
+                  //       ]);
+                  //       if (
+                  //         response.data.data.orderItems.unavailable.length !== 0
+                  //       ) {
+                  //         setUnAvailable([
+                  //           ...response.data.data.orderItems.unavailable,
+                  //         ]);
+                  //         setOpenUnAvailableModal(true);
+                  //       }
 
-                        setUploadItemPhoto(null);
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  } else {
-                    handleStartCaptureClick();
-                    console.log(itemsArray);
-                    let data = JSON.stringify({
-                      image: base64Image,
-                      existingOrderItems: itemsArray,
-                    });
-
-                    let config = {
-                      method: "put",
-                      maxBodyLength: Infinity,
-                      url: apiLocalPath + "/orders/" + orderID,
-                      headers: {
-                        Authorization:
-                          "Bearer " + sessionStorage.getItem("accessToken"),
-                        "Content-Type": "application/json",
-                      },
-                      data: data,
-                    };
-
-                    axios
-                      .request(config)
-                      .then((response) => {
-                        console.log(response.data);
-                        setShowSnackbar(true);
-                        setItems([...response.data.data.available]);
-                        if (response.data.data.unavailable.length !== 0) {
-                          setUnAvailable([...response.data.data.unavailable]);
-                          setOpenUnAvailableModal(true);
-                        }
-                        setUploadItemPhoto(null);
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  }
+                  //       setUploadItemPhoto(null);
+                  //     })
+                  //     .catch((error) => {
+                  //       console.log(error);
+                  //     });
+                  // } else {
+                  handleStartCaptureClick();
+                  UpdateCartApi(base64Image);
+                  // }
                 } else {
                 }
               }}
@@ -699,9 +765,9 @@ export default function Ncart() {
               },
             }}
             onClick={() => {
+              // sessionStorage.setItem("orderId", orderID);
               sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
               navigate("/cart");
-              // window.location.href = "/cart";
             }}
           >
             Checkout
@@ -715,7 +781,7 @@ export default function Ncart() {
             setUnAvailable(false);
           }}
         >
-          <Box sx={addItemModalStyle}>
+          <Box sx={addUnAvailableModalStyle}>
             {/* <h2></h2>
 
             
@@ -742,24 +808,34 @@ export default function Ncart() {
                   sx={{ fontSize: "5rem", color: "#ff7416" }}
                 />
               }
-              title={<>Sorry, {unAvailable.length===1?<>This item is not</>:<>These items are not</>} unavailable</>}
+              title={
+                <>
+                  Sorry,{" "}
+                  {unAvailable.length === 1 ? (
+                    <>This item is not</>
+                  ) : (
+                    <>These items are not</>
+                  )}{" "}
+                  unavailable
+                </>
+              }
               extra={
                 <>
-                  <List sx={{
-                    '& .MuiTypography-root':{
-                      fontSize: '2rem',
-                      textAlign: 'center',
-                      textTransform: 'capitalize'
-                    }
-                  }}>
-                    { unAvailable.map((currentValue, index) => {
+                  <List
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontSize: "2rem",
+                        textAlign: "center",
+                        textTransform: "capitalize",
+                        color: "orange",
+                      },
+                    }}
+                  >
+                    {unAvailable.map((currentValue, index) => {
                       return (
                         <ListItem key={index}>
                           {Object.entries(currentValue).map(([key, value]) => (
-                            <ListItemText key={key}>
-                              {value}
-                            </ListItemText>
-                            
+                            <ListItemText key={key}>{value}</ListItemText>
                           ))}
                         </ListItem>
                       );
@@ -820,7 +896,7 @@ export default function Ncart() {
   // }
 }
 
-const addItemModalStyle = {
+const addUnAvailableModalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
@@ -846,7 +922,6 @@ const addItemModalStyle = {
   //   fontSize: "1.8rem",
   // },
 };
-
 
 // const ImageToBase64Converter = () => {
 

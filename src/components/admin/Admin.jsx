@@ -574,7 +574,7 @@ export default function Admin() {
             </Table>
           </TableContainer>
           {/* <EditItemDetails/> */}
-          <LoginAdminModal/>
+          {/* <LoginAdminModal /> */}
           <Footer />
         </Box>
       </Box>
@@ -792,7 +792,6 @@ function EditItemDetails(prop) {
             onChange={(event) => setItemAvailable(event.target.value)}
             // defaultValue={itemAvailable}
           >
-            
             <MenuItem value={true} sx={{ fontSize: "1.8rem", color: "green" }}>
               Yes
             </MenuItem>
@@ -813,7 +812,6 @@ function EditItemDetails(prop) {
   );
 }
 
-
 const addLoginModalStyle = {
   position: "absolute",
   top: "50%",
@@ -830,51 +828,93 @@ const addLoginModalStyle = {
   margin: "0 auto",
   "& .MuiTypography-root": {
     fontSize: "2rem",
-    textAlign: 'center',
-    fontWeight: 'bold'
+    textAlign: "center",
+    fontWeight: "bold",
   },
-  "& button, & .MuiSelect-select, & input, & label": {
+  "& .MuiPaper-root": {
+    "& #admin-login, & #admin-signup": {
+      display: "none",
+    },
+  "& button, & label": {
     fontSize: "1.8rem",
   },
-  '& .MuiPaper-root':{
-    '& input':{
-      display: 'none',
-    },
-    '& label':{
-      display: 'inline-block',
-      width: '50%',
-      textAlign:'center',
+    "& label": {
+      display: "inline-block",
+      width: "50%",
+      textAlign: "center",
       p: 2,
-      backgroundColor: '#ddd'
+      backgroundColor: "#ddd",
     },
-    '& input:checked+label':{
-      borderTop: '2px solid blue',
-      backgroundColor: 'white'
-    }
-  }
+    "& input:checked+label": {
+      borderTop: "2px solid blue",
+      backgroundColor: "white",
+    },
+    "& #admin-login:checked+ name['admin-login']":{
+      display: 'none'
+    },
+    "& .MuiFormControl-root": {
+      m: "2rem auto",
+      width: "100%",
+      "& .MuiFormControl-root": {
+        width: "80%",
+      },
+      "& input": {
+        display: "inline-block",
+        width: "80%",
+        fontSize: "2rem",
+      },
+      "& .MuiButton-root": {
+        width: "80%",
+        m: '0 auto',
+        fontSize: '1.6rem'
+      },
+    },
+    // '& .MuiTextField-root, & .MuiInputBase-root':{
+    //   width: '100%',
+    //   display: 'inline-block',
+    //   // fontSize: '7rem'
+    // }
+  },
 };
 
-function LoginAdminModal(){
-  const [openLoginAdminModal, setOpenLoginAdminModal]= useState(true);
-  return(
+function LoginAdminModal() {
+  const [openLoginAdminModal, setOpenLoginAdminModal] = useState(true);
+  return (
     <>
-    <Modal open={openLoginAdminModal}>
-      <Box sx={addLoginModalStyle} >
-        <Typography>Please Login To Continue In Admin Page</Typography>
-        <Paper>
-          {/* <TextField></TextField> */}
-          <input type="radio" name="tabs" id="admin-login"  checked/>
-          <label for='admin-login'>Login</label>
-          <input type="radio" name="tabs" id="admin-signup" />
-          <label for='admin-signup'>Sign Up</label>
-          <FormControl>
-            <TextField
-            
-            />
-          </FormControl>
-        </Paper>
-      </Box>
-    </Modal>
+      <Modal open={openLoginAdminModal}>
+        <Box sx={addLoginModalStyle}>
+          <Typography>Please Login To Continue In Admin Page</Typography>
+          <Paper>
+            {/* <TextField></TextField> */}
+            <input type="radio" name="tabs" id="admin-login" checked readOnly />
+            <label htmlFor="admin-login">Login</label>
+            <input type="radio" name="tabs" id="admin-signup" />
+            <label htmlFor="admin-signup">Sign Up</label>
+            <FormControl name="admin-login">
+              <TextField variant="standard" placeholder="Enter Mobile number" />
+              <TextField
+                type="password"
+                variant="standard"
+                placeholder="password"
+              />
+              <Button variant="contained" type="submit">
+                Login
+              </Button>
+            </FormControl>
+            {/* <FormControl name="admin-signup">
+              <TextField variant="standard" placeholder="Enter Mobile number" />
+              <TextField
+                type="password"
+                variant="standard"
+                placeholder="password"
+              />
+              <Button variant="contained" type="submit">
+                Sign Up
+              </Button>
+            </FormControl> */}
+          </Paper>
+        </Box>
+      </Modal>
     </>
   );
 }
