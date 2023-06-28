@@ -31,15 +31,59 @@ export let LoginToken = "";
 
 export default function Nhome() {
   const navigate = useNavigate();
-  const [number, setNumber] = useState("");
-  const [name, setName] = useState("");
+  const [number, setNumber] = useState(()=>{
+      const storedNumber = sessionStorage.getItem("userMobile");
+      return storedNumber ? storedNumber : '';
+  });
+  const [name, setName] = useState(()=>{
+    const storedName = sessionStorage.getItem("userName");
+    return storedName ? storedName : '';
+}
+  );
   const [nameHelperText, setNameHelperText] = useState("");
   const [numberHelperText, setNumberHelperText] = useState("");
   const [isUserNameFound, setIsUserNameFound] = useState(false);
-  // const [itemsArray, _setItemsArray] = useState([]);
-  useEffect(()=>{
-    sessionStorage.clear();
-  },[])
+  const [accessToken, setAccessToken]= useState(null);
+
+  function userPresent(value){
+    let data = JSON.stringify({
+      phoneNumber: value,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: apiLocalPath + "/auth/user/login",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        setIsUserNameFound(true);
+        // sessionStorage.setItem(
+        //   "accessToken",
+        //   response.data.token
+        // );
+        // sessionStorage.setItem(
+        //   "userName",
+        //   response.data.username
+        // );
+        // sessionStorage.setItem("userMobile", event.target.value.trim());
+        setAccessToken(response.data.token);
+        setName(response.data.username);
+        setNumber(value);
+        // console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("user not found");
+        console.log(error);
+        setIsUserNameFound(false);
+      });
+  }
   return (
     <>
       <AppBar
@@ -69,7 +113,7 @@ export default function Nhome() {
             <Grid item sm></Grid>
 
             <Grid item>
-              <NavLink to="/nhome" className="navbar__home">
+              <NavLink to="/" className="navbar__home">
                 Home
               </NavLink>
             </Grid>
@@ -224,48 +268,14 @@ export default function Nhome() {
                 value={number}
                 onWheel={(e) => e.target.blur()}
                 onChange={(event) => {
+                  sessionStorage.clear();
                   if (
                     /^[0-9]*$/.test(event.target.value) &&
                     !event.target.value.includes("e")
                   ) {
                     if (event.target.value.trim().length === 10) {
                       // console.log(event.target.value);
-                      let data = JSON.stringify({
-                        phoneNumber: event.target.value.trim(),
-                      });
-
-                      let config = {
-                        method: "post",
-                        maxBodyLength: Infinity,
-                        url: apiLocalPath + "/auth/user/login",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        data: data,
-                      };
-
-                      axios
-                        .request(config)
-                        .then((response) => {
-                          setName(response.data.username);
-                          setIsUserNameFound(true);
-                          // Access token =
-                          sessionStorage.setItem(
-                            "accessToken",
-                            response.data.token
-                          );
-                          sessionStorage.setItem(
-                            "userName",
-                            response.data.username
-                          );
-                          console.log(response.data);
-                          sessionStorage.setItem("userMobile", number);
-                        })
-                        .catch((error) => {
-                          console.error("user not found");
-                          console.log(error);
-                          setIsUserNameFound(false);
-                        });
+                      userPresent(event.target.value.trim());
                     }
                     setNumber(event.target.value);
                     setNumberHelperText("");
@@ -287,6 +297,7 @@ export default function Nhome() {
                 onWheel={(e) => e.target.blur()}
                 value={name}
                 onChange={(event) => {
+                  sessionStorage.clear();
                   if (/^[A-Za-z]*$/.test(event.target.value)) {
                     setName(event.target.value);
                     setNameHelperText("");
@@ -371,10 +382,12 @@ export default function Nhome() {
                         fetch(apiLocalPath + "/signup/user/", requestOptions)
                           .then((response) => response.text())
                           .then((result) => {
-                            console.log(result);
-                            sessionStorage.setItem("userName", name);
-                            sessionStorage.setItem("userMobile", number);
-                            sessionStorage.setItem("accessToken", result.token);
+                            result=JSON.parse(result);
+                            // console.log(result);
+                            setAccessToken(result.token);
+                            // sessionStorage.setItem("userName", name);
+                            // sessionStorage.setItem("userMobile", number);
+                            // sessionStorage.setItem("accessToken", result.token);
                           })
                           .catch((error) => console.log("error", error));
                         navigate("/ncart");

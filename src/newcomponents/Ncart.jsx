@@ -65,29 +65,34 @@ export default function Ncart() {
 
   const defaultProps = {
     options: ShowItemToAddManually.sort((a, b) => {
-      return (a.productName < b.productName) ? -1: ((a.productName > b.productName)?  1: 0)
+      return a.productName < b.productName
+        ? -1
+        : a.productName > b.productName
+        ? 1
+        : 0;
     }),
     getOptionLabel: (option) => option.productName,
   };
 
-  function resetCartApi(){
+  function resetCartApi() {
     console.log(orderID);
     let config = {
-      method: 'get',
+      method: "get",
       maxBodyLength: Infinity,
-      url: apiLocalPath+'/orders/orderItems/'+orderID,
-      headers: { 
-        'Authorization': 'Bearer '+sessionStorage.getItem('accessToken')
-      }
+      url: apiLocalPath + "/orders/orderItems/" + orderID,
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+      },
     };
-    
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function UpdateCartApi(base64Image) {
@@ -114,6 +119,10 @@ export default function Ncart() {
         console.log(response.data);
         setShowSnackbar(true);
         setItems([...response.data.data.available]);
+        sessionStorage.setItem(
+          "itemsArray",
+          JSON.stringify([...response.data.data.available])
+        );
         if (response.data.data.unavailable.length !== 0) {
           setUnAvailable([...response.data.data.unavailable]);
           setOpenUnAvailableModal(true);
@@ -159,6 +168,10 @@ export default function Ncart() {
           // console.log('This is called')
           QuantityApi(indexOfItem, itemsArray[indexOfItem].quantity + 1);
         } else {
+          sessionStorage.setItem(
+            "itemsArray",
+            JSON.stringify([...itemsArray, response.data.data.available])
+          );
           setItems([...itemsArray, response.data.data.available]);
         }
         // setItemManuallyObj({
@@ -198,11 +211,16 @@ export default function Ncart() {
       .request(config)
       .then((response) => {
         console.log(response.data);
+        sessionStorage.setItem(
+          "itemsArray",
+          JSON.stringify(
+            itemsArray.filter((currentValue, idx) => {
+              return idx !== index;
+            })
+          )
+        );
         setItems((prevState) => {
           return prevState.filter((currentValue, idx) => {
-            if (idx === index) {
-              setTotalItems(totalItems - currentValue.quantity);
-            }
             return idx !== index;
           });
         });
@@ -261,6 +279,7 @@ export default function Ncart() {
             return true;
           });
         });
+        sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
       })
       .catch((error) => {
         console.log(error);
@@ -323,7 +342,7 @@ export default function Ncart() {
           // console.log(response.data);
 
           setOrderId(response.data.data.order.pk);
-          sessionStorage.setItem('orderId', response.data.data.order.pk);
+          sessionStorage.setItem("orderId", response.data.data.order.pk);
           // sessionStorage.clear();
         })
         .catch((error) => {

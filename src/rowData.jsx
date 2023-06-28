@@ -91,7 +91,7 @@ export const ShowItemToAddManually = [
 
 export default totalItemInDb;
 
-export const apiLocalPath='https://b7a4-61-246-192-170.ngrok-free.app';
+export const apiLocalPath='https://bf51-14-143-15-250.ngrok-free.app';
 export const objectDetectionProbability = {
   objectName: [
     "Apple",

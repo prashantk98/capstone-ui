@@ -40,6 +40,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Avatar,
 } from "@mui/material";
 // import PaidIcon from '@mui/icons-material/Paid';
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -47,11 +48,13 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import SellIcon from "@mui/icons-material/Sell";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import totalItemInDb from "../../rowData";
 import { useState } from "react";
 import CountUp from "react-countup";
 import Footer from "../../newcomponents/Footer";
+import { useRef } from "react";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -574,7 +577,7 @@ export default function Admin() {
             </Table>
           </TableContainer>
           {/* <EditItemDetails/> */}
-          {/* <LoginAdminModal /> */}
+          <LoginAdminModal />
           <Footer />
         </Box>
       </Box>
@@ -817,7 +820,7 @@ const addLoginModalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  // width: 600,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -826,18 +829,24 @@ const addLoginModalStyle = {
   flexDirection: "column",
   gap: "2.4rem",
   margin: "0 auto",
+  alignItems: "center",
+  // justifyContent: "center",
+  // width: "100%",
+  // height: "100%",
+  backgroundColor: "#eee",
   "& .MuiTypography-root": {
     fontSize: "2rem",
     textAlign: "center",
     fontWeight: "bold",
   },
   "& .MuiPaper-root": {
+    // width: '70%',
     "& #admin-login, & #admin-signup": {
       display: "none",
     },
-  "& button, & label": {
-    fontSize: "1.8rem",
-  },
+    "& button, & label": {
+      fontSize: "1.8rem",
+    },
     "& label": {
       display: "inline-block",
       width: "50%",
@@ -849,24 +858,24 @@ const addLoginModalStyle = {
       borderTop: "2px solid blue",
       backgroundColor: "white",
     },
-    "& #admin-login:checked+ name['admin-login']":{
-      display: 'none'
-    },
-    "& .MuiFormControl-root": {
-      m: "2rem auto",
+    "& .admin__login, & .admin__signup": {
       width: "100%",
+      textAlign: 'center',
       "& .MuiFormControl-root": {
-        width: "80%",
-      },
-      "& input": {
-        display: "inline-block",
-        width: "80%",
-        fontSize: "2rem",
+        width: '100%',
+        m: "2rem auto",
+        "& .MuiFormControl-root": {
+          width: "80%",
+        },
+        "& input": {
+          display: "inline-block",
+          width: "100%",
+          fontSize: "2rem",
+        },
       },
       "& .MuiButton-root": {
         width: "80%",
-        m: '0 auto',
-        fontSize: '1.6rem'
+        fontSize: "1.6rem",
       },
     },
     // '& .MuiTextField-root, & .MuiInputBase-root':{
@@ -879,39 +888,126 @@ const addLoginModalStyle = {
 
 function LoginAdminModal() {
   const [openLoginAdminModal, setOpenLoginAdminModal] = useState(true);
+  const [selectedRadio, setSelectedRadio] = useState("admin-login");
   return (
     <>
-      <Modal open={openLoginAdminModal}>
+      <Modal
+        open={openLoginAdminModal}
+        sx={{
+          justifyItems: "center",
+        }}
+      >
         <Box sx={addLoginModalStyle}>
-          <Typography>Please Login To Continue In Admin Page</Typography>
+          <Avatar sx={{ bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography>Login To Continue In Admin Page</Typography>
           <Paper>
             {/* <TextField></TextField> */}
-            <input type="radio" name="tabs" id="admin-login" checked readOnly />
+            <input
+              type="radio"
+              name="tabs"
+              id="admin-login"
+              // checked
+              onChange={(e) => {
+                console.log(e.target.value);
+                console.log("login");
+              }}
+              readOnly
+              onClick={() => setSelectedRadio("admin-login")}
+            />
+
             <label htmlFor="admin-login">Login</label>
-            <input type="radio" name="tabs" id="admin-signup" />
+            <input
+              type="radio"
+              name="tabs"
+              id="admin-signup"
+              // checked
+              onChange={(e) => {
+                console.log(e.target.value);
+                console.log("signup");
+              }}
+              onClick={() => setSelectedRadio("admin-signup")}
+            />
+
             <label htmlFor="admin-signup">Sign Up</label>
-            <FormControl name="admin-login">
-              <TextField variant="standard" placeholder="Enter Mobile number" />
-              <TextField
-                type="password"
-                variant="standard"
-                placeholder="password"
-              />
+            <form
+              action=""
+              className="admin__login"
+              style={
+                selectedRadio === "admin-signup"
+                  ? {
+                      display: "none",
+                    }
+                  : {height: '30rem'}
+              }
+            >
+              <FormControl name="admin-login">
+                <Typography>Enter Admin Login Details</Typography>
+                <TextField
+                  variant="standard"
+                  placeholder="Enter Mobile number"
+                />
+                <TextField
+                  type="password"
+                  variant="standard"
+                  placeholder="password"
+                />
+              </FormControl>
               <Button variant="contained" type="submit">
                 Login
               </Button>
-            </FormControl>
-            {/* <FormControl name="admin-signup">
-              <TextField variant="standard" placeholder="Enter Mobile number" />
-              <TextField
-                type="password"
-                variant="standard"
-                placeholder="password"
-              />
+            </form>
+            <form
+              action=""
+              className="admin__signup"
+              style={
+                selectedRadio === "admin-login"
+                  ? {
+                      display: "none",
+                    }
+                  : {height: '55rem'}
+              }
+            >
+              <FormControl name="admin-signup">
+                <Typography>Create a new account</Typography>
+                <TextField
+                  variant="standard"
+                  required
+                  name="name"
+                  placeholder="Enter Name"
+                  autoComplete="name"
+                  autoFocus
+                />
+                <TextField
+                  variant="standard"
+                  placeholder="Enter Email"
+                  required
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <TextField
+                  variant="standard"
+                  placeholder="Enter Mobile number"
+                />
+                <TextField
+                  type="password"
+                  required
+                  variant="standard"
+                  placeholder="password"
+                />
+                <TextField
+                  type="password"
+                  variant="standard"
+                  required
+                  placeholder="Confirm password"
+                />
+              </FormControl>
               <Button variant="contained" type="submit">
                 Sign Up
               </Button>
-            </FormControl> */}
+            </form>
           </Paper>
         </Box>
       </Modal>

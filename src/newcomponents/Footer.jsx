@@ -125,7 +125,7 @@ export default function Footer() {
               },
             }}
           >
-            <Typography>Contect Us</Typography>
+            <Typography>Contact Us</Typography>
             <p>
               <LocationOnIcon sx={{verticalAlign: 'top',}}/> <span style ={{display: 'inline-block',maxWidth: '20rem'}}> 5th Floor, Silpa Gram Craft Village, HITEC City, Hyderabad, Telangana 500081 </span></p>
             <p><LocalPhoneIcon sx={{verticalAlign: 'top',}}/>  +1 (650) 523-5000</p>
