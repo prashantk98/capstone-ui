@@ -30,6 +30,8 @@ import { useNavigate, Navigate } from "react-router-dom";
 import Footer from "./Footer";
 import axios from "axios";
 import { Result } from "antd";
+import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import Navbar from "../components/Navbar";
 
 // let totalItemsGlobal;
 // let itemsArrayGlobal;
@@ -44,11 +46,7 @@ export default function Ncart() {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
   });
-  // const [itemName, setItemName] = useState();
-  // const [expanded, setExpanded] = useState(false);
-  const [totalItems, setTotalItems] = useState(0);
   const [showSnackbar, setShowSnackbar] = useState(false);
-  // const [itemSelectedManually, setItemManually] = useState(null);
   const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
   const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
@@ -62,6 +60,10 @@ export default function Ncart() {
     return sessionOrderId ? JSON.parse(sessionOrderId) : null;
   });
   const [unAvailable, setUnAvailable] = useState([]);
+  const [base64Image, setBase64Image] = useState(null);
+  const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
+  const [openAddItemToCartSnackbar ,setOpenAddItemToCartSnackbar]= useState(false);
+  const [openCheckoutSnackbar ,setOpenCheckoutSnackbar]= useState(false);
 
   const defaultProps = {
     options: ShowItemToAddManually.sort((a, b) => {
@@ -187,6 +189,8 @@ export default function Ncart() {
   const addItemToCart = () => {
     if (itemSelectedManuallyObj.productName.trim() !== "") {
       addItemToCartApi(itemSelectedManuallyObj.productName, 1);
+    }else{
+      setOpenAddItemToCartSnackbar(true);
     }
   };
   const removeItemFromCart = (index) => {
@@ -228,7 +232,6 @@ export default function Ncart() {
       .catch((error) => {
         console.log(error);
       });
-    // setTotalItems(totalItems - 1);
   };
   const handleStartCaptureClick = async () => {
     try {
@@ -242,7 +245,6 @@ export default function Ncart() {
       console.error(err);
     }
   };
-  // const axios = require('axios');
 
   function QuantityApi(index, quantity) {
     console.log(itemsArray[index]);
@@ -296,21 +298,14 @@ export default function Ncart() {
   function changeQuantity(index, value) {
     QuantityApi(index, +value);
   }
-  // const handleStopCaptureClick = () => {
-  //   const stream = videoRef.current.srcObject;
-  //   if (stream) {
-  //     const tracks = stream.getTracks();
-  //     tracks.forEach((track) => track.stop());
-  //     videoRef.current.srcObject = null;
-  //   }
-  // };
-
   const handleCaptureClick = () => {
     audioRef.current.play();
     const canvas = document.createElement("canvas");
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
     const ctx = canvas.getContext("2d");
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
     ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const capturedImage = canvas.toDataURL();
     setImage(capturedImage);
@@ -319,35 +314,51 @@ export default function Ncart() {
     setBase64Image(imageData);
     // handleStopCaptureClick();
   };
+  function generateOrderId() {
+    let data = "";
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: apiLocalPath + "/orders/addNew/",
+      headers: {
+        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+      },
+      data: data,
+    };
 
-  const [base64Image, setBase64Image] = useState(null);
+    axios
+      .request(config)
+      .then((response) => {
+        // console.log(response.data);
+
+        setOrderId(response.data.data.order.pk);
+        sessionStorage.setItem("orderId", response.data.data.order.pk);
+        // sessionStorage.clear();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadItemPhoto(reader.result);
+        setImage(reader.result);
+        const base64String = reader.result;
+        // console.log(base64String);
+        const imageData = base64String.split(",")[1];
+        setBase64Image(imageData);
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = null;
+  }
 
   useEffect(() => {
-    let data = "";
-
     if (sessionStorage.getItem("orderId") === null) {
-      let config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: apiLocalPath + "/orders/addNew/",
-        headers: {
-          Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-        },
-        data: data,
-      };
-
-      axios
-        .request(config)
-        .then((response) => {
-          // console.log(response.data);
-
-          setOrderId(response.data.data.order.pk);
-          sessionStorage.setItem("orderId", response.data.data.order.pk);
-          // sessionStorage.clear();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      generateOrderId();
     }
     handleStartCaptureClick();
   }, []);
@@ -355,79 +366,7 @@ export default function Ncart() {
   return (
     <>
       <section className="new-cart">
-        <AppBar
-          sx={{
-            paddingLeft: "1rem",
-            paddingRight: "2rem",
-            // backgroundColor: '#af9990'
-            // background: '#afff90'
-            background: "#558044",
-            fontWeight: "500",
-          }}
-        >
-          <Toolbar>
-            <Grid
-              container
-              sx={{
-                alignItems: "center",
-              }}
-            >
-              <Grid item>
-                <NavLink to="/" className="navbar__logo">
-                  {/* <img src={logo} alt="website logo" /> */}
-                  {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
-                  Smart Cart
-                </NavLink>
-              </Grid>
-              <Grid item sm></Grid>
-
-              <Grid item>
-                <NavLink to="/" className="navbar__home">
-                  Home
-                </NavLink>
-              </Grid>
-              <Grid
-                item
-                sx={{
-                  position: "relative",
-                }}
-              >
-                <NavLink to="/ncart" className="navbar__cart">
-                  <Badge
-                    badgeContent={
-                      itemsArray.length === 0
-                        ? 0
-                        : itemsArray.reduce(
-                            (accumulator, currentValue) =>
-                              accumulator + currentValue.quantity,
-                            0
-                          )
-                    }
-                    sx={{
-                      "& .MuiBadge-badge": {
-                        fontSize: "2rem",
-                        margin: "0 .8rem 0",
-                      },
-                    }}
-                  >
-                    <ShoppingCart
-                      sx={{
-                        fontSize: "3rem",
-                        padding: "0 .8rem",
-                      }}
-                    ></ShoppingCart>
-                  </Badge>
-                  Cart
-                </NavLink>
-              </Grid>
-              <Grid item>
-                <NavLink to="/admin" className="navbar__admin">
-                  Admin
-                </NavLink>
-              </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
+        <Navbar/>
         <Stack
           direction="row"
           sx={{
@@ -446,6 +385,66 @@ export default function Ncart() {
                 "& .css-1eqdgzv-MuiPaper-root-MuiSnackbarContent-root": {
                   fontSize: "1.4rem",
                 },
+              }}
+            />
+            <Snackbar
+              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+              open={openSnapshotSnackbar}
+              autoHideDuration={4000}
+              onClose={()=>setOpenSnapshotSnackbar(false)}
+              message={<><InfoOutlined/> Upload image or take snapshot for add to cart</>}
+              sx={{
+                '& .MuiPaper-root ':{
+                  background: 'orange'
+                },
+                '& .MuiSnackbarContent-message':{
+                  fontSize: '1.6rem',
+                  padding: '0'
+                },
+                '& svg':{
+                  fontSize: '1.6rem',
+                  verticalAlign: 'middle'
+                }
+              }}
+            />
+            <Snackbar
+              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+              open={openCheckoutSnackbar}
+              autoHideDuration={4000}
+              onClose={()=>setOpenCheckoutSnackbar(false)}
+              message={<><InfoOutlined/> Add at least 1 item into cart</>}
+              sx={{
+                '& .MuiPaper-root ':{
+                  background: 'orange',
+                },
+                '& .MuiSnackbarContent-message':{
+                  fontSize: '1.6rem',
+                  padding: '0'
+                },
+                '& svg':{
+                  fontSize: '1.6rem',
+                  verticalAlign: 'middle'
+                }
+              }}
+            />
+            <Snackbar
+              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+              open={openAddItemToCartSnackbar}
+              autoHideDuration={4000}
+              onClose={()=>setOpenAddItemToCartSnackbar(false)}
+              message={<><InfoOutlined/> Select The Item for Add To Cart</>}
+              sx={{
+                '& .MuiPaper-root ':{
+                  background: 'orange'
+                },
+                '& .MuiSnackbarContent-message':{
+                  fontSize: '1.6rem',
+                  padding: '0'
+                },
+                '& svg':{
+                  fontSize: '1.6rem',
+                  verticalAlign: 'middle'
+                }
               }}
             />
 
@@ -663,24 +662,7 @@ export default function Ncart() {
               id="upload-button"
               accept="image/*"
               style={{ display: "none" }}
-              onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    setUploadItemPhoto(reader.result);
-                    setImage(reader.result);
-                    const base64String = reader.result;
-                    // console.log(base64String);
-                    const imageData = base64String.split(",")[1];
-                    setBase64Image(imageData);
-                  };
-                  reader.readAsDataURL(file);
-                }
-                // setUploadItemPhoto(file);
-                // console.log(uploadItemPhoto)
-                e.target.value = null;
-              }}
+              onChange={handleFileChange}
             />
             <label htmlFor="upload-button">
               <Button variant="contained" component="span">
@@ -711,62 +693,10 @@ export default function Ncart() {
               // href="/cart"
               onClick={() => {
                 if (image) {
-                  // if (!orderID) {
-                  //   handleStartCaptureClick();
-                  //   let data = JSON.stringify({
-                  //     image: base64Image,
-                  //   });
-
-                  //   let config = {
-                  //     method: "post",
-                  //     maxBodyLength: Infinity,
-                  //     url: apiLocalPath + "/orders/addNew/",
-                  //     headers: {
-                  //       Authorization:
-                  //         "Bearer " + sessionStorage.getItem("accessToken"),
-                  //     },
-                  //     data: data,
-                  //   };
-
-                  //   axios
-                  //     .request(config)
-                  //     .then((response) => {
-                  //       console.log(response.data);
-                  //       // console.log(response.data.data.orderItems.available.reduce((accumulator,current)=>{
-                  //       //   return [...accumulator, current.fields]
-                  //       // },[]));
-
-                  //       // console.log(response.data.data);
-                  //       setShowSnackbar(true);
-                  //       console.log(response.data.data.orderItems.available);
-                  //       setItems([
-                  //         ...itemsArray,
-                  //         ...response.data.data.orderItems.available.reduce(
-                  //           (accumulator, current) => {
-                  //             return [...accumulator, current.fields];
-                  //           },
-                  //           []
-                  //         ),
-                  //       ]);
-                  //       if (
-                  //         response.data.data.orderItems.unavailable.length !== 0
-                  //       ) {
-                  //         setUnAvailable([
-                  //           ...response.data.data.orderItems.unavailable,
-                  //         ]);
-                  //         setOpenUnAvailableModal(true);
-                  //       }
-
-                  //       setUploadItemPhoto(null);
-                  //     })
-                  //     .catch((error) => {
-                  //       console.log(error);
-                  //     });
-                  // } else {
                   handleStartCaptureClick();
                   UpdateCartApi(base64Image);
-                  // }
                 } else {
+                  setOpenSnapshotSnackbar(true);
                 }
               }}
             >
@@ -784,9 +714,12 @@ export default function Ncart() {
               },
             }}
             onClick={() => {
-              // sessionStorage.setItem("orderId", orderID);
+              if(itemsArray.length!==0){
               sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
               navigate("/cart");
+              }else{
+                setOpenCheckoutSnackbar(true);
+              }
             }}
           >
             Checkout

@@ -5,21 +5,20 @@ import {
   Stack,
   Typography,
   Paper,
-  Grid,
-  AppBar,
-  Toolbar,
-  Badge,
+  Snackbar,
 } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import logo from "../images/webLogo.png";
 import newHomeBg from "../images/homeBgFull.svg";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useEffect, useState } from "react";
+import { useState, forwardRef } from "react";
 import axios from "axios";
 import { apiLocalPath } from "../rowData";
 import Footer from "./Footer";
-import { useNavigate, NavLink } from "react-router-dom";
-import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
 function isMobileNumberValid(value) {
   value = value.trim();
   return value.length === 10;
@@ -27,25 +26,27 @@ function isMobileNumberValid(value) {
 function isUserNameValid(value) {
   return value.trim().length !== 0;
 }
-export let LoginToken = "";
+const Alert = forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={2} ref={ref} variant="outlined" {...props} />;
+});
 
 export default function Nhome() {
   const navigate = useNavigate();
-  const [number, setNumber] = useState(()=>{
-      const storedNumber = sessionStorage.getItem("userMobile");
-      return storedNumber ? storedNumber : '';
+  const [openContinueSnackbar, setOpenContinueSnackbar] = useState(false);
+  const [number, setNumber] = useState(() => {
+    const storedNumber = sessionStorage.getItem("userMobile");
+    return storedNumber ? storedNumber : "";
   });
-  const [name, setName] = useState(()=>{
+  const [name, setName] = useState(() => {
     const storedName = sessionStorage.getItem("userName");
-    return storedName ? storedName : '';
-}
-  );
+    return storedName ? storedName : "";
+  });
   const [nameHelperText, setNameHelperText] = useState("");
   const [numberHelperText, setNumberHelperText] = useState("");
   const [isUserNameFound, setIsUserNameFound] = useState(false);
-  const [accessToken, setAccessToken]= useState(null);
+  const [accessToken, setAccessToken] = useState(null);
 
-  function userPresent(value){
+  function userPresent(value) {
     let data = JSON.stringify({
       phoneNumber: value,
     });
@@ -64,110 +65,65 @@ export default function Nhome() {
       .request(config)
       .then((response) => {
         setIsUserNameFound(true);
-        // sessionStorage.setItem(
-        //   "accessToken",
-        //   response.data.token
-        // );
-        // sessionStorage.setItem(
-        //   "userName",
-        //   response.data.username
-        // );
-        // sessionStorage.setItem("userMobile", event.target.value.trim());
         setAccessToken(response.data.token);
         setName(response.data.username);
         setNumber(value);
-        // console.log(response.data);
       })
       .catch((error) => {
         console.error("user not found");
-        console.log(error);
         setIsUserNameFound(false);
       });
   }
+  function newUser() {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      name: name,
+      phoneNumber: number,
+      created_by: "Omesh",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(apiLocalPath + "/signup/user/", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        result = JSON.parse(result);
+        // console.log(result);
+        setAccessToken(result.token);
+        sessionStorage.setItem("userName", name);
+        sessionStorage.setItem("userMobile", number);
+        sessionStorage.setItem("accessToken", result.token);
+      })
+      .catch((error) => console.log("error", error));
+  }
+  function handleSubmit() {
+    if (isMobileNumberValid(number)) {
+      if (!isUserNameValid(name)) {
+        setNameHelperText("Please Enter user Name");
+      } else if (!isUserNameFound) {
+        // console.log(isUserNameFound);
+        newUser();
+        navigate("/ncart");
+      } else {
+        sessionStorage.setItem("userName", name);
+        sessionStorage.setItem("userMobile", number);
+        sessionStorage.setItem("accessToken", accessToken);
+        navigate("/ncart");
+      }
+    } else {
+      setOpenContinueSnackbar(true);
+    }
+  }
   return (
     <>
-      <AppBar
-        sx={{
-          paddingLeft: "1rem",
-          paddingRight: "2rem",
-          // backgroundColor: '#af9990'
-          // background: '#afff90'
-          background: "#558044",
-          fontWeight: "500",
-        }}
-      >
-        <Toolbar>
-          <Grid
-            container
-            sx={{
-              alignItems: "center",
-            }}
-          >
-            <Grid item>
-              <NavLink to="/" className="navbar__logo">
-                {/* <img src={logo} alt="website logo" /> */}
-                {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
-                Smart Cart
-              </NavLink>
-            </Grid>
-            <Grid item sm></Grid>
-
-            <Grid item>
-              <NavLink to="/" className="navbar__home">
-                Home
-              </NavLink>
-            </Grid>
-            <Grid
-              item
-              sx={{
-                position: "relative",
-              }}
-            >
-              <NavLink to="/ncart" className="navbar__cart">
-                <Badge
-                  badgeContent={0}
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      fontSize: "2rem",
-                      margin: "0 .8rem 0",
-                    },
-                  }}
-                >
-                  <ShoppingCart
-                    sx={{
-                      fontSize: "3rem",
-                      padding: "0 .8rem",
-                    }}
-                  ></ShoppingCart>
-                </Badge>
-                {/* <Typography
-                  sx={{
-                    '&':{
-                      position: 'absolute',
-                      top: '-.5rem',
-                      left: '28%',
-                      fontSize: '1.8rem',
-                      background: '#ff0000d6',
-                      borderRadius: '50%',
-                      padding: '0px 8px'
-                    }
-                    ,
-                    '.navbar__cart:hover &':{
-                      color: 'white'
-                    }
-                  }}
-                  >0</Typography> */}
-                Cart
-              </NavLink>
-            </Grid>
-            <Grid item>
-              <NavLink to="/admin" className="navbar__admin">
-                Admin
-              </NavLink>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+      <Navbar/>
       <Stack
         direction="row"
         sx={{
@@ -225,6 +181,24 @@ export default function Nhome() {
             }}
             noValidate
           >
+            <Snackbar
+              open={openContinueSnackbar}
+              autoHideDuration={4000}
+              onClose={() => setOpenContinueSnackbar(false)}
+              sx={{ alignItems: "center" }}
+            >
+              <Alert
+                onClose={() => setOpenContinueSnackbar(false)}
+                severity="info"
+                sx={{
+                  width: "100%",
+                  fontSize: "1.6rem",
+                  svg: { fontSize: "1.6rem" },
+                }}
+              >
+                Enter Details First To Continue
+              </Alert>
+            </Snackbar>
             <Typography
               sx={{
                 fontWeight: "800",
@@ -284,15 +258,12 @@ export default function Nhome() {
                   }
                 }}
                 name="mobile"
-                // error={!isMobileNumberValid(number)}
-                // helperText= {isMobileNumberValid(number)?'': numberHelperText}
                 helperText={numberHelperText}
                 required
               />
               <TextField
                 label="Name"
                 required
-                // variant="outlined"
                 variant="standard"
                 onWheel={(e) => e.target.blur()}
                 value={name}
@@ -334,6 +305,7 @@ export default function Nhome() {
                     },
                   }}
                   onClick={() => {
+                    setAccessToken("");
                     setName("");
                     setNumber("");
                   }}
@@ -357,45 +329,7 @@ export default function Nhome() {
                       backgroundColor: "var(--primary)",
                     },
                   }}
-                  onClick={() => {
-                    if (isMobileNumberValid(number)) {
-                      if (!isUserNameValid(name)) {
-                        setNameHelperText("Please Enter user Name");
-                      } else if(!isUserNameFound) {
-                      // console.log(isUserNameFound);
-                        var myHeaders = new Headers();
-                        myHeaders.append("Content-Type", "application/json");
-
-                        var raw = JSON.stringify({
-                          name: name,
-                          phoneNumber: number,
-                          created_by: "Omesh",
-                        });
-
-                        var requestOptions = {
-                          method: "POST",
-                          headers: myHeaders,
-                          body: raw,
-                          redirect: "follow",
-                        };
-
-                        fetch(apiLocalPath + "/signup/user/", requestOptions)
-                          .then((response) => response.text())
-                          .then((result) => {
-                            result=JSON.parse(result);
-                            // console.log(result);
-                            setAccessToken(result.token);
-                            // sessionStorage.setItem("userName", name);
-                            // sessionStorage.setItem("userMobile", number);
-                            // sessionStorage.setItem("accessToken", result.token);
-                          })
-                          .catch((error) => console.log("error", error));
-                        navigate("/ncart");
-                      }else{
-                        navigate("/ncart");
-                      }
-                    }
-                  }}
+                  onClick={handleSubmit}
                 >
                   Continue
                   <ArrowForwardIcon

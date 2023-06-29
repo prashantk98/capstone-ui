@@ -7,6 +7,7 @@ import Invoice from "./components/invoice/Invoice";
 import Nhome from "./newcomponents/Nhome";
 import Ncart from "./newcomponents/Ncart";
 import Bill from "./newcomponents/Bill";
+import AdminLogin from "./components/AdminLogin";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route exact path="/" element={<Nhome></Nhome>}></Route>
           <Route exact path="/ncart" element={<Ncart></Ncart>}></Route>
           <Route exact path="/bill" element={<Bill></Bill>}></Route>
+          <Route exact path="/adminlogin" element={<AdminLogin></AdminLogin>}></Route>
           {/* <Route path="/*" component={NotFound} /> */}
         </Routes>
       </BrowserRouter>

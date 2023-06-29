@@ -17,11 +17,12 @@ const LightTooltip = styled(({ className, ...props }) => (
     fontSize: "1.2rem",
     display: 'block',
     // fontSize: '14px',
-    padding: '4px 8px 1.6rem',
+    padding: '8px',
     borderRadius: '4px',
     // maxWidth: '250px',
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
     zIndex: 9999,
+    // padding: '0'
     
   },
 }));
@@ -108,50 +109,27 @@ export default function CartItem(prop) {
           title={
             <Stack
               direction={"row"}
-              // spacing={2}
-              // width={'50rem'}
               justifyContent={"space-around"}
               alignItems={"center"}
-              mt={2}
               sx={{
                 "& .MuiTypography-root": {
                   fontSize: "1.2rem",
                   position: "relative",
                 },
-                // ".MuiTypography-root:: after": {
-                //   content: "''",
-                //   position: "absolute",
-                //   top: "-.2rem",
-                //   right: "-3.2rem",
-                //   width: "3rem",
-                //   height: "3rem",
-                //   borderRadius: "50%",
-                // },
               }}
             >Product Probability %
               <Typography
                 sx={{
-                  // "&::after": {
-                  //   background: "red",
-                  // },
-                  "&": {
                     color: "red",
                     margin: "0 .4rem",
-                  },
                 }}
               >
-               
                 0-50
               </Typography>
               <Typography
                 sx={{
-                  // "&::after": {
-                  //   background: "orange",
-                  // },
-                  "&": {
                     color: "orange",
                     margin: "0 .4rem",
-                  },
                 }}
               >
                 51-70
@@ -159,14 +137,8 @@ export default function CartItem(prop) {
               <Typography
                 color={"green"}
                 sx={{
-                  // "&::after": {
-                  //   background: "green",
-                  // },
-                  "&": {
                     color: "green",
                     margin: "0 .4rem",
-                    
-                  },
                 }}
               >
                 71-100
