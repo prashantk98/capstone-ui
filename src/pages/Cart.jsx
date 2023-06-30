@@ -1,22 +1,15 @@
-import { useEffect, useState } from "react";
-// import Ncart from "../newcomponents/Ncart";
+import { useState } from "react";
 import {
   Card,
   CardContent,
   Typography,
-  Button,
   Stack,
   Box,
-  Grid,
-  AppBar,
-  Toolbar,
-  Badge,
 } from "@mui/material";
-import ShoppingCart from "@mui/icons-material/ShoppingCart";
-import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import { useNavigate, NavLink } from "react-router-dom";
-import Footer from "../newcomponents/Footer";
-import PaymentAccordion from "./PaymentAccordion";
+// import { useNavigate, NavLink } from "react-router-dom";
+import Footer from "../components/Footer";
+import PaymentAccordion from "../components/PaymentAccordion";
+import Navbar from "../components/Navbar";
 
 export default function Cart() {
   const [itemsArray, setItems] = useState(
@@ -24,7 +17,6 @@ export default function Cart() {
       ? []
       : JSON.parse(sessionStorage.getItem("itemsArray"))
   );
-  // const [itemName, setItemName] = useState("");
   const [totalItems, setTotalItems] = useState(
     itemsArray.length !== 0
       ? itemsArray.reduce(
@@ -33,7 +25,6 @@ export default function Cart() {
         )
       : 0
   );
-  // const [isPaymentCliked, setPaymentClicked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(
     itemsArray.reduce(
       (accumulator, currentValue) =>
@@ -44,100 +35,13 @@ export default function Cart() {
 
   return (
     <>
-      <AppBar
-        sx={{
-          paddingLeft: "1rem",
-          paddingRight: "2rem",
-          // backgroundColor: '#af9990'
-          // background: '#afff90'
-          background: "#558044",
-          fontWeight: "500",
-        }}
-      >
-        <Toolbar>
-          <Grid
-            container
-            sx={{
-              alignItems: "center",
-            }}
-          >
-            <Grid item>
-              <Button
-                sx={{
-                  "&": {
-                    fontSize: "1.8rem",
-                    // color: "black",
-                    color: "white",
-                  },
-                  "& svg": {
-                    fontSize: "2rem",
-                  },
-                  "&:hover": {
-                    color: "black",
-                  },
-                }}
-                onClick={() => {
-                  window.history.back();
-                  // navigate(-1);
-                }}
-              >
-                <KeyboardDoubleArrowLeftIcon /> Go Back
-              </Button>
-            </Grid>
-            <Grid item sm></Grid>
-
-            <Grid item>
-              <NavLink to="/" className="navbar__home">
-                Home
-              </NavLink>
-            </Grid>
-            <Grid
-              item
-              sx={{
-                position: "relative",
-              }}
-            >
-              <NavLink to="/ncart" className="navbar__cart">
-                <Badge
-                  badgeContent={
-                    itemsArray.length === 0
-                      ? 0
-                      : itemsArray.reduce(
-                          (accumulator, currentValue) =>
-                            accumulator + currentValue.quantity,
-                          0
-                        )
-                  }
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      fontSize: "2rem",
-                      margin: "0 .8rem 0",
-                    },
-                  }}
-                >
-                  <ShoppingCart
-                    sx={{
-                      fontSize: "3rem",
-                      padding: "0 .8rem",
-                    }}
-                  ></ShoppingCart>
-                </Badge>
-                Cart
-              </NavLink>
-            </Grid>
-            <Grid item>
-              <NavLink to="/adminlogin" className="navbar__admin">
-                Admin
-              </NavLink>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+      <Navbar
+      isBackButton={true}
+      />
       <section className="cart">
         <h3 className="cart__title">
           Hello {sessionStorage.getItem("userName")}
         </h3>
-        {/* <h4 className="cart__title">Shopping cart</h4> */}
         <p className="cart__description">
           You have {totalItems} {totalItems > 1 ? "items" : "item"} in your cart
         </p>
@@ -147,8 +51,6 @@ export default function Cart() {
             sx={{
               "&": {
                 width: "50%",
-                // background: '#f1f3f6',
-                // backgroundColor: 'white',
                 borderRadius: ".5rem",
                 // height: '50.6rem'
               },
@@ -163,8 +65,6 @@ export default function Cart() {
                 overflowY: "scroll",
               }}
             >
-              {/* <Paper>Item 1</Paper>
-          <Paper>Item 2</Paper> */}
               {itemsArray.map((currentValue, index) => {
                 return (
                   <div className="bill-item" key={index}>
@@ -193,7 +93,7 @@ export default function Cart() {
               sx={{
                 "&": {
                   width: "100%",
-                  height: "30rem",
+                  // height: "30rem",
                   backgroundColor: "#F5F3EF",
                   padding: "0",
                   marginTop: "2rem",

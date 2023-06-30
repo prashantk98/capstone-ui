@@ -22,7 +22,7 @@ import CartItem from "../components/CartItem";
 import { NavLink } from "react-router-dom";
 import { apiLocalPath, ShowItemToAddManually } from "../rowData";
 import { useNavigate, Navigate } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "../components/Footer";
 import axios from "axios";
 import { Result } from "antd";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
@@ -750,9 +750,9 @@ export default function Ncart() {
         {/* <ImageToBase64Converter/> */}
         <Modal
           open={Boolean(openUnAvailableModal)}
-          onClose={() => {
-            setUnAvailable(false);
-          }}
+          // onClose={() => {
+          //   setUnAvailable(false);
+          // }}
         >
           <Box sx={addUnAvailableModalStyle}>
             {/* <h2></h2>

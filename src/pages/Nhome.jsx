@@ -15,7 +15,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useState, forwardRef } from "react";
 import axios from "axios";
 import { apiLocalPath } from "../rowData";
-import Footer from "./Footer";
+import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 

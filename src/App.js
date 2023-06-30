@@ -1,13 +1,12 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
-import Cart from "./components/Cart";
-import Admin from "./components/Admin";
-import Invoice from "./components/invoice/Invoice";
-import Nhome from "./newcomponents/Nhome";
-import Ncart from "./newcomponents/Ncart";
-import Bill from "./newcomponents/Bill";
+import Cart from "./pages/Cart";
+import Admin from "./pages/Admin";
+import Nhome from "./pages/Nhome";
+import Ncart from "./pages/Ncart";
 import AdminLogin from "./components/AdminLogin";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -17,12 +16,10 @@ function App() {
           <Route exact path="/home" element={<Home />}> </Route>
           <Route exact path="/cart" element={<Cart />}></Route>
           <Route exact path="/admin" element={<Admin />}></Route>
-          <Route exact path="/invoice" element={<Invoice />}></Route>
-          <Route exact path="/" element={<Nhome></Nhome>}></Route>
-          <Route exact path="/ncart" element={<Ncart></Ncart>}></Route>
-          <Route exact path="/bill" element={<Bill></Bill>}></Route>
-          <Route exact path="/adminlogin" element={<AdminLogin></AdminLogin>}></Route>
-          {/* <Route path="/*" component={NotFound} /> */}
+          <Route exact path="/" element={<Nhome />}></Route>
+          <Route exact path="/ncart" element={<Ncart />}></Route>
+          <Route exact path="/admin/login" element={<AdminLogin/>}></Route>
+          <Route path="/*" element={<NotFound />}></Route>
         </Routes>
       </BrowserRouter>
 
@@ -31,10 +28,4 @@ function App() {
 }
 
 export default App;
-// function NotFound() {
-//   return <>
-//     <h1>
-//       You have landed on a page that doesn't exist
-//     </h1>
-//   </>;
-// }
+

@@ -4,7 +4,8 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import totalItemInDb from '../rowData';
+import totalItemInDb, { apiLocalPath } from '../rowData';
+import axios from 'axios';
 export default function ShowItemsTable(){
 
   const [sortConfig, setSortConfig] = useState({
@@ -40,6 +41,44 @@ export default function ShowItemsTable(){
     }
     return null;
   };
+  function totalProductApi(){
+
+    // let config = {
+    //   method: 'GET',
+    //   url: 'https://9843-14-143-15-250.ngrok-free.app/inventory/products/',
+    //   headers: { 
+    //     'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'),
+    //     'Content-Type': 'Application/json'
+    //   }
+    // };
+    // console.log(config.headers)
+    
+    // axios.request(config)
+    // .then((response) => {
+    //   console.log(JSON.stringify(response.data));
+    // })
+    // .catch((error) => {
+    //   console.log(error);
+    // });
+    //   }
+
+let config = {
+  method: 'get',
+  maxBodyLength: Infinity,
+  url: 'https://9843-14-143-15-250.ngrok-free.app/inventory/products/',
+  headers: { 
+    'Authorization': 'Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkNoaXJheXUiLCJleHAiOjE2ODgxMjIzNzcsInJvbGUiOiJhZG1pbiJ9.rUWUH93FRyyOBklzo0xtgFAST-ey-HBuDvQldlKBfMo'
+  }
+};
+
+axios.request(config)
+.then((response) => {
+  console.log(JSON.stringify(response.data));
+})
+.catch((error) => {
+  console.log(error);
+});
+  }
   return(
     <>
     <TableContainer
@@ -74,7 +113,7 @@ export default function ShowItemsTable(){
               >
                 <TableHead>
                   <TableRow>
-                    <TableCell onClick={() => sortTable("id")}>
+                    <TableCell onClick={() => {sortTable("id"); totalProductApi();}}>
                       Id{getSortIcon("id")}
                     </TableCell>
                     <TableCell>Image</TableCell>
@@ -226,9 +265,10 @@ function EditItemDetails(prop) {
     setEditedName("");
     setEditedAge("");
   };
+
   return (
     <>
-      <IconButton onClick={() => handleEdit(prop.currentItem)}>
+      <IconButton onClick={() => {handleEdit(prop.currentItem)}}>
         <EditIcon />
       </IconButton>
       <Modal open={Boolean(editableItemModal)} onClose={handleCancel}>

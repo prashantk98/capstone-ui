@@ -8,12 +8,14 @@ import PageviewIcon from "@mui/icons-material/Pageview";
 import totalItemInDb from "../rowData";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import Footer from "../newcomponents/Footer";
+import Footer from "../components/Footer";
 // import homeBg from '../../images/cart_bg.svg';
-import DrawerCustom from "./DrawerCustom";
-import ShowItemsTable from "./ShowItemsTable";
-import Stats from "./ Stats";
-import AddNewProduct from "./AddNewProduct";
+import DrawerCustom from "../components/DrawerCustom";
+import ShowItemsTable from "../components/ShowItemsTable";
+import Stats from "../components/ Stats";
+import AddNewProduct from "../components/AddNewProduct";
+
+import { Button, Result } from 'antd';
 
 const chartOption = {
   tooltip: {
@@ -78,7 +80,7 @@ const sellIcon = (
 export default function Admin() {
   const navigate = useNavigate();
   const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
-
+  const [isAuthenticated, setisAuthenticated]= useState(sessionStorage.getItem('adminAuthorization')==='true')
   const sidebarButton = [
     { title: "Dashboard", onClickFuntion: navigateToDashborad },
     { title: "Add New Item", onClickFuntion: navigateToAddNewItem },
@@ -103,7 +105,7 @@ export default function Admin() {
     console.log("add new subcategory");
   }
 
-  // if (sessionStorage.getItem("adminAuthenticated") === true) {
+  if (isAuthenticated) {
   return (
     <>
       <Box
@@ -205,7 +207,13 @@ export default function Admin() {
       </Box>
     </>
   );
-  // }else{
-  //   return <Navigate replace to="/adminlogin" />
-  // }
+  }else{
+    // console.log(isAuthenticated ,sessionStorage.getItem('adminAuthorization') );
+    return <Result
+    status="403"
+    title="Sorry, you are not authorized to access the admin page."
+    subTitle="To access the admin page login first."
+    extra={<Button type="primary" onClick={()=>navigate('login')}>Login Admin</Button>}
+  />
+  }
 }

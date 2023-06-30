@@ -13,9 +13,9 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useState } from "react";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import cartBg from "../images/homeBgFull.svg";
-import { orange } from "@mui/material/colors";
+import { apiLocalPath } from "../rowData";
 
 const addLoginModalStyle = {
   position: "absolute",
@@ -74,52 +74,55 @@ const addLoginModalStyle = {
   },
 };
 
-function userName() {
-  let data = JSON.stringify({
-    phoneNumber: "8239363793",
-    password: "Smartcheckoutadmin",
-  });
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "http://127.0.0.1:8000/auth/admin/login",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: data,
-  };
-
-  axios
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const [openLoginAdminModal, setOpenLoginAdminModal] = useState(true);
+  const [authentication, setAuthentication]= useState(false);
   const [adminDetails, setAdminDetails] = useState({
     adminUserName: "",
     adminPassword: "",
   });
   const [passwordHelperText, setPasswordHelperText] = useState("");
+
+  function loginUser(adminDetails) {
+    let data = JSON.stringify({
+      "password": adminDetails.adminPassword,
+      "username": adminDetails.adminUserName
+    });
+    
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: apiLocalPath+'/auth/admin/login',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      // console.log(response.data);
+      sessionStorage.setItem('adminAccessToken', response.data.token);
+      setAuthentication(true);
+
+    })
+    .catch((error) => {
+      console.log(error);
+      // if(error.response.status===401){
+        setPasswordHelperText(error.response.data.error);
+      // }
+    });
+  }
   function handleLoginDetails(event) {
+    loginUser(adminDetails);
     event.preventDefault();
-    if (
-      adminDetails.adminUserName === "prashant" &&
-      adminDetails.adminPassword === "Yolo"
-    ) {
-      console.log("Inside it");
-      // setOpenLoginAdminModal(false);
-      sessionStorage.setItem("adminAuthenticated", true);
+    // console.log(authentication)
+    if(sessionStorage.getItem('adminAccessToken')!==null) {
+      sessionStorage.setItem("adminAuthorization", true);
       navigate("/admin");
-    } else {
-      setPasswordHelperText("Password is incorrect");
     }
   }
   function handleReset() {
@@ -134,7 +137,7 @@ export default function AdminLogin() {
         open={openLoginAdminModal}
         sx={{
           justifyItems: "center",
-          background: `url(${cartBg})`,
+          // background: `url(${cartBg})`,
           backgroundSize: "cover",
         }}
       >
@@ -159,7 +162,9 @@ export default function AdminLogin() {
                 }
                 required
               />
-              {adminDetails.adminUserName === "prashant" && (
+              {
+              // adminDetails.adminUserName === "prashant" && 
+              (
                 <TextField
                   type="password"
                   variant="standard"
@@ -177,15 +182,17 @@ export default function AdminLogin() {
                 />
               )}
             </FormControl>
-            {passwordHelperText !== "" && (
+            {/* {passwordHelperText !== "" && ( */}
               <Link href="/admin/login">Forget Password</Link>
-            )}
+            {/* )} */}
+            {
+            // (adminDetails.adminPassword==='Yolo'&&adminDetails.adminUserName==='prashant')&&
             <Stack direction="row" width="80%" gap='10%' justifyContent="center">
-              {adminDetails.adminUserName !== "" && (
+              {/* {adminDetails.adminUserName !== "" && ( */}
                 <Button type="reset" variant="contained" onClick={handleReset}>
                   Reset
                 </Button>
-              )}
+              {/* )} */}
               <Button
                 variant="contained"
                 type="submit"
@@ -193,7 +200,7 @@ export default function AdminLogin() {
               >
                 Login
               </Button>
-            </Stack>
+            </Stack>}
           </form>
         </Paper>
         {/* </Box> */}
