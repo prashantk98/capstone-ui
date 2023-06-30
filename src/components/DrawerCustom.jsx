@@ -1,12 +1,28 @@
-import {ListItem,ListItemIcon,ListItemText,ListItemButton,IconButton} from "@mui/material";
-
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
+import {
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  IconButton,
+  Divider,
+  Toolbar,
+  Typography,
+  List,
+  Grid,
+  Badge
+} from "@mui/material";
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar from "@mui/material/AppBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AddIcon from "@mui/icons-material/Add";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { styled, useTheme } from "@mui/material/styles";
+import MenuIcon from "@mui/icons-material/Menu";
+import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import { useState } from "react";
+import Navbar from "./Navbar";
+import { NavLink } from "react-router-dom";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -35,7 +51,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -73,62 +88,145 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-export default function DrawerCustom(prop){
-
+export default function DrawerCustom(prop) {
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
-  return(
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const getDrawerOpen=()=>{
+    return open;
+  }
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+  return (
     <>
-    <Drawer variant="permanent" open={open}>
-            <DrawerHeader>
-              <IconButton onClick={prop.handleDrawerClose}>
-                {theme.direction === "rtl" ? (
-                  <ChevronRightIcon />
-                ) : (
-                  <ChevronLeftIcon />
-                )}
-              </IconButton>
-            </DrawerHeader>
-            <Divider />
-            <List
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{
+          backgroundColor: "#558044",
+          fontWeight: "500",
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{
+              marginRight: 5,
+              ...(open && { display: "none" }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Grid
+              container
               sx={{
-                ".css-10hburv-MuiTypography-root": {
-                  fontSize: "1.8rem",
-                },
-                "& svg": {
-                  fontSize: "1.8rem",
-                },
+                alignItems: "center",
               }}
             >
-              {prop.sidebarButton.map((currentElement, index) => (
-                <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                  <ListItemButton
+              <Grid item>
+                <NavLink to="/" className="navbar__logo">
+                  Smart Cart
+                </NavLink>
+              </Grid>
+              <Grid item sm></Grid>
+
+              <Grid item>
+                <NavLink to="/" className="navbar__home">
+                  Home
+                </NavLink>
+              </Grid>
+              <Grid
+                item
+                sx={{
+                  position: "relative",
+                }}
+              >
+                <NavLink to="/ncart" className="navbar__cart">
+                  <Badge
+                    badgeContent={0}
                     sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
+                      "& .MuiBadge-badge": {
+                        fontSize: "2rem",
+                        margin: "0 .8rem 0",
+                      },
+                      '& svg':{
+                        fontSize: "3.6rem",
+                        padding: "0 .8rem",
+                        }
                     }}
-                    onClick={currentElement.onClickFuntion}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {index % 2 === 0 ? <DashboardIcon /> : <AddIcon />}
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={currentElement.title}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-            <Divider />
-          </Drawer>
-          <DrawerHeader />
+                    <ShoppingCart>
+
+                    </ShoppingCart>
+                  </Badge>
+                  Cart
+                </NavLink>
+              </Grid>
+              <Grid item>
+                <NavLink to="/admin/login" className="navbar__admin">
+                  Admin
+                </NavLink>
+              </Grid>
+            </Grid>
+        </Toolbar>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "rtl" ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List
+          sx={{
+            ".css-10hburv-MuiTypography-root": {
+              fontSize: "1.8rem",
+            },
+            "& svg": {
+              fontSize: "1.8rem",
+            },
+          }}
+        >
+          {prop.sidebarButton.map((currentElement, index) => (
+            <ListItem key={index} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+                onClick={currentElement.onClickFuntion}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  {index % 2 === 0 ? <DashboardIcon /> : <AddIcon />}
+                </ListItemIcon>
+                <ListItemText
+                  primary={currentElement.title}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </Drawer>
+      <DrawerHeader />
     </>
-  )
+  );
 }

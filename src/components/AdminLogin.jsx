@@ -8,12 +8,14 @@ import {
   TextField,
   Link,
   Button,
+  Stack,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useState } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import cartBg from "../images/homeBgFull.svg";
+import { orange } from "@mui/material/colors";
 
 const addLoginModalStyle = {
   position: "absolute",
@@ -27,44 +29,47 @@ const addLoginModalStyle = {
   p: 2,
   display: "flex",
   flexDirection: "column",
-  gap: "2.4rem",
+  gap: "1.8rem",
   margin: "0 auto",
   alignItems: "center",
-  // justifyContent: "center",
-  // width: "100%",
-  // height: "100%",
-  backgroundColor: "#eee",
+  // backgroundColor: "#eee",
   "& .MuiTypography-root": {
     fontSize: "2rem",
     textAlign: "center",
     fontWeight: "bold",
   },
-  "& .MuiPaper-root": {
-    width: "70%",
-    padding: "4rem",
-    "& .admin__login": {
+  "& .admin__login": {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1.2rem",
+    alignItems: "center",
+    width: "100%",
+    textAlign: "center",
+    "& .MuiFormControl-root": {
       width: "100%",
-      textAlign: "center",
+      m: "0rem auto",
+      gap: "1.6rem",
       "& .MuiFormControl-root": {
-        width: "100%",
-        m: "2rem auto",
-        "& .MuiFormControl-root": {
-          width: "80%",
-        },
-        "& input": {
-          display: "inline-block",
-          width: "100%",
-          fontSize: "2rem",
-        },
-        "& .MuiFormHelperText-root": {
-          fontSize: "1.6rem",
-        },
-      },
-      "& .MuiButton-root": {
-        margin: "1rem 0",
         width: "80%",
+      },
+      "& input": {
+        display: "inline-block",
+        width: "100%",
+        fontSize: "2rem",
+        background: "#eee",
+        padding: '1rem'
+      },
+      "& .MuiFormHelperText-root": {
         fontSize: "1.6rem",
       },
+    },
+    "& .MuiButton-root": {
+      margin: "1rem 0",
+      width: "100%",
+      fontSize: "1.6rem",
+    },
+    "& button[type='reset']": {
+      background: "orange",
     },
   },
 };
@@ -98,27 +103,30 @@ function userName() {
 export default function AdminLogin() {
   const navigate = useNavigate();
   const [openLoginAdminModal, setOpenLoginAdminModal] = useState(true);
-  // const [adminUserName, setAdminUserName] = useState('');
-  // const [adminPassword, setAdminPassword]= useState('');
   const [adminDetails, setAdminDetails] = useState({
     adminUserName: "",
     adminPassword: "",
   });
   const [passwordHelperText, setPasswordHelperText] = useState("");
   function handleLoginDetails(event) {
-    console.log(adminDetails);
     event.preventDefault();
     if (
       adminDetails.adminUserName === "prashant" &&
       adminDetails.adminPassword === "Yolo"
     ) {
-      console.log('Inside it')
+      console.log("Inside it");
       // setOpenLoginAdminModal(false);
       sessionStorage.setItem("adminAuthenticated", true);
       navigate("/admin");
     } else {
       setPasswordHelperText("Password is incorrect");
     }
+  }
+  function handleReset() {
+    setAdminDetails({
+      adminUserName: "",
+      adminPassword: "",
+    });
   }
   return (
     <>
@@ -130,48 +138,53 @@ export default function AdminLogin() {
           backgroundSize: "cover",
         }}
       >
-        <Box sx={addLoginModalStyle}>
+        {/* <Box sx={addLoginModalStyle}> */}
+        <Paper sx={addLoginModalStyle}>
+          <Typography>Login To Continue In Admin Page</Typography>
           <Avatar sx={{ bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography>Login To Continue In Admin Page</Typography>
-          <Paper>
-            <form action="" className="admin__login">
-              <FormControl>
-                <Typography>Enter Admin Login Details</Typography>
+          <form action="" className="admin__login">
+            <FormControl>
+              <Typography>Enter Admin Login Details</Typography>
+              <TextField
+                variant="standard"
+                placeholder="Enter Admin user-name "
+                value={adminDetails.adminUserName}
+                onChange={(e) =>
+                  setAdminDetails({
+                    adminUserName: e.target.value,
+                    adminPassword: adminDetails.adminPassword,
+                  })
+                }
+                required
+              />
+              {adminDetails.adminUserName === "prashant" && (
                 <TextField
+                  type="password"
                   variant="standard"
-                  placeholder="Enter Admin user-name "
-                  value={adminDetails.adminUserName}
-                  onChange={(e) =>
+                  placeholder="Password"
+                  value={adminDetails.adminPassword}
+                  onChange={(e) => {
                     setAdminDetails({
-                      adminUserName: e.target.value,
-                      adminPassword: adminDetails.adminPassword,
-                    })
-                  }
+                      adminUserName: adminDetails.adminUserName,
+                      adminPassword: e.target.value,
+                    });
+                    setPasswordHelperText("");
+                  }}
                   required
+                  helperText={passwordHelperText}
                 />
-                {adminDetails.adminUserName === "prashant" && (
-                  <TextField
-                    type="password"
-                    variant="standard"
-                    placeholder="Password"
-                    value={adminDetails.adminPassword}
-                    onChange={(e) => {
-                      setAdminDetails({
-                        adminUserName: adminDetails.adminUserName,
-                        adminPassword: e.target.value,
-                      });
-                      setPasswordHelperText("");
-
-                    }}
-                    required
-                    helperText={passwordHelperText}
-                  />
-                )}
-              </FormControl>
-              {passwordHelperText !== "" && (
-                <Link href="/admin/login">Forget Password</Link>
+              )}
+            </FormControl>
+            {passwordHelperText !== "" && (
+              <Link href="/admin/login">Forget Password</Link>
+            )}
+            <Stack direction="row" width="80%" gap='10%' justifyContent="center">
+              {adminDetails.adminUserName !== "" && (
+                <Button type="reset" variant="contained" onClick={handleReset}>
+                  Reset
+                </Button>
               )}
               <Button
                 variant="contained"
@@ -180,9 +193,10 @@ export default function AdminLogin() {
               >
                 Login
               </Button>
-            </form>
-          </Paper>
-        </Box>
+            </Stack>
+          </form>
+        </Paper>
+        {/* </Box> */}
       </Modal>
     </>
   );

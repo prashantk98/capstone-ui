@@ -14,8 +14,6 @@ export default function Navbar(){
           sx={{
             paddingLeft: "1rem",
             paddingRight: "2rem",
-            // backgroundColor: '#af9990'
-            // background: '#afff90'
             background: "#558044",
             fontWeight: "500",
           }}
@@ -29,8 +27,6 @@ export default function Navbar(){
             >
               <Grid item>
                 <NavLink to="/" className="navbar__logo">
-                  {/* <img src={logo} alt="website logo" /> */}
-                  {/* <ShoppingCartIcon ></ShoppingCartIcon> */}
                   Smart Cart
                 </NavLink>
               </Grid>
@@ -76,7 +72,7 @@ export default function Navbar(){
                 </NavLink>
               </Grid>
               <Grid item>
-                <NavLink to="/admin/login" className="navbar__admin">
+                <NavLink to="/adminlogin" className="navbar__admin">
                   Admin
                 </NavLink>
               </Grid>

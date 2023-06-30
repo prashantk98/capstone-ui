@@ -1,79 +1,23 @@
 import { useEffect, useState } from "react";
-// import CartItem from "./CartItem";
-// import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-// import banana from "../images/Banana.svg";
 // import Ncart from "../newcomponents/Ncart";
 import {
   Card,
   CardContent,
   Typography,
-  ImageList,
-  ImageListItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Button,
   Stack,
   Box,
-  Modal,
   Grid,
   AppBar,
   Toolbar,
-  Badge
+  Badge,
 } from "@mui/material";
-import { Result } from "antd";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
-import QrCodeIcon from "@mui/icons-material/QrCode";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-import Gpay from "../images/google_pay.svg";
-import phonePe from "../images/Phonepe.svg";
-import paytm from "../images/paytmLogo.svg";
-import visa from "../images/visa.svg";
-import mastercard from "../images/mastercard.svg";
-import rupay from "../images/rupay.svg";
 import { useNavigate, NavLink } from "react-router-dom";
 import Footer from "../newcomponents/Footer";
-import { apiLocalPath } from "../rowData";
-import axios from "axios";
-const creditCard = [
-  { src: visa, alt: "visa card" },
-  { src: mastercard, alt: "mastercard card" },
-  { src: rupay, alt: "rupay card" },
-];
-const onlinePaymentMethod = [
-  { src: Gpay, alt: "Google pay" },
-  { src: phonePe, alt: "PhonePe" },
-  { src: paytm, alt: "Payment pay" },
-];
+import PaymentAccordion from "./PaymentAccordion";
 
-function paymentAPI(price) {
-  let data = JSON.stringify({
-    orderID: sessionStorage.getItem('orderId'),
-    amount: price,
-  });
-
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: apiLocalPath+"/payments/addNew/",
-    headers: {
-      Authorization:
-        "Bearer "+sessionStorage.getItem('accessToken'),
-    },
-    data: data,
-  };
-
-  axios
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
 export default function Cart() {
   const [itemsArray, setItems] = useState(
     !JSON.parse(sessionStorage.getItem("itemsArray"))
@@ -81,7 +25,6 @@ export default function Cart() {
       : JSON.parse(sessionStorage.getItem("itemsArray"))
   );
   // const [itemName, setItemName] = useState("");
-  const [expanded, setExpanded] = useState(false);
   const [totalItems, setTotalItems] = useState(
     itemsArray.length !== 0
       ? itemsArray.reduce(
@@ -98,13 +41,6 @@ export default function Cart() {
       0
     )
   );
-
-  const [openModal, setOpenModal] = useState(false);
-  const navigate = useNavigate();
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
 
   return (
     <>
@@ -162,18 +98,35 @@ export default function Cart() {
               }}
             >
               <NavLink to="/ncart" className="navbar__cart">
-                <ShoppingCart
+                <Badge
+                  badgeContent={
+                    itemsArray.length === 0
+                      ? 0
+                      : itemsArray.reduce(
+                          (accumulator, currentValue) =>
+                            accumulator + currentValue.quantity,
+                          0
+                        )
+                  }
                   sx={{
-                    fontSize: "3rem",
-                    padding: "0 .8rem",
-                    verticalAlign: "middle",
+                    "& .MuiBadge-badge": {
+                      fontSize: "2rem",
+                      margin: "0 .8rem 0",
+                    },
                   }}
-                ></ShoppingCart>
+                >
+                  <ShoppingCart
+                    sx={{
+                      fontSize: "3rem",
+                      padding: "0 .8rem",
+                    }}
+                  ></ShoppingCart>
+                </Badge>
                 Cart
               </NavLink>
             </Grid>
             <Grid item>
-              <NavLink to="/admin" className="navbar__admin">
+              <NavLink to="/adminlogin" className="navbar__admin">
                 Admin
               </NavLink>
             </Grid>
@@ -314,7 +267,7 @@ export default function Cart() {
             sx={{
               width: "40%",
               backgroundColor: "white",
-              height: "43rem",
+              // height: "46rem",
             }}
           >
             <Typography
@@ -330,274 +283,7 @@ export default function Cart() {
                 Total Amount ₹ {(totalPrice - totalPrice * 0.1).toFixed(2)}
               </strong>
             </Typography>
-            {
-              <Card
-                sx={{
-                  // width: "100%',
-                  height: "75vh",
-                  // backgroundColor: "#90efc7",
-                  background: "none",
-                  boxShadow: "unset",
-                }}
-              >
-                <CardContent>
-                  <Accordion
-                    expanded={expanded === "panel3"}
-                    onChange={handleChange("panel3")}
-                    sx={
-                      expanded === "panel3"
-                        ? {
-                            border: "2px solid #4BB543",
-                            background: "#F5F3EF",
-                            boxShadow: "1px 1px 7px green",
-                          }
-                        : { background: "#F5F3EF" }
-                    }
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        expanded === "panel3" ? (
-                          <RadioButtonCheckedIcon color="success" />
-                        ) : (
-                          <RadioButtonUncheckedIcon />
-                        )
-                      }
-                      aria-controls="panel1bh-content"
-                      id="panel1bh-header"
-                      sx={{
-                        "& .MuiAccordionSummary-content": {
-                          alignItems: "center",
-                        },
-                      }}
-                    >
-                      <Typography
-                        sx={{ width: "50%", flexShrink: 0, fontSize: "1.8rem" }}
-                      >
-                        Pay with Credit Card
-                      </Typography>
-                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                        {creditCard.map((item, index) => (
-                          <ImageListItem
-                            key={index}
-                            sx={{
-                              ".MuiImageListItem-img": {
-                                objectFit: "contain",
-                                // width: '4rem'
-                              },
-                            }}
-                          >
-                            <img src={item.src} alt={item.alt} />
-                          </ImageListItem>
-                        ))}
-                      </ImageList>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography sx={{ fontSize: "1.4rem" }}>
-                        Seamless and Secure Payments: Pay with Confidence Using
-                        Your Credit Card!
-                      </Typography>
-
-                      <Button
-                        variant="contained"
-                        sx={{
-                          width: "100%",
-                          height: "5vh",
-                          fontSize: "1.4rem",
-                        }}
-                        onClick={() => {
-                          setOpenModal(true);
-                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
-                          sessionStorage.clear();
-                        }}
-                      >
-                        Pay Now
-                      </Button>
-                    </AccordionDetails>
-                  </Accordion>
-                  <Accordion
-                    expanded={expanded === "panel1"}
-                    onChange={handleChange("panel1")}
-                    sx={
-                      expanded === "panel1"
-                        ? {
-                            border: "3px solid #4BB543",
-                            background: "#F5F3EF",
-                            boxShadow: "1px 1px 7px green",
-                          }
-                        : { background: "#F5F3EF" }
-                    }
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        expanded === "panel1" ? (
-                          <RadioButtonCheckedIcon color="success" />
-                        ) : (
-                          <RadioButtonUncheckedIcon />
-                        )
-                      }
-                      aria-controls="panel1bh-content"
-                      id="panel1bh-header"
-                      sx={{
-                        "& .MuiAccordionSummary-content": {
-                          alignItems: "center",
-                        },
-                      }}
-                    >
-                      <Typography
-                        sx={{ width: "50%", flexShrink: 0, fontSize: "1.8rem" }}
-                      >
-                        Pay with UPI QR Code
-                      </Typography>
-                      <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                        {/* <ImageListItem
-                          >
-                            <img src={paytm} alt='paytm logo' />
-                          </ImageListItem> */}
-                        {onlinePaymentMethod.map((item, index) => (
-                          <ImageListItem
-                            key={index}
-                            sx={{
-                              ".MuiImageListItem-img": {
-                                objectFit: "contain",
-                                // width: '4rem'
-                              },
-                            }}
-                          >
-                            <img src={item.src} alt={item.alt} />
-                          </ImageListItem>
-                        ))}
-                        {/* ))} */}
-                      </ImageList>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography sx={{ fontSize: "1.4rem" }}>
-                        Seamless and Secure Payments: Pay with Confidence Using
-                        Online Payments Method!
-                      </Typography>
-
-                      <Button
-                        variant="contained"
-                        sx={{
-                          width: "100%",
-                          height: "5vh",
-                          fontSize: "1.4rem",
-                        }}
-                        onClick={() => {
-                          setOpenModal(true);
-                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
-                          sessionStorage.clear();
-                        }}
-                      >
-                        <QrCodeIcon />
-                        Show QR
-                      </Button>
-                    </AccordionDetails>
-                  </Accordion>
-                  <Accordion
-                    expanded={expanded === "panel2"}
-                    onChange={handleChange("panel2")}
-                    sx={
-                      expanded === "panel2"
-                        ? {
-                            border: "2px solid #4BB543",
-                            backgroundColor: "#F5F3EF",
-                            boxShadow: "1px 1px 7px green",
-                          }
-                        : { backgroundColor: "#F5F3EF" }
-                    }
-                  >
-                    <AccordionSummary
-                      expandIcon={
-                        expanded === "panel2" ? (
-                          <RadioButtonCheckedIcon color="success" />
-                        ) : (
-                          <RadioButtonUncheckedIcon />
-                        )
-                      }
-                      aria-controls="panel2bh-content"
-                      id="panel2bh-header"
-                    >
-                      <Typography
-                        sx={{ width: "33%", flexShrink: 0, fontSize: "1.8rem" }}
-                      >
-                        Cash Payment
-                      </Typography>
-                      <Typography
-                        sx={{ color: "text.secondary", fontSize: "1.6rem" }}
-                      >
-                        Pay via Cash
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography sx={{ fontSize: "1.4rem" }}>
-                        Flexible and Traditional: Experience the Ease of Cash
-                        Payments!
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          width: "100%",
-                          height: "5vh",
-                          fontSize: "1.4rem",
-                        }}
-                        onClick={() => {
-                          setOpenModal(true);
-                          paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
-                          sessionStorage.clear();
-                        }}
-                      >
-                        Pay Now
-                      </Button>
-                    </AccordionDetails>
-                  </Accordion>
-                </CardContent>
-              </Card>
-            }
-            <Modal
-              open={openModal}
-              // onClose={() => setOpenModal(false)}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  width: 440,
-                  bgcolor: "background.paper",
-                  border: "2px solid #000",
-                  boxShadow: 24,
-                  p: 4,
-                }}
-              >
-                <Result
-                  status="success"
-                  title={
-                    <>
-                      Paid ₹{(totalPrice - totalPrice * 0.1).toFixed(2)}{" "}
-                      Successfully{" "}
-                    </>
-                  }
-                  subTitle="Thanks for Shopping! Visit again"
-                  extra={[
-                    <Button variant="contained" key="print Bill">
-                      Print Bill
-                    </Button>,
-                    <Button
-                      variant="contained"
-                      key="Home"
-                      onClick={() => navigate("/")}
-                      color="success"
-                    >
-                      {" "}
-                      Home
-                    </Button>,
-                  ]}
-                />
-              </Box>
-            </Modal>
+            <PaymentAccordion />
           </Box>
         </div>
       </section>

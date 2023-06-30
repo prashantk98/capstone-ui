@@ -2,10 +2,6 @@ import {
   Box,
   Stack,
   Button,
-  Badge,
-  Grid,
-  AppBar,
-  Toolbar,
   Snackbar,
   Autocomplete,
   TextField,
@@ -20,7 +16,6 @@ import { useEffect, useRef } from "react";
 import { useState } from "react";
 // import Navbar from "../components/Navbar";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import CloseIcon from "@mui/icons-material/Close";
 import CartItem from "../components/CartItem";
@@ -62,8 +57,9 @@ export default function Ncart() {
   const [unAvailable, setUnAvailable] = useState([]);
   const [base64Image, setBase64Image] = useState(null);
   const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
-  const [openAddItemToCartSnackbar ,setOpenAddItemToCartSnackbar]= useState(false);
-  const [openCheckoutSnackbar ,setOpenCheckoutSnackbar]= useState(false);
+  const [openAddItemToCartSnackbar, setOpenAddItemToCartSnackbar] =
+    useState(false);
+  const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
 
   const defaultProps = {
     options: ShowItemToAddManually.sort((a, b) => {
@@ -189,7 +185,7 @@ export default function Ncart() {
   const addItemToCart = () => {
     if (itemSelectedManuallyObj.productName.trim() !== "") {
       addItemToCartApi(itemSelectedManuallyObj.productName, 1);
-    }else{
+    } else {
       setOpenAddItemToCartSnackbar(true);
     }
   };
@@ -366,7 +362,7 @@ export default function Ncart() {
   return (
     <>
       <section className="new-cart">
-        <Navbar/>
+        <Navbar />
         <Stack
           direction="row"
           sx={{
@@ -388,65 +384,30 @@ export default function Ncart() {
               }}
             />
             <Snackbar
-              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               open={openSnapshotSnackbar}
               autoHideDuration={4000}
-              onClose={()=>setOpenSnapshotSnackbar(false)}
-              message={<><InfoOutlined/> Upload image or take snapshot for add to cart</>}
+              onClose={() => setOpenSnapshotSnackbar(false)}
+              message={
+                <>
+                  <InfoOutlined /> Upload image or take snapshot for add to cart
+                </>
+              }
               sx={{
-                '& .MuiPaper-root ':{
-                  background: 'orange'
+                "& .MuiPaper-root ": {
+                  background: "orange",
                 },
-                '& .MuiSnackbarContent-message':{
-                  fontSize: '1.6rem',
-                  padding: '0'
+                "& .MuiSnackbarContent-message": {
+                  fontSize: "1.6rem",
+                  padding: "0",
                 },
-                '& svg':{
-                  fontSize: '1.6rem',
-                  verticalAlign: 'middle'
-                }
+                "& svg": {
+                  fontSize: "1.6rem",
+                  verticalAlign: "middle",
+                },
               }}
             />
-            <Snackbar
-              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-              open={openCheckoutSnackbar}
-              autoHideDuration={4000}
-              onClose={()=>setOpenCheckoutSnackbar(false)}
-              message={<><InfoOutlined/> Add at least 1 item into cart</>}
-              sx={{
-                '& .MuiPaper-root ':{
-                  background: 'orange',
-                },
-                '& .MuiSnackbarContent-message':{
-                  fontSize: '1.6rem',
-                  padding: '0'
-                },
-                '& svg':{
-                  fontSize: '1.6rem',
-                  verticalAlign: 'middle'
-                }
-              }}
-            />
-            <Snackbar
-              anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
-              open={openAddItemToCartSnackbar}
-              autoHideDuration={4000}
-              onClose={()=>setOpenAddItemToCartSnackbar(false)}
-              message={<><InfoOutlined/> Select The Item for Add To Cart</>}
-              sx={{
-                '& .MuiPaper-root ':{
-                  background: 'orange'
-                },
-                '& .MuiSnackbarContent-message':{
-                  fontSize: '1.6rem',
-                  padding: '0'
-                },
-                '& svg':{
-                  fontSize: '1.6rem',
-                  verticalAlign: 'middle'
-                }
-              }}
-            />
+            
 
             {!image ? (
               <div className="home__camera-screen">
@@ -527,6 +488,34 @@ export default function Ncart() {
                 }}
               >
                 Add
+                <Snackbar
+                  open={openAddItemToCartSnackbar}
+                  autoHideDuration={4000}
+                  onClose={() => setOpenAddItemToCartSnackbar(false)}
+                  message={
+                    <>
+                      <InfoOutlined /> Select The Item for Add To Cart
+                    </>
+                  }
+                  sx={{
+                    position: "relative",
+                    "& .MuiPaper-root ": {
+                      background: "orange",
+                      position: "absolute",
+                      bottom: "-11rem",
+                      right: "35rem",
+                      justifyContent: 'center'
+                    },
+                    "& .MuiSnackbarContent-message": {
+                      fontSize: "1.2rem",
+                      padding: "0",
+                    },
+                    "& svg": {
+                      fontSize: "1.6rem",
+                      verticalAlign: "middle",
+                    },
+                  }}
+                />
               </Button>
             </div>
 
@@ -711,18 +700,50 @@ export default function Ncart() {
                 width: "50%",
                 height: "4rem",
                 fontSize: "2rem",
+                position: 'relative'
               },
             }}
             onClick={() => {
-              if(itemsArray.length!==0){
-              sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
-              navigate("/cart");
-              }else{
+              if (itemsArray.length !== 0) {
+                sessionStorage.setItem(
+                  "itemsArray",
+                  JSON.stringify(itemsArray)
+                );
+                navigate("/cart");
+              } else {
                 setOpenCheckoutSnackbar(true);
               }
             }}
           >
             Checkout
+            <Snackbar
+              open={openCheckoutSnackbar}
+              autoHideDuration={4000}
+              onClose={() => setOpenCheckoutSnackbar(false)}
+              message={
+                <>
+                  <InfoOutlined /> Add at least 1 item into cart
+                </>
+              }
+              sx={{
+                position: 'relative',
+                "& .MuiPaper-root ": {
+                  background: "orange",
+                  position: 'absolute',
+                  top: '-4rem',
+                  left: '-25rem'
+                },
+                "& .MuiSnackbarContent-message": {
+                  fontSize: "1.2rem",
+                  padding: "0",
+
+                },
+                "& svg": {
+                  fontSize: "1.6rem",
+                  verticalAlign: "middle",
+                },
+              }}
+            />
           </Button>
         </Stack>
 
