@@ -43,42 +43,23 @@ export default function ShowItemsTable(){
   };
   function totalProductApi(){
 
-    // let config = {
-    //   method: 'GET',
-    //   url: 'https://9843-14-143-15-250.ngrok-free.app/inventory/products/',
-    //   headers: { 
-    //     'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'),
-    //     'Content-Type': 'Application/json'
-    //   }
-    // };
+    let config = {
+      method: 'GET',
+      url: apiLocalPath+'/inventory/products/',
+      headers: { 
+        'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'),
+      }
+    };
     // console.log(config.headers)
     
-    // axios.request(config)
-    // .then((response) => {
-    //   console.log(JSON.stringify(response.data));
-    // })
-    // .catch((error) => {
-    //   console.log(error);
-    // });
-    //   }
-
-let config = {
-  method: 'get',
-  maxBodyLength: Infinity,
-  url: 'https://9843-14-143-15-250.ngrok-free.app/inventory/products/',
-  headers: { 
-    'Authorization': 'Token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkNoaXJheXUiLCJleHAiOjE2ODgxMjIzNzcsInJvbGUiOiJhZG1pbiJ9.rUWUH93FRyyOBklzo0xtgFAST-ey-HBuDvQldlKBfMo'
-  }
-};
-
-axios.request(config)
-.then((response) => {
-  console.log(JSON.stringify(response.data));
-})
-.catch((error) => {
-  console.log(error);
-});
-  }
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+      }
   return(
     <>
     <TableContainer

@@ -135,6 +135,28 @@ export default function Nhome() {
         <Box
           sx={{
             width: "40%",
+            "@media screen and (max-width: 1024px) and (min-width: 768px)": {
+              width: '60%',
+          },
+            "@media screen and (max-width: 768px) and (min-width: 0)": {
+                width: '100%',
+                background: `url(${newHomeBg})`,
+                backgroundSize: 'cover'
+            },
+            "@media screen and (max-width: 425px)": {
+              '& .logo__nhome':{
+                paddingTop: '8.6rem'
+              },'& .logo__nhome img':{
+                width: '3.6rem'
+              },
+              '& .logo__nhome p':{
+                fontSize: '2.4rem'
+              },
+              '& .MuiPaper-root':{
+                width: '90%'
+              }
+        },
+            
           }}
         >
           <div className="logo__nhome">
@@ -205,6 +227,10 @@ export default function Nhome() {
                 margin: "0 4.8rem 6rem",
                 fontSize: "4.4rem",
                 textTransform: "capitalize",
+                "@media screen and (max-width: 425px)": {
+                    fontSize: '3.2rem',
+                    textAlign: 'center'
+              },
               }}
             >
               welcome to Smart Cart
@@ -284,11 +310,11 @@ export default function Nhome() {
                 direction="row"
                 sx={{
                   "&": {
-                    justifyContent: "center",
+                    justifyContent: "space-evenly",
                     marginTop: "5rem",
                   },
                   "& .MuiButtonBase-root": {
-                    margin: "0 3rem",
+                    // margin: "0 3rem",
                     fontSize: "1.6rem",
                   },
                 }}
@@ -324,7 +350,7 @@ export default function Nhome() {
                   type="submit"
                   // href="/ncart"
                   sx={{
-                    margin: "0 8rem",
+                    // margin: "0 8rem",
                     "&:hover": {
                       backgroundColor: "var(--primary)",
                     },
@@ -345,9 +371,19 @@ export default function Nhome() {
         <Box
           sx={{
             width: "60%",
+            background: `url(${newHomeBg})`,
+            backgroundSize: 'cover',
+            "@media screen and (max-width: 1024px) and (min-width: 768px)": {
+              width: '40%',
+              // background: `url(${newHomeBg})`,
+              // backgroundSize: 'cover'
+          },
+            '@media screen and (max-width: 768px)': {
+              display: 'none'
+          },
           }}
         >
-          <img src={newHomeBg} alt="new home Bg" width="100%" height="100%" />
+          {/* <img src={newHomeBg} alt="new home Bg" width="100%" height="100%" /> */}
         </Box>
       </Stack>
       <Footer></Footer>
