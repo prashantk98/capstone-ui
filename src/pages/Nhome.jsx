@@ -339,7 +339,7 @@ export default function Nhome() {
                   <RestartAltIcon
                     sx={{
                       "&": {
-                        fontSize: "4rem",
+                        fontSize: "2rem",
                       },
                     }}
                   />
@@ -360,7 +360,7 @@ export default function Nhome() {
                   Continue
                   <ArrowForwardIcon
                     sx={{
-                      fontSize: "4rem",
+                      fontSize: "2.4rem",
                     }}
                   />
                 </Button>

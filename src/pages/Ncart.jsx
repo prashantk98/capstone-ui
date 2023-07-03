@@ -1,39 +1,40 @@
 import {
   Box,
   Stack,
-  Button,
-  Snackbar,
-  Autocomplete,
-  TextField,
-  Modal,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
+  // Button,
+  // Snackbar,
+  // Autocomplete,
+  // TextField,
+  // Modal,
+  // List,
+  // ListItem,
+  // ListItemText,
+  // IconButton,
   // MuiAlert
 } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 // import Navbar from "../components/Navbar";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-import CloseIcon from "@mui/icons-material/Close";
+// import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+// import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+// import CloseIcon from "@mui/icons-material/Close";
+// import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import CartItem from "../components/CartItem";
-import { NavLink } from "react-router-dom";
-import { apiLocalPath, ShowItemToAddManually } from "../rowData";
-import { useNavigate, Navigate } from "react-router-dom";
+// import { NavLink } from "react-router-dom";
+import { apiLocalPath, } from "../rowData";
 import Footer from "../components/Footer";
 import axios from "axios";
-import { Result } from "antd";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
+// import { Result } from "antd";
 import Navbar from "../components/Navbar";
+import Camera from "../components/Camera";
+import AddItemManually from "../components/AddItemManually";
+import ButtonStack from "../components/ButtonStack";
 
 // let totalItemsGlobal;
 // let itemsArrayGlobal;
 export let itemsArrayGlobal = [];
 
 export default function Ncart() {
-  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
@@ -43,7 +44,7 @@ export default function Ncart() {
   });
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
-  const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
+  // const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
     productName: "",
   });
@@ -54,24 +55,14 @@ export default function Ncart() {
     const sessionOrderId = sessionStorage.getItem("orderId");
     return sessionOrderId ? JSON.parse(sessionOrderId) : null;
   });
-  const [unAvailable, setUnAvailable] = useState([]);
+  // const [unAvailable, setUnAvailable] = useState([]);
   const [base64Image, setBase64Image] = useState(null);
-  const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
+  // const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
   const [openAddItemToCartSnackbar, setOpenAddItemToCartSnackbar] =
     useState(false);
-  const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
+  // const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
 
-  const defaultProps = {
-    options: ShowItemToAddManually.sort((a, b) => {
-      return a.productName < b.productName
-        ? -1
-        : a.productName > b.productName
-        ? 1
-        : 0;
-    }),
-    getOptionLabel: (option) => option.productName,
-  };
-
+  
   function resetCartApi() {
     console.log(orderID);
     let config = {
@@ -93,44 +84,6 @@ export default function Ncart() {
       });
   }
 
-  function UpdateCartApi(base64Image) {
-    console.log(itemsArray);
-    let data = JSON.stringify({
-      image: base64Image,
-      existingOrderItems: itemsArray,
-    });
-
-    let config = {
-      method: "put",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/orders/" + orderID,
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(response.data);
-        setShowSnackbar(true);
-        setItems([...response.data.data.available]);
-        sessionStorage.setItem(
-          "itemsArray",
-          JSON.stringify([...response.data.data.available])
-        );
-        if (response.data.data.unavailable.length !== 0) {
-          setUnAvailable([...response.data.data.unavailable]);
-          setOpenUnAvailableModal(true);
-        }
-        setUploadItemPhoto(null);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
 
   function addItemToCartApi(productName, quantity) {
     let data = JSON.stringify({
@@ -294,22 +247,6 @@ export default function Ncart() {
   function changeQuantity(index, value) {
     QuantityApi(index, +value);
   }
-  const handleCaptureClick = () => {
-    audioRef.current.play();
-    const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    const capturedImage = canvas.toDataURL();
-    setImage(capturedImage);
-
-    const imageData = capturedImage.split(",")[1];
-    setBase64Image(imageData);
-    // handleStopCaptureClick();
-  };
   function generateOrderId() {
     let data = "";
     let config = {
@@ -335,22 +272,6 @@ export default function Ncart() {
         console.log(error);
       });
   }
-  function handleFileChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUploadItemPhoto(reader.result);
-        setImage(reader.result);
-        const base64String = reader.result;
-        // console.log(base64String);
-        const imageData = base64String.split(",")[1];
-        setBase64Image(imageData);
-      };
-      reader.readAsDataURL(file);
-    }
-    e.target.value = null;
-  }
 
   useEffect(() => {
     if (sessionStorage.getItem("orderId") === null) {
@@ -371,7 +292,7 @@ export default function Ncart() {
             height: "65rem",
           }}
         >
-          <Box>
+          {/* <Box>
             <Snackbar
               open={showSnackbar}
               autoHideDuration={1000}
@@ -434,7 +355,14 @@ export default function Ncart() {
               </figure>
             )}
             <audio ref={audioRef} src={require("../shutter.wav")} />
-          </Box>
+          </Box> */}
+          <Camera
+            image={image}
+            videoRef={videoRef}
+            audioRef={audioRef}
+            setBase64Image={setBase64Image}
+            setImage={setImage}
+          />
           <Box
             sx={{
               "&": {
@@ -449,75 +377,10 @@ export default function Ncart() {
               },
             }}
           >
-            <div className="cart__input">
-              <Autocomplete
-                {...defaultProps}
-                onChange={(event, newValue) => {
-                  setItemManuallyObj(newValue);
-                }}
-                autoHighlight
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Add item manually"
-                    variant="standard"
-                    sx={{
-                      "&": {
-                        // backgroundColor: 'white',
-                        // height:'3rem'
-                      },
-                      "& label": {
-                        fontSize: "1.8rem",
-                      },
-                    }}
-                  />
-                )}
-                sx={{
-                  width: "40%",
-                }}
-              />
-
-              <Button
-                variant="contained"
-                startIcon={<AddCircleOutlineIcon />}
-                onClick={addItemToCart}
-                sx={{
-                  "&, & svg": {
-                    fontSize: "1.8rem",
-                  },
-                }}
-              >
-                Add
-                <Snackbar
-                  open={openAddItemToCartSnackbar}
-                  autoHideDuration={4000}
-                  onClose={() => setOpenAddItemToCartSnackbar(false)}
-                  message={
-                    <>
-                      <InfoOutlined /> Select The Item for Add To Cart
-                    </>
-                  }
-                  sx={{
-                    position: "relative",
-                    "& .MuiPaper-root ": {
-                      background: "orange",
-                      position: "absolute",
-                      bottom: "-11rem",
-                      right: "35rem",
-                      justifyContent: 'center'
-                    },
-                    "& .MuiSnackbarContent-message": {
-                      fontSize: "1.2rem",
-                      padding: "0",
-                    },
-                    "& svg": {
-                      fontSize: "1.6rem",
-                      verticalAlign: "middle",
-                    },
-                  }}
-                />
-              </Button>
-            </div>
+            <AddItemManually
+              setItemManuallyObj={setItemManuallyObj}
+              addItemToCart={addItemToCart}
+            />
 
             <Stack
               sx={{
@@ -539,292 +402,25 @@ export default function Ncart() {
                 );
               })}
             </Stack>
-            {/* production Detection probability */}
-            {/* <Stack
-              direction={"row"}
-              // spacing={2}
-              justifyContent={"space-around"}
-              mt={2}
-              sx={{
-                "& .MuiTypography-root": {
-                  fontSize: "1.8rem",
-                  // width: "10%",
-                  position: "relative",
-                  // alignItems:'center'
-                  // display: 'block'
-                },
-                ".MuiTypography-root:: after": {
-                  content: "''",
-                  position: "absolute",
-                  top: "-.2rem",
-                  right: "-3.2rem",
-                  width: "3rem",
-                  height: "3rem",
-                  borderRadius: "50%",
-                },
-              }}
-            >
-              <Typography>Product Detection Probability</Typography>
-              <Typography
-                sx={{
-                  "&": {
-                    position: "relative",
-                  },
-                  "&::after": {
-                    background: "red",
-                  },
-                }}
-              >
-                0-50%:-
-              </Typography>
-              <Typography
-                sx={{
-                  "&::after": {
-                    background: "orange",
-                  },
-                }}
-              >
-                51-70%:-
-              </Typography>
-              <Typography
-                sx={{
-                  "&::after": {
-                    background: "green",
-                  },
-                }}
-              >
-                71-100%:-{" "}
-              </Typography>
-            </Stack> */}
           </Box>
         </Stack>
-        <Stack
-          direction="row"
-          sx={{
-            "&": {
-              margin: "0 4rem",
-              alignItems: "center",
-              mb: "1.4rem",
-            },
-          }}
-        >
-          <Stack
-            direction="row"
-            spacing={5}
-            sx={{
-              "&": {
-                // m: "2rem 0 0",
-                width: "50%",
-                // padding: "0 0 0 1rem",
-                justifyContent: "space-around",
-                alignItems: "center",
-              },
-              ".css-1jspvjo-MuiStack-root>:not(style)+:not(style)": {
-                marginLeft: "0px",
-              },
-              "& .MuiButton-root": {
-                fontSize: "1.4rem",
-              },
-            }}
-          >
-            <Button
-              variant="contained"
-              // color="orange"
-              type="reset"
-              sx={{
-                "&": {
-                  backgroundColor: "orange",
-                },
-                "&:hover": {
-                  backgroundColor: "#ff7300",
-                },
-              }}
-              onClick={() => {
-                setItems([]);
-                resetCartApi();
-              }}
-            >
-              Reset
-            </Button>
-            <input
-              type="file"
-              id="upload-button"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-            />
-            <label htmlFor="upload-button">
-              <Button variant="contained" component="span">
-                Upload Image
-              </Button>
-            </label>
-            {image !== null ? (
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleStartCaptureClick}
-              >
-                {image ? "Restart camera" : "Start Camera"}
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={() => {
-                  handleCaptureClick();
-                }}
-              >
-                Take snapshot
-              </Button>
-            )}
-            <Button
-              variant="contained"
-              color="success"
-              // href="/cart"
-              onClick={() => {
-                if (image) {
-                  handleStartCaptureClick();
-                  UpdateCartApi(base64Image);
-                } else {
-                  setOpenSnapshotSnackbar(true);
-                }
-              }}
-            >
-              Add to cart
-            </Button>
-          </Stack>
-          <Button
-            variant="contained"
-            // color="primar"
-            sx={{
-              "&": {
-                width: "50%",
-                height: "4rem",
-                fontSize: "2rem",
-                position: 'relative'
-              },
-            }}
-            onClick={() => {
-              if (itemsArray.length !== 0) {
-                sessionStorage.setItem(
-                  "itemsArray",
-                  JSON.stringify(itemsArray)
-                );
-                navigate("/cart");
-              } else {
-                setOpenCheckoutSnackbar(true);
-              }
-            }}
-          >
-            Checkout
-            <Snackbar
-              open={openCheckoutSnackbar}
-              autoHideDuration={4000}
-              onClose={() => setOpenCheckoutSnackbar(false)}
-              message={
-                <>
-                  <InfoOutlined /> Add at least 1 item into cart
-                </>
-              }
-              sx={{
-                position: 'relative',
-                "& .MuiPaper-root ": {
-                  background: "orange",
-                  position: 'absolute',
-                  top: '-4rem',
-                  left: '-25rem'
-                },
-                "& .MuiSnackbarContent-message": {
-                  fontSize: "1.2rem",
-                  padding: "0",
-
-                },
-                "& svg": {
-                  fontSize: "1.6rem",
-                  verticalAlign: "middle",
-                },
-              }}
-            />
-          </Button>
-        </Stack>
+        <ButtonStack
+          image={image}
+          setImage={setImage}
+          setBase64Image={setBase64Image}
+          setUploadItemPhoto={setUploadItemPhoto}
+          itemsArray={itemsArray}
+          videoRef={videoRef}
+          audioRef={audioRef}
+          setShowSnackbar={setShowSnackbar}
+          setItem={setItems}
+          handleStartCaptureClick={handleStartCaptureClick}
+          resetCartApi={resetCartApi}
+          base64Image={base64Image}
+          orderID={orderID}
+        />
 
         {/* <ImageToBase64Converter/> */}
-        <Modal
-          open={Boolean(openUnAvailableModal)}
-          // onClose={() => {
-          //   setUnAvailable(false);
-          // }}
-        >
-          <Box sx={addUnAvailableModalStyle}>
-            {/* <h2></h2>
-
-            
-             */}
-            <IconButton
-              onClick={(e) => setOpenUnAvailableModal(false)}
-              sx={{
-                position: "absolute",
-                right: "0",
-                top: "0",
-                "&: hover": {
-                  color: "red",
-                },
-                "& svg": {
-                  fontSize: "2.4rem",
-                },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Result
-              icon={
-                <SentimentVeryDissatisfiedIcon
-                  sx={{ fontSize: "5rem", color: "#ff7416" }}
-                />
-              }
-              title={
-                <>
-                  Sorry,{" "}
-                  {unAvailable.length === 1 ? (
-                    <>This item is not</>
-                  ) : (
-                    <>These items are not</>
-                  )}{" "}
-                  unavailable
-                </>
-              }
-              extra={
-                <>
-                  <List
-                    sx={{
-                      "& .MuiTypography-root": {
-                        fontSize: "2rem",
-                        textAlign: "center",
-                        textTransform: "capitalize",
-                        color: "orange",
-                      },
-                    }}
-                  >
-                    {unAvailable.map((currentValue, index) => {
-                      return (
-                        <ListItem key={index}>
-                          {Object.entries(currentValue).map(([key, value]) => (
-                            <ListItemText key={key}>{value}</ListItemText>
-                          ))}
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </>
-              }
-            />
-            {/* <Button
-              type="primary"
-              onClick={() => setOpenUnAvailableModal(false)}
-            >
-              Close It
-            </Button> */}
-          </Box>
-        </Modal>
       </section>
       <Footer />
     </>
@@ -868,54 +464,3 @@ export default function Ncart() {
   //   );
   // }
 }
-
-const addUnAvailableModalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 600,
-  bgcolor: "background.paper",
-  // border: "2px solid #000",
-  boxShadow: 24,
-  // p: 4,
-  display: "flex",
-  flexDirection: "column",
-  gap: "2.4rem",
-  margin: "0 auto",
-  fontSize: "1.8rem",
-  textAlign: "center",
-  "& .MuiButton-root": {
-    fontSize: "1.4rem",
-  },
-  "& .ant-result": {
-    // padding: 0
-  },
-  // "& button, & .MuiSelect-select, & input, & label": {
-  //   fontSize: "1.8rem",
-  // },
-};
-
-// const ImageToBase64Converter = () => {
-
-// const handleImageUpload = (event) => {
-//   const file = event.target.files[0];
-//   console.log(file);
-//   if (file) {
-//     const reader = new FileReader();
-//     reader.onloadend = () => {
-//       const base64String = reader.result;
-//       console.log(base64String);
-//     };
-//     reader.readAsDataURL(file);
-//   }
-// };
-// console.log(handleImageUpload(apples));
-
-//   return (
-//     <div>
-//       <h1>Image to Base64 Conversion</h1>
-//       <input type="file" accept="image/*" onChange={handleImageUpload} />
-//     </div>
-//   );
-// };
