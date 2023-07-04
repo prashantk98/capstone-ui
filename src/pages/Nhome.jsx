@@ -334,6 +334,7 @@ export default function Nhome() {
                     setAccessToken("");
                     setName("");
                     setNumber("");
+                    sessionStorage.clear();
                   }}
                 >
                   <RestartAltIcon

@@ -6,7 +6,16 @@ import { Box,Snackbar, } from '@mui/material';
 export default function Camera(prop) {
   return (
     <>
-    <Box>
+    <Box width={'48%'}
+    sx={{
+      "@media screen and (max-width: 1024px)": {
+        width: '90%'
+  }, 
+  "@media screen and (max-width: 768px)": {
+    width: '100%'
+},
+    }}
+    >
             {/* <Snackbar
               open={showSnackbar}
               autoHideDuration={1000}
@@ -57,8 +66,6 @@ export default function Camera(prop) {
                   src={prop.image}
                   alt="click on take snapshot"
                   style={{
-                    width: "64rem",
-                    height: "48rem",
                     animation: "pulse .2s 1",
                     // border: "2px solid salmon",
                   }}

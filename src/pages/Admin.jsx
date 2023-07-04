@@ -1,5 +1,4 @@
 import * as React from "react";
-import ReactEcharts from "echarts-for-react";
 import { Paper, Grid, Typography, CssBaseline, Box } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ReceiptIcon from "@mui/icons-material/Receipt";
@@ -16,46 +15,9 @@ import Stats from "../components/ Stats";
 import AddNewProduct from "../components/AddNewProduct";
 
 import { Button, Result } from 'antd';
+import ChartComponent from "../components/ChartComponent";
 
-const chartOption = {
-  tooltip: {
-    trigger: "axis",
-    formatter: (params) => {
-      const dataIndex = params[0]?.dataIndex;
-      if (dataIndex !== undefined) {
-        const data = totalItemInDb.reduce((accumulator, current) => {
-          return [...accumulator, current.imgSrc];
-        }, []);
-        return `
-            <img src="${data[dataIndex]}" alt="${params[0]?.name}" style="width: 4rem; height: 4rem;" />
-            <div>${params[0]?.name}: ${params[0]?.value}%</div>
-        `;
-      }
-      return "";
-    },
-  },
-  xAxis: {
-    name: "Item Name",
-    type: "category",
-    boundaryGap: false,
-    data: totalItemInDb.reduce((accumulator, current) => {
-      return [...accumulator, current.productName];
-    }, []),
-  },
-  yAxis: {
-    name: "Probability %",
-    type: "value",
-    // data: objectDetectionProbability.objectProbability,
-  },
-  series: [
-    {
-      data: totalItemInDb.reduce((accumulator, current) => {
-        return [...accumulator, (current.probability * 100).toFixed(2)];
-      }, []),
-      type: "line",
-    },
-  ],
-};
+
 const statsDataStyle = {
   color: "white",
   fontSize: "4.4rem",
@@ -155,14 +117,14 @@ export default function Admin() {
             </Grid>
             <Grid item xs={2.5}>
               <Stats
-                title="Total Transaction"
+                title="Total Number of Transactions"
                 icon={receiptIcon}
                 statsData={54231}
               />
             </Grid>
             <Grid item xs={2.5}>
               <Stats
-                title="Avarage Probability"
+                title="Average Probability %"
                 icon={pageViewIcon}
                 statsData={Math.floor(Math.random() * 40 + 50)}
               />
@@ -175,25 +137,9 @@ export default function Admin() {
               />
             </Grid>
           </Grid>
-          <Paper
-            elevation={3}
-            sx={{
-              "&": {
-                padding: "1rem",
-                marginBottom: "3rem",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "1.8rem",
-                fontWeight: "700",
-              }}
-            >
-              Probability Of Object Detection
-            </Typography>
-            <ReactEcharts option={chartOption} style={{ height: "40rem" }} />
-          </Paper>
+          {/* <ChartComponent category={'Fruit'}/> */}
+          {/* <ChartComponent category={'Vegetable'}/> */}
+          <ChartComponent />
           <AddNewProduct
             navigateToAddNewItem={navigateToAddNewItem}
             openAddItemModal={openAddNewProductModal}

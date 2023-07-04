@@ -1,17 +1,26 @@
 import {TableContainer,Table, TableHead,TableBody,TableCell,TableRow,Paper,Modal,Button,Select,InputLabel,Stack,MenuItem,TextField,Box, Typography} from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import totalItemInDb, { apiLocalPath } from '../rowData';
 import axios from 'axios';
+import TableFooter from './TableFooterComponent';
 export default function ShowItemsTable(){
 
+  const [totalProductsArray,setTotalProductsArray]=useState([]);
   const [sortConfig, setSortConfig] = useState({
     key: "",
     direction: "",
   });
+  const currentPage = 0; // Example current page number
+  const totalPages = 5; // Example total number of pages
+
+  const handleChangePage = (event, newPage) => {
+    // Handle page change logic
+    console.log(newPage);
+  };
   const sortTable = (key) => {
     let direction = "asc";
 
@@ -22,7 +31,17 @@ export default function ShowItemsTable(){
     setSortConfig({ key, direction });
   };
 
-  const sortedData = [...totalItemInDb].sort((a, b) => {
+  // const sortedData = [...totalItemInDb].sort((a, b) => {
+  //   if (a[sortConfig.key] < b[sortConfig.key]) {
+  //     return sortConfig.direction === "asc" ? -1 : 1;
+  //   }
+  //   if (a[sortConfig.key] > b[sortConfig.key]) {
+  //     return sortConfig.direction === "asc" ? 1 : -1;
+  //   }
+  //   return 0;
+  // });
+
+  const sortedData = [...totalProductsArray].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
       return sortConfig.direction === "asc" ? -1 : 1;
     }
@@ -42,33 +61,39 @@ export default function ShowItemsTable(){
     return null;
   };
   function totalProductApi(){
-
+    const token = sessionStorage.getItem("adminAccessToken")
     let config = {
       method: 'GET',
-      url: apiLocalPath+'/inventory/products/',
+      url: `${apiLocalPath}/inventory/products`,
       headers: { 
-        'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'),
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     };
     // console.log(config.headers)
     
     axios.request(config)
     .then((response) => {
-      console.log(JSON.stringify(response.data));
+      console.log(response.data);
+      setTotalProductsArray(response.data.results);
     })
     .catch((error) => {
       console.log(error);
     });
       }
+  useEffect(()=>{
+    // console.log(totalProductsArray);
+    totalProductApi();
+  },[])
   return(
     <>
     <TableContainer
               component={Paper}
               sx={{
                 width: "100%",
-                maxHeight: "40rem",
-                margin: "3rem 0",
-                // margin: '0 4rem 0 4rem'
+                // maxHeight: "40rem",
+                // margin: "3rem 0",
+                margin: '4rem 0'
               }}
             >
               <Table
@@ -98,7 +123,7 @@ export default function ShowItemsTable(){
                       Id{getSortIcon("id")}
                     </TableCell>
                     <TableCell>Image</TableCell>
-                    <TableCell onClick={() => sortTable("productName")}>
+                    <TableCell onClick={() => sortTable("name")}>
                       Name{getSortIcon("name")}
                     </TableCell>
                     <TableCell onClick={() => sortTable("category")}>
@@ -106,6 +131,9 @@ export default function ShowItemsTable(){
                     </TableCell>
                     <TableCell onClick={() => sortTable("probability")}>
                       Probability % {getSortIcon("probability")}{" "}
+                    </TableCell>
+                    <TableCell onClick={() => sortTable("quantity")}>
+                      Quantity {getSortIcon("quantity")}{" "}
                     </TableCell>
                     <TableCell onClick={() => sortTable("available")}>
                       Available {getSortIcon("available")}{" "}
@@ -117,7 +145,7 @@ export default function ShowItemsTable(){
                   {sortedData.map((current, index) => {
                     return (
                       <TableRow
-                        key={current.id}
+                        key={index}
                         sx={{
                           "&:last-child td, &:last-child th": { border: 0 },
                           "td img": {
@@ -126,12 +154,12 @@ export default function ShowItemsTable(){
                           },
                         }}
                       >
-                        <TableCell>{current.id}</TableCell>
+                        <TableCell>{index +1}</TableCell>
                         <TableCell>
-                          <img src={current.imgSrc} alt={current.productName} />
+                          <img src={"data:image/jpeg;base64,"+current.image} alt={current.name} />
                         </TableCell>
-                        <TableCell>{current.productName}</TableCell>
-                        <TableCell>{current.category}</TableCell>
+                        <TableCell>{current.name}</TableCell>
+                        <TableCell>{current.categories}</TableCell>
 
                         <TableCell
                           sx={
@@ -148,11 +176,16 @@ export default function ShowItemsTable(){
                                 }
                           }
                         >
-                          {(current.probability * 100).toFixed(2)}
+                          {
+                          (current.probability * 100).toFixed(2)
+                          // (Math.random()*50+index).toFixed(2)
+                          }
                         </TableCell>
+
+                        <TableCell>{current.quantity}</TableCell>
                         <TableCell
                           sx={
-                            current.available
+                            current.isActive
                               ? {
                                   color: "green",
                                 }
@@ -161,7 +194,7 @@ export default function ShowItemsTable(){
                                 }
                           }
                         >
-                          {current.available ? "Yes" : "No"}
+                          {current.isActive ? "Yes" : "No"}
                         </TableCell>
                         <TableCell>
                           <EditItemDetails currentItem={current} />
@@ -170,6 +203,7 @@ export default function ShowItemsTable(){
                     );
                   })}
                 </TableBody>
+                <TableFooter currentPage={currentPage} totalPages={totalPages} handleChangePage={handleChangePage} />
               </Table>
             </TableContainer>
     </>
@@ -203,46 +237,59 @@ const editItemModalStyle = {
 
 
 function EditItemDetails(prop) {
-  const [editableItemModal, setEditableItemModal] = useState(false);
+  const [editableProductModal, setEditableProductModal] = useState(false);
   const [editedName, setEditedName] = useState("");
   const [editedAge, setEditedAge] = useState("");
-  const [itemName, setItemName] = useState(prop.currentItem.productName);
-  const [itemPrice, setItemPrice] = useState(prop.currentItem.price);
-  const [itemCategory, setItemCategory] = useState(prop.currentItem.category);
-  const [itemAvailable, setItemAvailable] = useState(
-    prop.currentItem.available
-  );
-  const [itemPhoto, setItemPhoto] = useState(null);
+  // const [productName, setProductName] = useState(prop.currentItem.name);
+  // const [productPrice, setProductPrice] = useState(prop.currentItem.price);
+  // const [productCategory, setProductCategory] = useState(prop.currentItem.categories);
+  // const [productAvailable, setProductAvailable] = useState(prop.currentItem.isActive);
+  // const [productQuantity, setProductQuantity]= useState(prop.currentItem.quantity);
+  const [productPhoto, setProductPhoto] = useState(null);
+  const [productDetails, setProductDetails]= useState({
+    productName: prop.currentItem.name,
+    productPrice: prop.currentItem.price,
+    productCategory: prop.currentItem.categories,
+    productAvailable: prop.currentItem.isActive,
+    productPhoto: prop.currentItem.image,
+    productQuantity: prop.currentItem.quantity
+  });
   // const [editableItemModal, setEditableItemModal] = useState(false);
 
   const handleEdit = (item) => {
-    setEditableItemModal(item);
+    setEditableProductModal(item);
     // setEditedName(item.name);
     // setEditedAge(item.age);
   };
   // const chartRef = useRef(null);
-
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setProductDetails((prevProductDetails) => ({
+      ...prevProductDetails,
+      [name]: value
+    }));
+  };
   const handleCancel = () => {
-    setEditableItemModal(false);
+    setEditableProductModal(false);
     setEditedName("");
     setEditedAge("");
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
-    console.log(itemPhoto);
-    setItemPhoto(file);
+    console.log(productPhoto);
+    setProductPhoto(file);
   };
   const handleSave = () => {
     const updatedData = totalItemInDb.map((item) => {
-      if (item.id === editableItemModal.id) {
+      if (item.id === editableProductModal.id) {
         return { ...item, name: editedName, age: editedAge };
       }
       return item;
     });
 
     // setData(updatedData);
-    setEditableItemModal(null);
+    setEditableProductModal(null);
     setEditedName("");
     setEditedAge("");
   };
@@ -252,53 +299,52 @@ function EditItemDetails(prop) {
       <IconButton onClick={() => {handleEdit(prop.currentItem)}}>
         <EditIcon />
       </IconButton>
-      <Modal open={Boolean(editableItemModal)} onClose={handleCancel}>
+      <Modal open={Boolean(editableProductModal)} onClose={handleCancel}>
         {/* <div className="modal-container"> */}
         <Box sx={editItemModalStyle} component="form">
           <Typography>Edit Details</Typography>
           <TextField
-            name="itemName"
-            label="Item Name"
+            name='productName'
+            label="Product Name"
             variant="filled"
             fullWidth
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
+            value={productDetails.productName}
+            onChange={handleChange}
           />
           <TextField
-            name="itemPrice"
-            label="Item Price"
+            name='productPrice'
+            label="Product Price"
             variant="filled"
             fullWidth
-            value={itemPrice}
-            onChange={(e) => setItemPrice(e.target.value)}
+            value={productDetails.productPrice}
+            onChange={handleChange}
           />
           <TextField
-            name="itemCategory"
-            label="Item Category"
+            name='productQuantity'
+            label="Product Quantity"
             variant="filled"
             fullWidth
-            value={itemCategory}
-            onChange={(e) => setItemCategory(e.target.value)}
+            value={productDetails.productQuantity}
+            onChange={handleChange}
           />
-          {/* <TextField
-        name="itemAvailable"
-        label="Item Available"
-        variant="filled"
-        fullWidth
-        value={itemAvailable}
-        onChange={(e) => setItemAvailable(e.target.value)}
-      /> */}
+          <TextField
+            name='productCategory'
+            label="Product Category"
+            variant="filled"
+            fullWidth
+            value={productDetails.productCategory}
+            onChange={handleChange}
+          />
           <Stack>
             <InputLabel id="demo-simple-select-standard-label">
-              Item Available
+              Product Available
             </InputLabel>
             <Select
-              name="itemAvailable"
-              label="Item Available"
+              name='productAvailable'
+              label="Product Available"
               variant="filled"
-              value={itemAvailable}
-              onChange={(event) => setItemAvailable(event.target.value)}
-              // defaultValue={itemAvailable}
+              value={productDetails.productAvailable}
+              onChange={handleChange}
             >
               <MenuItem
                 value={true}

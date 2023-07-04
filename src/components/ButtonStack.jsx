@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  Stack,
-  Button,
-  Snackbar,
-  Modal,
-  Box,
-  IconButton,
-} from "@mui/material";
+import { Stack, Button, Snackbar, Modal, Box, IconButton } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import CloseIcon from "@mui/icons-material/Close";
 import { Result } from "antd";
 import { useState } from "react";
@@ -17,6 +10,7 @@ import { apiLocalPath } from "../rowData";
 import axios from "axios";
 
 export default function ButtonStack(props) {
+  // console.log(props.setItems)
   const navigate = useNavigate();
   const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
   const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
@@ -99,23 +93,47 @@ export default function ButtonStack(props) {
         direction="row"
         sx={{
           "&": {
-            margin: "0 4rem",
+            margin: "1.4rem 4rem",
             alignItems: "center",
-            mb: "1.4rem",
+            "@media screen and (max-width: 1024px)": {
+              "& .MuiButton-root": {
+                fontSize: "1rem",
+                // width: 'unset'
+              },
+            },
+            "@media screen and (max-width: 768px)": {
+              "& .MuiButton-root": {
+                width: 'unset'
+              },
+            },
+            "@media screen and (max-width: 425px)": {
+              "& .MuiButton-root": {
+                fontSize: ".6rem",
+                // width: 'unset'
+              },
+            },
           },
         }}
       >
         <Stack
           direction="row"
-          spacing={5}
           sx={{
             "&": {
+              gap: "1rem",
               width: "50%",
               justifyContent: "space-around",
               alignItems: "center",
+              "@media screen and (max-width: 768px)": {
+                flexGrow: '1.3'
+              },
             },
             "& .MuiButton-root": {
               fontSize: "1.4rem",
+            },
+            "@media screen and (max-width: 1024px)": {
+              "& .MuiButton-root": {
+                fontSize: "1rem",
+              },
             },
           }}
         >
@@ -190,8 +208,8 @@ export default function ButtonStack(props) {
           sx={{
             "&": {
               width: "50%",
-              height: "4rem",
-              fontSize: "2rem",
+              // height: "4rem",
+              fontSize: "1.4rem",
               position: "relative",
             },
           }}
@@ -262,7 +280,7 @@ export default function ButtonStack(props) {
               />
             }
             title="This Photo is not valid."
-            extra= "It is important for the photo to have clear and valid."
+            extra="It is important for the photo to have clear and valid."
           />
         </Box>
       </Modal>

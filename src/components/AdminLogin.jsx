@@ -107,6 +107,8 @@ export default function AdminLogin() {
       // console.log(response.data);
       sessionStorage.setItem('adminAccessToken', response.data.token);
       setAuthentication(true);
+      sessionStorage.setItem("adminAuthorization", true);
+      navigate("/admin");
 
     })
     .catch((error) => {
@@ -117,13 +119,13 @@ export default function AdminLogin() {
     });
   }
   function handleLoginDetails(event) {
-    loginUser(adminDetails);
     event.preventDefault();
+    loginUser(adminDetails);
     // console.log(authentication)
-    if(sessionStorage.getItem('adminAccessToken')!==null) {
-      sessionStorage.setItem("adminAuthorization", true);
-      navigate("/admin");
-    }
+    // if(sessionStorage.getItem('adminAccessToken')!==null) {
+    //   sessionStorage.setItem("adminAuthorization", true);
+    //   navigate("/admin");
+    // }
   }
   function handleReset() {
     setAdminDetails({
@@ -143,7 +145,6 @@ export default function AdminLogin() {
       >
         {/* <Box sx={addLoginModalStyle}> */}
         <Paper sx={addLoginModalStyle}>
-          <Typography>Login To Continue In Admin Page</Typography>
           <Avatar sx={{ bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>

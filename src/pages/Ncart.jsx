@@ -289,7 +289,15 @@ export default function Ncart() {
           sx={{
             padding: "12rem 4rem 0rem",
             justifyContent: "space-between",
-            height: "65rem",
+            alignItems: 'center',
+            "@media screen and (max-width: 1024px)": {
+              flexDirection: 'column',
+              gap: '2rem',
+          },
+          "@media screen and (max-width: 768px)": {
+            flexDirection: 'column',
+            gap: '2rem',
+        },
           }}
         >
           {/* <Box>
@@ -371,6 +379,12 @@ export default function Ncart() {
                 // backgroundColor: 'black',
                 borderRadius: ".5rem",
                 height: "50.6rem",
+                "@media screen and (max-width: 1024px)": {
+                    width: '90%'
+              }, 
+              "@media screen and (max-width: 768px)": {
+                width: '100%'
+            },
               },
               "& .MuiPaper-root": {
                 // height: '5rem'
@@ -382,9 +396,9 @@ export default function Ncart() {
               addItemToCart={addItemToCart}
             />
 
-            <Stack
+            <Box
               sx={{
-                height: "44.3rem",
+                height: "37.3rem",
                 overflowY: "scroll",
               }}
             >
@@ -401,7 +415,7 @@ export default function Ncart() {
                   />
                 );
               })}
-            </Stack>
+            </Box>
           </Box>
         </Stack>
         <ButtonStack
@@ -413,14 +427,12 @@ export default function Ncart() {
           videoRef={videoRef}
           audioRef={audioRef}
           setShowSnackbar={setShowSnackbar}
-          setItem={setItems}
+          setItems={setItems}
           handleStartCaptureClick={handleStartCaptureClick}
           resetCartApi={resetCartApi}
           base64Image={base64Image}
           orderID={orderID}
         />
-
-        {/* <ImageToBase64Converter/> */}
       </section>
       <Footer />
     </>

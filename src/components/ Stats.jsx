@@ -11,7 +11,7 @@ export default function Stats({ title, icon, statsData }) {
       >
         <Typography
           sx={{
-            fontSize: "1.8rem",
+            fontSize: "1.6rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -19,20 +19,6 @@ export default function Stats({ title, icon, statsData }) {
             textAlign: "center",
           }}
         >
-          {/* <iconName
-            fontSize="large"
-            sx={{
-              "&": {
-                backgroundColor: "orange",
-                color: "white",
-                fontSize: "4.4rem",
-                position: "absolute",
-                top: "-3.2rem",
-                left: "-4.4rem",
-                borderRadius: ".8rem",
-              },
-            }}
-          /> */}
           {icon}
           {title}
         </Typography>
@@ -45,6 +31,7 @@ export default function Stats({ title, icon, statsData }) {
             fontWeight: "700",
           }}
         >
+          {title==="Total Revenue"?<>₹</>:<></>}
           <CountUp end={statsData} duration={1} />
         </Typography>
       </Paper>

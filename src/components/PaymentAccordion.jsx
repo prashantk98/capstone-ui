@@ -27,6 +27,7 @@ import rupay from "../images/rupay.svg";
 import cash from "../images/cash.jpeg";
 import note from "../images/IndianNote.png";
 import wallet from "../images/wallet.png";
+import coins from "../images/coins.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -255,11 +256,12 @@ export default function PaymentAccordion() {
                 Cash Payment
               </Typography>
               <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                {cashPaymentMethod.map((item, index) => (
-                  <ImageListItem key={index}>
-                    <img src={item.src} alt={item.alt} />
+                {/* {cashPaymentMethod.map((item, index) => ( */}
+                  <ImageListItem >
+                    {/* <img src={item.src} alt={item.alt} /> */}
+                    <img src={coins} alt={'coins'} />
                   </ImageListItem>
-                ))}
+                {/* // ))} */}
               </ImageList>
             </AccordionSummary>
             <AccordionDetails>

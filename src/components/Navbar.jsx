@@ -97,7 +97,8 @@ export default function Navbar(prop) {
               </NavLink>
             </Grid>
             <Grid item>
-              <NavLink to="/admin/login" className="navbar__admin">
+              <NavLink to="/admin/login" className="navbar__admin" onClick={()=>{sessionStorage.removeItem("adminAccessToken");
+            sessionStorage.removeItem('adminAuthorization')}}>
                 Admin
               </NavLink>
             </Grid>
