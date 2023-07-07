@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   Stack,
   // Button,
   // Snackbar,
@@ -29,6 +30,7 @@ import Navbar from "../components/Navbar";
 import Camera from "../components/Camera";
 import AddItemManually from "../components/AddItemManually";
 import ButtonStack from "../components/ButtonStack";
+import { notification } from "antd";
 
 // let totalItemsGlobal;
 // let itemsArrayGlobal;
@@ -60,6 +62,7 @@ export default function Ncart() {
   // const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
   const [openAddItemToCartSnackbar, setOpenAddItemToCartSnackbar] =
     useState(false);
+  const [isGotData, setIsGotData]= useState(true);
   // const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
 
   
@@ -81,6 +84,15 @@ export default function Ncart() {
       })
       .catch((error) => {
         console.log(error);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+          return error;
+        }
+        
       });
   }
 
@@ -132,6 +144,14 @@ export default function Ncart() {
       })
       .catch((error) => {
         console.log(error);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+        }
+        return error;        
       });
   }
 
@@ -190,8 +210,16 @@ export default function Ncart() {
       videoRef.current.style.transform = "scaleX(-1)";
       videoRef.current.style.width = "100%";
       videoRef.current.style.height = "100%";
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
+      if (error.code) {
+        notification.error({
+          message: error.name,
+          description: error.message,
+          placement: 'bottomRight',
+        });
+      }
+      return error; 
     }
   };
 
@@ -234,6 +262,14 @@ export default function Ncart() {
       })
       .catch((error) => {
         console.log(error);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+        }
+        return error; 
       });
   }
 
@@ -400,9 +436,12 @@ export default function Ncart() {
               sx={{
                 height: "37.3rem",
                 overflowY: "scroll",
+                textAlign: 'center'
               }}
             >
-              {itemsArray.map((currentValue, index) => {
+               {!isGotData&&<CircularProgress />}
+              {
+              itemsArray.map((currentValue, index) => {
                 return (
                   <CartItem
                     index={index}
@@ -414,7 +453,8 @@ export default function Ncart() {
                     changeQuantity={changeQuantity}
                   />
                 );
-              })}
+              })
+              }
             </Box>
           </Box>
         </Stack>
@@ -432,6 +472,8 @@ export default function Ncart() {
           resetCartApi={resetCartApi}
           base64Image={base64Image}
           orderID={orderID}
+          isGotData={isGotData}
+          setIsGotData={setIsGotData}
         />
       </section>
       <Footer />

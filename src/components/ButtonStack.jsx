@@ -3,7 +3,7 @@ import { Stack, Button, Snackbar, Modal, Box, IconButton } from "@mui/material";
 import InfoOutlined from "@mui/icons-material/InfoOutlined";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import CloseIcon from "@mui/icons-material/Close";
-import { Result } from "antd";
+import { notification, Result } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLocalPath } from "../rowData";
@@ -50,6 +50,7 @@ export default function ButtonStack(props) {
     // handleStopCaptureClick();
   };
   function UpdateCartApi(base64Image) {
+    props.setIsGotData(false);
     // console.log(props.itemsArray);
     let data = JSON.stringify({
       image: base64Image,
@@ -70,21 +71,30 @@ export default function ButtonStack(props) {
     axios
       .request(config)
       .then((response) => {
+        props.setIsGotData(true);
         console.log(response.data);
         props.setShowSnackbar(true);
-        props.setItems([...response.data.data.available]);
+        props.setItems([...response.data.available]);
         sessionStorage.setItem(
           "itemsArray",
-          JSON.stringify([...response.data.data.available])
+          JSON.stringify([...response.data.available])
         );
-        if (response.data.data.unavailable.length !== 0) {
-          setUnAvailable([...response.data.data.unavailable]);
+        if (response.data.unavailable.length !== 0) {
+          setUnAvailable([...response.data.unavailable]);
           setOpenUnAvailableModal(true);
         }
         props.setUploadItemPhoto(null);
       })
       .catch((error) => {
         console.log(error);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+        }
+        return error; 
       });
   }
   return (

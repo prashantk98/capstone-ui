@@ -5,19 +5,18 @@ import {
   Stack,
   Typography,
   Paper,
-  Snackbar,
 } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import logo from "../images/webLogo.png";
 import newHomeBg from "../images/homeBgFull.svg";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useState, forwardRef } from "react";
+// import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useState } from "react";
 import axios from "axios";
 import { apiLocalPath } from "../rowData";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { notification } from 'antd';
 
 function isMobileNumberValid(value) {
   value = value.trim();
@@ -26,13 +25,9 @@ function isMobileNumberValid(value) {
 function isUserNameValid(value) {
   return value.trim().length !== 0;
 }
-const Alert = forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={2} ref={ref} variant="outlined" {...props} />;
-});
 
 export default function Nhome() {
   const navigate = useNavigate();
-  const [openContinueSnackbar, setOpenContinueSnackbar] = useState(false);
   const [number, setNumber] = useState(() => {
     const storedNumber = sessionStorage.getItem("userMobile");
     return storedNumber ? storedNumber : "";
@@ -72,6 +67,14 @@ export default function Nhome() {
       .catch((error) => {
         console.error("user not found");
         setIsUserNameFound(false);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+        }
+        return error;
       });
   }
   function newUser() {
@@ -101,7 +104,18 @@ export default function Nhome() {
         sessionStorage.setItem("userMobile", number);
         sessionStorage.setItem("accessToken", result.token);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) => {
+        console.log("error", error);
+        if (error.code) {
+          notification.error({
+            message: error.name,
+            description: error.message,
+            placement: 'bottomRight',
+          });
+        }
+        return error;
+        
+    });
   }
   function handleSubmit() {
     if (isMobileNumberValid(number)) {
@@ -118,7 +132,7 @@ export default function Nhome() {
         navigate("/ncart");
       }
     } else {
-      setOpenContinueSnackbar(true);
+      setNumberHelperText('Enter both mobile number and name');
     }
   }
   return (
@@ -203,24 +217,6 @@ export default function Nhome() {
             }}
             noValidate
           >
-            <Snackbar
-              open={openContinueSnackbar}
-              autoHideDuration={4000}
-              onClose={() => setOpenContinueSnackbar(false)}
-              sx={{ alignItems: "center" }}
-            >
-              <Alert
-                onClose={() => setOpenContinueSnackbar(false)}
-                severity="info"
-                sx={{
-                  width: "100%",
-                  fontSize: "1.6rem",
-                  svg: { fontSize: "1.6rem" },
-                }}
-              >
-                Enter Details First To Continue
-              </Alert>
-            </Snackbar>
             <Typography
               sx={{
                 fontWeight: "800",
@@ -284,6 +280,7 @@ export default function Nhome() {
                   }
                 }}
                 name="mobile"
+                error={numberHelperText!==''}
                 helperText={numberHelperText}
                 required
               />
@@ -359,11 +356,6 @@ export default function Nhome() {
                   onClick={handleSubmit}
                 >
                   Continue
-                  <ArrowForwardIcon
-                    sx={{
-                      fontSize: "2.4rem",
-                    }}
-                  />
                 </Button>
               </Stack>
             </Paper>

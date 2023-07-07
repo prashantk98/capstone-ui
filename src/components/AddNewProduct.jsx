@@ -87,8 +87,9 @@ export default function AddNewProduct(prop){
     
   }
   function handleSubmit(){
-    console.log("item category->", itemCategory)
-    addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto ,itemAvailable)
+    // console.log("item category->", itemCategory)
+    addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto ,itemAvailable);
+    prop.closeAddNewItemModal();
   }
 
   return (

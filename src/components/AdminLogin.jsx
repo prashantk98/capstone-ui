@@ -14,7 +14,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import cartBg from "../images/homeBgFull.svg";
 import { apiLocalPath } from "../rowData";
 
 const addLoginModalStyle = {

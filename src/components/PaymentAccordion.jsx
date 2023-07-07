@@ -25,8 +25,7 @@ import visa from "../images/visa.svg";
 import mastercard from "../images/mastercard.svg";
 import rupay from "../images/rupay.svg";
 import cash from "../images/cash.jpeg";
-import note from "../images/IndianNote.png";
-import wallet from "../images/wallet.png";
+import coinCash from '../images/coinCash.png';
 import coins from "../images/coins.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -45,8 +44,8 @@ const onlinePaymentMethod = [
 ];
 const cashPaymentMethod = [
   { src: cash, alt: "cash " },
-  { src: note, alt: "Cash exchange" },
-  { src: wallet, alt: "wallet" },
+  { src: coins, alt: "coin exchange" },
+  { src: coinCash, alt: "coin Cash" },
 ];
 const selectedAccordionStyle = {
   border: "2px solid #4BB543",
@@ -256,12 +255,12 @@ export default function PaymentAccordion() {
                 Cash Payment
               </Typography>
               <ImageList sx={{ width: 200 }} cols={3} gap={8}>
-                {/* {cashPaymentMethod.map((item, index) => ( */}
-                  <ImageListItem >
-                    {/* <img src={item.src} alt={item.alt} /> */}
-                    <img src={coins} alt={'coins'} />
+                {cashPaymentMethod.map((item, index) => (
+                  <ImageListItem key={index} >
+                    <img src={item.src} alt={item.alt} />
+                    {/* <img src={coins} alt={'coins'} /> */}
                   </ImageListItem>
-                {/* // ))} */}
+                ))}
               </ImageList>
             </AccordionSummary>
             <AccordionDetails>

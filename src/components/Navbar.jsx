@@ -3,12 +3,18 @@ import { AppBar, Toolbar, Grid, Badge,Button } from "@mui/material";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { useState } from "react";
+import { useEffect } from "react";
 
 export default function Navbar(prop) {
   const [itemsArray, setItems] = useState(() => {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
   });
+  useEffect(() => {
+    const storedItems = sessionStorage.getItem("itemsArray");
+    return storedItems ? setItems(JSON.parse(storedItems)) : setItems([]);
+    }, [])
+  
   return (
     <>
       <AppBar

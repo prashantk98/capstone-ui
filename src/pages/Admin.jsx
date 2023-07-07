@@ -47,7 +47,6 @@ export default function Admin() {
     { title: "Dashboard", onClickFuntion: navigateToDashborad },
     { title: "Add New Item", onClickFuntion: navigateToAddNewItem },
     { title: "Add Category", onClickFuntion: navigateToAddNewItem },
-    { title: "Add Sub-Category", onClickFuntion: navigateToAddNewItem },
   ];
 
   function navigateToDashborad() {
@@ -84,7 +83,7 @@ export default function Admin() {
             flexGrow: 1,
             p: 3,
             fontSize: "1.4rem",
-            width: "90%",
+            width: "85%",
             mt: "6rem",
           }}
         >

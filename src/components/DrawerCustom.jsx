@@ -17,6 +17,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AddIcon from "@mui/icons-material/Add";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { styled, useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
@@ -214,7 +215,7 @@ export default function DrawerCustom(prop) {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <DashboardIcon /> : <AddIcon />}
+                  {index===0 ? <DashboardIcon /> :  <AddIcon />}
                 </ListItemIcon>
                 <ListItemText
                   primary={currentElement.title}
