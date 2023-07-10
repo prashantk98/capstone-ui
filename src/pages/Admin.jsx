@@ -13,6 +13,8 @@ import DrawerCustom from "../components/DrawerCustom";
 import ShowItemsTable from "../components/ShowItemsTable";
 import Stats from "../components/ Stats";
 import AddNewProduct from "../components/AddNewProduct";
+import AddNewCategory from "../components/AddNewCategory";
+
 
 import { Button, Result } from 'antd';
 import ChartComponent from "../components/ChartComponent";
@@ -42,11 +44,12 @@ const sellIcon = (
 export default function Admin() {
   const navigate = useNavigate();
   const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
+  const [openAddItemCategoryModal,setOpenAddNewCategoryModal]= useState(false)
   const [isAuthenticated, setisAuthenticated]= useState(sessionStorage.getItem('adminAuthorization')==='true')
   const sidebarButton = [
     { title: "Dashboard", onClickFuntion: navigateToDashborad },
-    { title: "Add New Item", onClickFuntion: navigateToAddNewItem },
-    { title: "Add Category", onClickFuntion: navigateToAddNewItem },
+    { title: "Add New Product", onClickFuntion: navigateToAddNewItem },
+    { title: "Add Category", onClickFuntion: navigateToAddNewCategory },
   ];
 
   function navigateToDashborad() {
@@ -59,11 +62,13 @@ export default function Admin() {
     // return false;
     setOpenAddNewProductModal(false);
   }
-  function navigateToAddNewCategory() {
-    console.log("add new category");
+  function closeAddNewCategory() {
+    // return false;
+    setOpenAddNewCategoryModal(false);
   }
-  function navigateToAddNewSubCategory() {
-    console.log("add new subcategory");
+  function navigateToAddNewCategory() {
+    setOpenAddNewCategoryModal(true);
+    console.log("add new category");
   }
 
   if (isAuthenticated) {
@@ -144,6 +149,11 @@ export default function Admin() {
             openAddItemModal={openAddNewProductModal}
             closeAddNewItemModal={closeAddNewItemModal}
           />
+          <AddNewCategory
+            navigateToAddNewCategory={navigateToAddNewCategory}
+            openAddItemCategoryModal={openAddItemCategoryModal}
+            closeAddNewCategory={closeAddNewCategory}
+          />
           <ShowItemsTable />
           {/* <EditItemDetails/> */}
           {/* <LoginAdminModal /> */}
@@ -153,7 +163,6 @@ export default function Admin() {
     </>
   );
   }else{
-    // console.log(isAuthenticated ,sessionStorage.getItem('adminAuthorization') );
     return <Result
     status="403"
     title="Sorry, you are not authorized to access the admin page."

@@ -21,6 +21,7 @@ import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { styled, useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useState } from "react";
 import Navbar from "./Navbar";
 import { NavLink } from "react-router-dom";
@@ -122,7 +123,11 @@ export default function DrawerCustom(prop) {
               ...(open && { display: "none" }),
             }}
           >
-            <MenuIcon />
+            <MenuIcon
+            sx={{
+              fontSize: '2rem'
+            }}
+             />
           </IconButton>
           <Grid
               container
@@ -194,7 +199,7 @@ export default function DrawerCustom(prop) {
               fontSize: "1.8rem",
             },
             "& svg": {
-              fontSize: "1.8rem",
+              fontSize: "2.0rem",
             },
           }}
         >
@@ -215,7 +220,7 @@ export default function DrawerCustom(prop) {
                     justifyContent: "center",
                   }}
                 >
-                  {index===0 ? <DashboardIcon /> :  <AddIcon />}
+                  {index===0 ? <DashboardIcon /> : (index===1 ? <LibraryAddIcon />: <PlaylistAddIcon />)}
                 </ListItemIcon>
                 <ListItemText
                   primary={currentElement.title}

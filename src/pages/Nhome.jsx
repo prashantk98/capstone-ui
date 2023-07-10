@@ -40,6 +40,10 @@ export default function Nhome() {
   const [numberHelperText, setNumberHelperText] = useState("");
   const [isUserNameFound, setIsUserNameFound] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
+  const [itemsArray, setItems] = useState(() => {
+    const storedItems = sessionStorage.getItem("itemsArray");
+    return storedItems ? JSON.parse(storedItems) : [];
+  });
 
   function userPresent(value) {
     let data = JSON.stringify({
@@ -137,7 +141,7 @@ export default function Nhome() {
   }
   return (
     <>
-      <Navbar/>
+      <Navbar key={itemsArray}/>
       <Stack
         direction="row"
         sx={{

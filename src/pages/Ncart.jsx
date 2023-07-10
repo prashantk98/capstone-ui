@@ -135,7 +135,7 @@ export default function Ncart() {
             "itemsArray",
             JSON.stringify([...itemsArray, response.data.data.available])
           );
-          setItems([...itemsArray, response.data.data.available]);
+          setItems((prev) => [...prev, response.data.data.available]);
         }
         // setItemManuallyObj({
         //   productName: "",
@@ -250,15 +250,24 @@ export default function Ncart() {
       .request(config)
       .then((response) => {
         // console.log(response.data.data);
-        setItems((prevState) => {
-          return prevState.filter((current, idx) => {
-            if (idx === index) {
-              Object.assign(current, response.data.data);
-            }
-            return true;
-          });
-        });
-        sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
+        const newItemsArray=itemsArray.slice();
+        newItemsArray.filter((current, idx) => {
+          if (idx === index) {
+            Object.assign(current, response.data.data);
+          }
+          return true;
+        })
+        setItems(() => newItemsArray);
+        console.log(newItemsArray);
+        // setItems((prevState) => {
+        //   return [...prevState.filter((current, idx) => {
+        //     if (idx === index) {
+        //       Object.assign(current, response.data.data);
+        //     }
+        //     return true;
+        //   })];
+        // });
+        sessionStorage.setItem("itemsArray", JSON.stringify(newItemsArray));
       })
       .catch((error) => {
         console.log(error);
@@ -319,7 +328,7 @@ export default function Ncart() {
   return (
     <>
       <section className="new-cart">
-        <Navbar />
+        <Navbar key={itemsArray} />
         <Stack
           direction="row"
           sx={{

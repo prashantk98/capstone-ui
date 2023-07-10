@@ -10,10 +10,10 @@ export default function Navbar(prop) {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
   });
-  useEffect(() => {
-    const storedItems = sessionStorage.getItem("itemsArray");
-    return storedItems ? setItems(JSON.parse(storedItems)) : setItems([]);
-    }, [])
+  // useEffect(() => {
+  //   const storedItems = sessionStorage.getItem("itemsArray");
+  //   return storedItems ? setItems(JSON.parse(storedItems)) : setItems([]);
+  //   }, [])
   
   return (
     <>

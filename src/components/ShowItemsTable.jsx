@@ -26,7 +26,7 @@ function TableRowsLoader({ rowsNum,colNum }){
   return [...Array(rowsNum)].map((row, index) => (
     <TableRow key={index} style={{ backgroundColor: index % 2 !== 0 ? 'rgb(207 250 254)' : 'rgb(236 254 255)' }} >
       {
-          [...Array(colNum+2)].map((column,index)=>(
+          [...Array(colNum)].map((column,index)=>(
               <TableCell component="th" scope="row" key={index}>
                   <Skeleton animation="wave" variant="text" />
               </TableCell>
@@ -57,16 +57,6 @@ export default function ShowItemsTable() {
 
     setSortConfig({ key, direction });
   };
-
-  // const sortedData = [...totalItemInDb].sort((a, b) => {
-  //   if (a[sortConfig.key] < b[sortConfig.key]) {
-  //     return sortConfig.direction === "asc" ? -1 : 1;
-  //   }
-  //   if (a[sortConfig.key] > b[sortConfig.key]) {
-  //     return sortConfig.direction === "asc" ? 1 : -1;
-  //   }
-  //   return 0;
-  // });
 
   const sortedData = [...totalProductsArray].sort((a, b) => {
     if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -154,7 +144,7 @@ export default function ShowItemsTable() {
         }
         return error;
       });
-  }
+  } 
   useEffect(() => {
     // console.log(totalProductsArray);
     totalProductApi(rowsPerPage);
@@ -212,6 +202,9 @@ export default function ShowItemsTable() {
               <TableCell onClick={() => sortTable("probability")}>
                 Probability % {getSortIcon("probability")}{" "}
               </TableCell>
+              <TableCell onClick={() => sortTable("price")}>
+                Price {getSortIcon("price")}{" "}
+              </TableCell>
               <TableCell onClick={() => sortTable("quantity")}>
                 Quantity {getSortIcon("quantity")}{" "}
               </TableCell>
@@ -266,7 +259,7 @@ export default function ShowItemsTable() {
                       // (Math.random()*50+index).toFixed(2)
                     }
                   </TableCell>
-
+                  <TableCell>{current.price}</TableCell>
                   <TableCell>{current.quantity}</TableCell>
                   <TableCell
                     sx={
@@ -290,7 +283,7 @@ export default function ShowItemsTable() {
             :
             <TableRowsLoader 
         rowsNum={rowsPerPage}
-        colNum={6}
+        colNum={8}
         ></TableRowsLoader>
           } 
           

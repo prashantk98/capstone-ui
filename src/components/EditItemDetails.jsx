@@ -1,4 +1,5 @@
-import {Modal,
+import {
+  Modal,
   Button,
   Select,
   InputLabel,
@@ -6,15 +7,21 @@ import {Modal,
   MenuItem,
   TextField,
   Box,
-  Typography,} from '@mui/material';
+  Typography,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material";
 
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import ProfilePhoto from "./ProfilePhoto";
 import { notification } from "antd";
-import { useState } from 'react';
-import { apiLocalPath } from '../rowData';
-import axios from 'axios';
+import { useState } from "react";
+import { apiLocalPath } from "../rowData";
+import axios from "axios";
+import { FormControl } from "@mui/base";
 
 const editItemModalStyle = {
   position: "absolute",
@@ -40,13 +47,17 @@ const editItemModalStyle = {
   },
 };
 
-export default function EditItemDetails({currentItem}) {
+export default function EditItemDetails({ currentItem }) {
   const [editableProductModal, setEditableProductModal] = useState(false);
   const [productName, setProductName] = useState(currentItem.name);
   const [productPrice, setProductPrice] = useState(currentItem.price);
-  const [productCategory, setProductCategory] = useState(currentItem.categories);
-  const [productAvailable, setProductAvailable] = useState(currentItem.isActive);
-  const [productQuantity, setProductQuantity]= useState(currentItem.quantity);
+  const [productCategory, setProductCategory] = useState(
+    currentItem.categories
+  );
+  const [productAvailable, setProductAvailable] = useState(
+    currentItem.isActive
+  );
+  const [productQuantity, setProductQuantity] = useState(currentItem.quantity);
   const [productPhoto, setProductPhoto] = useState(currentItem.image);
   // const [productDetails, setProductDetails] = useState({
   //   productName: currentItem.name,
@@ -57,17 +68,16 @@ export default function EditItemDetails({currentItem}) {
   //   productQuantity: currentItem.quantity,
   // });
 
-
   const handleEdit = (item) => {
-    console.log(currentItem.name)
+    console.log(currentItem.name);
     setEditableProductModal(true);
-    console.log(item,currentItem,);
-    setProductName(currentItem.name)
-    setProductPrice(currentItem.price)
-    setProductCategory(currentItem.categories)
-    setProductAvailable(currentItem.isActive)
-    setProductQuantity(currentItem.quantity)
-    setProductPhoto(currentItem.image)
+    console.log(item, currentItem);
+    setProductName(currentItem.name);
+    setProductPrice(currentItem.price);
+    setProductCategory(currentItem.categories);
+    setProductAvailable(currentItem.isActive);
+    setProductQuantity(currentItem.quantity);
+    setProductPhoto(currentItem.image);
   };
   // const chartRef = useRef(null);
   // const handleChange = (event) => {
@@ -79,7 +89,6 @@ export default function EditItemDetails({currentItem}) {
   // };
   const handleCancel = () => {
     setEditableProductModal(false);
-    
   };
 
   const handlePhotoChange = (e) => {
@@ -90,8 +99,7 @@ export default function EditItemDetails({currentItem}) {
     const reader = new FileReader();
 
     reader.onload = (event) => {
-      setProductPhoto((event.target.result).split(',')[1]);
-      
+      setProductPhoto(event.target.result.split(",")[1]);
     };
 
     if (file) {
@@ -99,18 +107,25 @@ export default function EditItemDetails({currentItem}) {
     }
   };
   const handleSave = () => {
-    editProductDetailsApi(productName,productPrice,productQuantity,productCategory,productAvailable,productPhoto);
-    setEditableProductModal(false)
+    editProductDetailsApi(
+      productName,
+      productPrice,
+      productQuantity,
+      productCategory,
+      productAvailable,
+      productPhoto
+    );
+    setEditableProductModal(false);
     // setData(updatedData);
   };
   function editProductDetailsApi() {
     let data = JSON.stringify({
-      "categories": productCategory,
-      "image": productPhoto,
-      "isActive": productAvailable,
-      "name": productName,
-      "price": +productPrice,
-      "quantity": +productQuantity
+      categories: productCategory,
+      image: productPhoto,
+      isActive: productAvailable,
+      name: productName,
+      price: +productPrice,
+      quantity: +productQuantity,
     });
 
     let config = {
@@ -134,7 +149,7 @@ export default function EditItemDetails({currentItem}) {
           notification.error({
             message: error.name,
             description: error.message,
-            placement: 'bottomRight',
+            placement: "bottomRight",
           });
         }
         return error;
@@ -150,13 +165,13 @@ export default function EditItemDetails({currentItem}) {
       >
         <EditIcon />
       </IconButton>
-      <Modal open={Boolean(editableProductModal)} >
+      <Modal open={Boolean(editableProductModal)}>
         {/* <div className="modal-container"> */}
         <Box sx={editItemModalStyle} component="form">
           <Typography>Edit Details</Typography>
           <ProfilePhoto
-          image={productPhoto}
-          handlePhotoChange={handlePhotoChange}
+            image={productPhoto}
+            handlePhotoChange={handlePhotoChange}
           />
           <TextField
             name="productName"
@@ -164,7 +179,7 @@ export default function EditItemDetails({currentItem}) {
             variant="filled"
             fullWidth
             value={productName}
-            onChange={(e)=>setProductName(e.target.value)}
+            onChange={(e) => setProductName(e.target.value)}
           />
           <TextField
             name="productPrice"
@@ -172,7 +187,7 @@ export default function EditItemDetails({currentItem}) {
             variant="filled"
             fullWidth
             value={productPrice}
-            onChange={(e)=>setProductPrice(e.target.value)}
+            onChange={(e) => setProductPrice(e.target.value)}
           />
           <TextField
             name="productQuantity"
@@ -180,7 +195,7 @@ export default function EditItemDetails({currentItem}) {
             variant="filled"
             fullWidth
             value={productQuantity}
-            onChange={(e)=>setProductQuantity(e.target.value)}
+            onChange={(e) => setProductQuantity(e.target.value)}
           />
           {/* <TextField
             name="productCategory"
@@ -199,23 +214,20 @@ export default function EditItemDetails({currentItem}) {
               label="Product Category"
               variant="filled"
               value={productCategory}
-              onChange={(e)=>setProductCategory(e.target.value)}
+              onChange={(e) => setProductCategory(e.target.value)}
               // defaultValue={itemAvailable}
             >
-              <MenuItem
-                value='Fruits'
-                sx={{ fontSize: "1.8rem",}}
-              >
+              <MenuItem value="Fruits" sx={{ fontSize: "1.8rem" }}>
                 Fruits
               </MenuItem>
-              <MenuItem value={'Vegetables'} sx={{ fontSize: "1.8rem", }}>
+              <MenuItem value={"Vegetables"} sx={{ fontSize: "1.8rem" }}>
                 Vegetables
               </MenuItem>
             </Select>
           </Stack>
 
-          <Stack>
-            <InputLabel id="demo-simple-select-standard-label">
+          {/* <Stack> */}
+          {/* <InputLabel id="demo-simple-select-standard-label">
               Product Available
             </InputLabel>
             <Select
@@ -234,8 +246,19 @@ export default function EditItemDetails({currentItem}) {
               <MenuItem value={false} sx={{ fontSize: "1.8rem", color: "red" }}>
                 No
               </MenuItem>
-            </Select>
-          </Stack>
+            </Select> */}
+          <FormLabel id="demo-row-radio-buttons-group-label">Product Available</FormLabel>
+          <RadioGroup
+            row
+            // aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            value={productAvailable}
+              onChange={(e)=>setProductAvailable(e.target.value)}
+          >
+            <FormControlLabel value={true} control={<Radio />} label="Yes" color="success" />
+            <FormControlLabel value={false} control={<Radio />} label="No" color="success" />
+          </RadioGroup>
+          {/* </Stack> */}
           {/* <input type="file" accept="image/*" onChange={handlePhotoChange} /> */}
           <Button variant="contained" onClick={handleSave}>
             Save
