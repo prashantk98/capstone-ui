@@ -14,10 +14,11 @@ import {
 import { useEffect, useState } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import totalItemInDb, { apiLocalPath } from "../rowData";
-import axios from "axios";
+// import totalItemInDb, { apiLocalPath } from "../rowData";
+// import axios from "axios";
 import EditItemDetails from "./EditItemDetails";
-import { notification } from "antd";
+// import { notification } from "antd";
+import { totalProductTableApi } from "../backendApis/AdminApis";
 
 
 
@@ -78,11 +79,23 @@ export default function ShowItemsTable() {
     return null;
   };
 
-  // function totalProductApi() {
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  // function totalProductApi(rowsPerPage) {
+  //   setIsTotalData(false);
   //   const token = sessionStorage.getItem("adminAccessToken");
   //   let config = {
   //     method: "GET",
-  //     url: `${apiLocalPath}/inventory/products/Vegetables`,
+  //     url: `${apiLocalPath}/inventory/products?page=${page+1}&page_size=${rowsPerPage}`,
+  //     // /?next_page_number=${
+  //     //   page + 1
+  //     // }&page_size=${rowsPerPage}
   //     headers: {
   //       Authorization: `Bearer ${token}`,
   //       "Content-Type": "application/json",
@@ -95,59 +108,24 @@ export default function ShowItemsTable() {
   //     .then((response) => {
   //       console.log(response.data);
   //       setTotalProductsArray(response.data.results);
+  //       setCount(response.data.count);
+  //       setIsTotalData(true);
   //     })
   //     .catch((error) => {
   //       console.log(error);
+  //       if (error.code) {
+  //         notification.error({
+  //           message: error.name,
+  //           description: error.message,
+  //           placement: 'bottomRight',
+  //         });
+  //       }
+  //       return error;
   //     });
-  // }
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-  function totalProductApi(rowsPerPage) {
-    setIsTotalData(false);
-    const token = sessionStorage.getItem("adminAccessToken");
-    let config = {
-      method: "GET",
-      url: `${apiLocalPath}/inventory/products?page=${page+1}&page_size=${rowsPerPage}`,
-      // /?next_page_number=${
-      //   page + 1
-      // }&page_size=${rowsPerPage}
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    };
-    // console.log(config.headers)
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(response.data);
-        setTotalProductsArray(response.data.results);
-        setCount(response.data.count);
-        setIsTotalData(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code) {
-          notification.error({
-            message: error.name,
-            description: error.message,
-            placement: 'bottomRight',
-          });
-        }
-        return error;
-      });
-  } 
+  // } 
   useEffect(() => {
     // console.log(totalProductsArray);
-    totalProductApi(rowsPerPage);
+    totalProductTableApi(setIsTotalData,page,rowsPerPage,setTotalProductsArray, setCount);
   }, [page,rowsPerPage,]);
 
   return (

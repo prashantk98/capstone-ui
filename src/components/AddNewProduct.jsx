@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button,Stack,TextField,Typography,Modal,Box,Select,MenuItem,InputLabel } from "@mui/material";
-import axios from "axios";
-import { apiLocalPath } from "../rowData";
+// import axios from "axios";
+// import { apiLocalPath } from "../rowData";
+import { addNewProductApi } from "../backendApis/AdminApis";
 
 const addItemModalStyle = {
   position: "absolute",
@@ -28,7 +29,7 @@ const addItemModalStyle = {
 };
 
 
-export default function AddNewProduct(prop){
+export default function AddNewProduct({navigateToAddNewItem,openAddNewProductModal,closeAddNewItemModal}){
   // const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
@@ -52,44 +53,44 @@ export default function AddNewProduct(prop){
     // e.target.value = null;
   };
   
-  function addNewProductApi(name,price,quantity,category,imgSrc,available){
-    let data = JSON.stringify({
-      "name": name,
-      "price": +price,
-      "quantity": +quantity,
-      "image": imgSrc,
-      "isActive": available
-    });
+  // function addNewProductApi(name,price,quantity,category,imgSrc,available){
+  //   let data = JSON.stringify({
+  //     "name": name,
+  //     "price": +price,
+  //     "quantity": +quantity,
+  //     "image": imgSrc,
+  //     "isActive": available
+  //   });
     
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: apiLocalPath+'/inventory/products/'+category,
-      headers: { 
-        'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'), 
-        'Content-Type': 'application/json'
-      },
-      data : data
-    };
+  //   let config = {
+  //     method: 'post',
+  //     maxBodyLength: Infinity,
+  //     url: apiLocalPath+'/inventory/products/'+category,
+  //     headers: { 
+  //       'Authorization': 'Bearer '+sessionStorage.getItem('adminAccessToken'), 
+  //       'Content-Type': 'application/json'
+  //     },
+  //     data : data
+  //   };
     
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    
-    
+  //   axios.request(config)
+  //   .then((response) => {
+  //     console.log(JSON.stringify(response.data));
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //   });
     
     
     
     
-  }
+    
+    
+  // }
   function handleSubmit(){
     // console.log("item category->", itemCategory)
     addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto ,itemAvailable);
-    prop.closeAddNewItemModal();
+    closeAddNewItemModal();
   }
 
   return (
@@ -99,12 +100,12 @@ export default function AddNewProduct(prop){
         sx={{
           fontSize: "1.8rem",
         }}
-        onClick={prop.navigateToAddNewItem}
+        onClick={navigateToAddNewItem}
       >
         Add New Product
       </Button>
       <Modal
-        open={prop.openAddItemModal}
+        open={openAddNewProductModal}
         //  onClose={() => setOpenAddItemModal(false)}
       >
         <Box sx={addItemModalStyle} component="form">
@@ -187,7 +188,7 @@ export default function AddNewProduct(prop){
           <Button variant="contained" color="primary" onClick={handleSubmit}>
             Submit
           </Button>
-          <Button variant="contained" onClick={prop.closeAddNewItemModal}>
+          <Button variant="contained" onClick={closeAddNewItemModal}>
             Cancel
           </Button>
         </Box>

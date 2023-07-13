@@ -6,97 +6,112 @@ import CloseIcon from "@mui/icons-material/Close";
 import { notification, Result } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiLocalPath } from "../rowData";
-import axios from "axios";
+// import { apiLocalPath } from "../rowData";
+// import axios from "axios";
+import { resetCartApi, UpdateCartApi } from "../backendApis/NcartApis";
 
-export default function ButtonStack(props) {
-  // console.log(props.setItems)
+export default function ButtonStack({
+  image,
+  setImage,
+  setBase64Image,
+  itemsArray,
+  videoRef,
+  audioRef,
+  setItems,
+  handleStartCaptureClick,
+  base64Image,
+  orderID,
+  isGotData,
+  setIsGotData,
+}) {
+  // console.log(setItems)
   const navigate = useNavigate();
   const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
   const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
   const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [unAvailable, setUnAvailable] = useState([]);
+  const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
 
   function handleFileChange(e) {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        props.setUploadItemPhoto(reader.result);
-        props.setImage(reader.result);
+        setUploadItemPhoto(reader.result);
+        setImage(reader.result);
         const base64String = reader.result;
         // console.log(base64String);
         const imageData = base64String.split(",")[1];
-        props.setBase64Image(imageData);
+        setBase64Image(imageData);
       };
       reader.readAsDataURL(file);
     }
     e.target.value = null;
   }
   const handleCaptureClick = () => {
-    props.audioRef.current.play();
+    audioRef.current.play();
     const canvas = document.createElement("canvas");
-    canvas.width = props.videoRef.current.videoWidth;
-    canvas.height = props.videoRef.current.videoHeight;
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
     const ctx = canvas.getContext("2d");
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(props.videoRef.current, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
     const capturedImage = canvas.toDataURL();
-    props.setImage(capturedImage);
+    setImage(capturedImage);
 
     const imageData = capturedImage.split(",")[1];
-    props.setBase64Image(imageData);
+    setBase64Image(imageData);
     // handleStopCaptureClick();
   };
-  function UpdateCartApi(base64Image) {
-    props.setIsGotData(false);
-    // console.log(props.itemsArray);
-    let data = JSON.stringify({
-      image: base64Image,
-      existingOrderItems: props.itemsArray,
-    });
+  // function UpdateCartApi(base64Image) {
+  //   setIsGotData(false);
+  //   // console.log(itemsArray);
+  //   let data = JSON.stringify({
+  //     image: base64Image,
+  //     existingOrderItems: itemsArray,
+  //   });
 
-    let config = {
-      method: "put",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/orders/" + props.orderID,
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
+  //   let config = {
+  //     method: "put",
+  //     maxBodyLength: Infinity,
+  //     url: apiLocalPath + "/orders/" + orderID,
+  //     headers: {
+  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: data,
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        props.setIsGotData(true);
-        console.log(response.data);
-        props.setShowSnackbar(true);
-        props.setItems([...response.data.available]);
-        sessionStorage.setItem(
-          "itemsArray",
-          JSON.stringify([...response.data.available])
-        );
-        if (response.data.unavailable.length !== 0) {
-          setUnAvailable([...response.data.unavailable]);
-          setOpenUnAvailableModal(true);
-        }
-        props.setUploadItemPhoto(null);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code) {
-          notification.error({
-            message: error.name,
-            description: error.message,
-            placement: 'bottomRight',
-          });
-        }
-        return error; 
-      });
-  }
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       setIsGotData(true);
+  //       console.log(response.data);
+  //       // setShowSnackbar(true);
+  //       setItems([...response.data.available]);
+  //       sessionStorage.setItem(
+  //         "itemsArray",
+  //         JSON.stringify([...response.data.available])
+  //       );
+  //       if (response.data.unavailable.length !== 0) {
+  //         setUnAvailable([...response.data.unavailable]);
+  //         setOpenUnAvailableModal(true);
+  //       }
+  //       setUploadItemPhoto(null);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       if (error.code) {
+  //         notification.error({
+  //           message: error.name,
+  //           description: error.message,
+  //           placement: "bottomRight",
+  //         });
+  //       }
+  //       return error;
+  //     });
+  // }
   return (
     <>
       <Stack
@@ -113,7 +128,7 @@ export default function ButtonStack(props) {
             },
             "@media screen and (max-width: 768px)": {
               "& .MuiButton-root": {
-                width: 'unset'
+                width: "unset",
               },
             },
             "@media screen and (max-width: 425px)": {
@@ -134,7 +149,7 @@ export default function ButtonStack(props) {
               justifyContent: "space-around",
               alignItems: "center",
               "@media screen and (max-width: 768px)": {
-                flexGrow: '1.3'
+                flexGrow: "1.3",
               },
             },
             "& .MuiButton-root": {
@@ -160,8 +175,8 @@ export default function ButtonStack(props) {
               },
             }}
             onClick={() => {
-              props.setItems([]);
-              props.resetCartApi();
+              setItems([]);
+              resetCartApi(orderID);
             }}
           >
             Reset
@@ -178,13 +193,13 @@ export default function ButtonStack(props) {
               Upload Image
             </Button>
           </label>
-          {props.image !== null ? (
+          {image !== null ? (
             <Button
               variant="contained"
               color="success"
-              onClick={props.handleStartCaptureClick}
+              onClick={handleStartCaptureClick}
             >
-              {props.image ? "Restart camera" : "Start Camera"}
+              {image ? "Restart camera" : "Start Camera"}
             </Button>
           ) : (
             <Button
@@ -201,9 +216,9 @@ export default function ButtonStack(props) {
             color="success"
             // href="/cart"
             onClick={() => {
-              if (props.image) {
-                props.handleStartCaptureClick();
-                UpdateCartApi(props.base64Image);
+              if (image) {
+                handleStartCaptureClick();
+                UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setUnAvailable, setOpenUnAvailableModal, setUploadItemPhoto);
               } else {
                 setOpenSnapshotSnackbar(true);
               }
@@ -224,11 +239,8 @@ export default function ButtonStack(props) {
             },
           }}
           onClick={() => {
-            if (props.itemsArray.length !== 0) {
-              sessionStorage.setItem(
-                "itemsArray",
-                JSON.stringify(props.itemsArray)
-              );
+            if (itemsArray.length !== 0) {
+              sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
               navigate("/cart");
             } else {
               setOpenCheckoutSnackbar(true);

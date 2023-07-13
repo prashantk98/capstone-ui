@@ -12,6 +12,7 @@ import ReactEcharts from "echarts-for-react";
 import { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import { totalProductApi } from "../backendApis/AdminApis";
 
 export default function ChartComponent() {
   const [isCategoryListOpen, setCategoryListOpen] = useState(false);
@@ -36,31 +37,31 @@ export default function ChartComponent() {
     // totalProductApi();
   };
 
-  function totalProductApi() {
-    setIsGotData(false);
-    const token = sessionStorage.getItem("adminAccessToken");
-    let config = {
-      method: "GET",
-      url: `${apiLocalPath}/inventory/products?page=${0}&page_size=2000`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    };
+  // function totalProductApi() {
+  //   setIsGotData(false);
+  //   const token = sessionStorage.getItem("adminAccessToken");
+  //   let config = {
+  //     method: "GET",
+  //     url: `${apiLocalPath}/inventory/products?page=${0}&page_size=2000`,
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        // console.log(response.data);
-        // setDefaultCategory(response.data.results);
-        setTotalItemInDb(response.data.results);
-        setIsGotData(true);
-        // setTotalProductsArray(response.data.results);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       // console.log(response.data);
+  //       // setDefaultCategory(response.data.results);
+  //       setTotalItemInDb(response.data.results);
+  //       setIsGotData(true);
+  //       // setTotalProductsArray(response.data.results);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
   const getChartOption = (category) => {
     // console.log(totalItemInDb);
     const chartOptions = {
@@ -136,7 +137,8 @@ export default function ChartComponent() {
   };
   
   useEffect(() => {
-    totalProductApi("");
+    // totalProductApi("");
+    totalProductApi(setIsGotData, setTotalItemInDb);
   }, []);
 
   return (

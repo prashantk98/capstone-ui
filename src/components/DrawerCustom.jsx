@@ -90,7 +90,7 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-export default function DrawerCustom(prop) {
+export default function DrawerCustom({sidebarButton}) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const handleDrawerOpen = () => {
@@ -203,7 +203,7 @@ export default function DrawerCustom(prop) {
             },
           }}
         >
-          {prop.sidebarButton.map((currentElement, index) => (
+          {sidebarButton.map((currentElement, index) => (
             <ListItem key={index} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{

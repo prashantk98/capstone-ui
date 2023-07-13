@@ -226,7 +226,7 @@ export default function EditItemDetails({ currentItem }) {
             </Select>
           </Stack>
 
-          {/* <Stack> */}
+          <Stack>
           {/* <InputLabel id="demo-simple-select-standard-label">
               Product Available
             </InputLabel>
@@ -250,15 +250,15 @@ export default function EditItemDetails({ currentItem }) {
           <FormLabel id="demo-row-radio-buttons-group-label">Product Available</FormLabel>
           <RadioGroup
             row
-            // aria-labelledby="demo-row-radio-buttons-group-label"
+            aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
             value={productAvailable}
               onChange={(e)=>setProductAvailable(e.target.value)}
           >
-            <FormControlLabel value={true} control={<Radio />} label="Yes" color="success" />
-            <FormControlLabel value={false} control={<Radio />} label="No" color="success" />
+            <FormControlLabel value={true} control={<Radio />} label="Yes"  />
+            <FormControlLabel value={false} control={<Radio />} label="No" />
           </RadioGroup>
-          {/* </Stack> */}
+          </Stack>
           {/* <input type="file" accept="image/*" onChange={handlePhotoChange} /> */}
           <Button variant="contained" onClick={handleSave}>
             Save

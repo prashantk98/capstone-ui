@@ -141,12 +141,10 @@ export default function Admin() {
               />
             </Grid>
           </Grid>
-          {/* <ChartComponent category={'Fruit'}/> */}
-          {/* <ChartComponent category={'Vegetable'}/> */}
           <ChartComponent />
           <AddNewProduct
             navigateToAddNewItem={navigateToAddNewItem}
-            openAddItemModal={openAddNewProductModal}
+            openAddNewProductModal={openAddNewProductModal}
             closeAddNewItemModal={closeAddNewItemModal}
           />
           <AddNewCategory

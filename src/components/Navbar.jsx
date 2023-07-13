@@ -5,7 +5,7 @@ import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrow
 import { useState } from "react";
 import { useEffect } from "react";
 
-export default function Navbar(prop) {
+export default function Navbar({isBackButton}) {
   const [itemsArray, setItems] = useState(() => {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
@@ -13,7 +13,10 @@ export default function Navbar(prop) {
   // useEffect(() => {
   //   const storedItems = sessionStorage.getItem("itemsArray");
   //   return storedItems ? setItems(JSON.parse(storedItems)) : setItems([]);
-  //   }, [])
+  //   }, [itemsArray])
+  useEffect(() => {
+    sessionStorage.setItem('itemsArray', JSON.stringify(itemsArray));
+  }, [itemsArray]);
   
   return (
     <>
@@ -33,7 +36,7 @@ export default function Navbar(prop) {
             }}
           >
             <Grid item>
-              {prop.isBackButton ? (
+              {isBackButton ? (
                 <Button
                   sx={{
                     "&": {

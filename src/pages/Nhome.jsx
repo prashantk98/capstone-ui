@@ -17,6 +17,7 @@ import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { notification } from 'antd';
+import { newUserApi, userPresentApi } from "../backendApis/NhomeApis";
 
 function isMobileNumberValid(value) {
   value = value.trim();
@@ -45,89 +46,88 @@ export default function Nhome() {
     return storedItems ? JSON.parse(storedItems) : [];
   });
 
-  function userPresent(value) {
-    let data = JSON.stringify({
-      phoneNumber: value,
-    });
+  // function userPresent(value) {
+  //   let data = JSON.stringify({
+  //     phoneNumber: value,
+  //   });
 
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/auth/user/login",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
+  //   let config = {
+  //     method: "post",
+  //     maxBodyLength: Infinity,
+  //     url: apiLocalPath + "/auth/user/login",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: data,
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        setIsUserNameFound(true);
-        setAccessToken(response.data.token);
-        setName(response.data.username);
-        setNumber(value);
-      })
-      .catch((error) => {
-        console.error("user not found");
-        setIsUserNameFound(false);
-        if (error.code) {
-          notification.error({
-            message: error.name,
-            description: error.message,
-            placement: 'bottomRight',
-          });
-        }
-        return error;
-      });
-  }
-  function newUser() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       setIsUserNameFound(true);
+  //       setAccessToken(response.data.token);
+  //       setName(response.data.username);
+  //       setNumber(value);
+  //     })
+  //     .catch((error) => {
+  //       console.error("user not found");
+  //       setIsUserNameFound(false);
+  //       if (error.code) {
+  //         notification.error({
+  //           message: error.name,
+  //           description: error.message,
+  //           placement: 'bottomRight',
+  //         });
+  //       }
+  //       return error;
+  //     });
+  // }
+  // function newUser() {
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Content-Type", "application/json");
 
-    var raw = JSON.stringify({
-      name: name,
-      phoneNumber: number,
-      created_by: "Omesh",
-    });
+  //   var raw = JSON.stringify({
+  //     name: name,
+  //     phoneNumber: number,
+  //     created_by: "Omesh",
+  //   });
 
-    var requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    };
+  //   var requestOptions = {
+  //     method: "POST",
+  //     headers: myHeaders,
+  //     body: raw,
+  //     redirect: "follow",
+  //   };
 
-    fetch(apiLocalPath + "/signup/user/", requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        result = JSON.parse(result);
-        // console.log(result);
-        setAccessToken(result.token);
-        sessionStorage.setItem("userName", name);
-        sessionStorage.setItem("userMobile", number);
-        sessionStorage.setItem("accessToken", result.token);
-      })
-      .catch((error) => {
-        console.log("error", error);
-        if (error.code) {
-          notification.error({
-            message: error.name,
-            description: error.message,
-            placement: 'bottomRight',
-          });
-        }
-        return error;
+  //   fetch(apiLocalPath + "/signup/user/", requestOptions)
+  //     .then((response) => response.text())
+  //     .then((result) => {
+  //       result = JSON.parse(result);
+  //       // console.log(result);
+  //       setAccessToken(result.token);
+  //       sessionStorage.setItem("userName", name);
+  //       sessionStorage.setItem("userMobile", number);
+  //       sessionStorage.setItem("accessToken", result.token);
+  //     })
+  //     .catch((error) => {
+  //       console.log("error", error);
+  //       if (error.code) {
+  //         notification.error({
+  //           message: error.name,
+  //           description: error.message,
+  //           placement: 'bottomRight',
+  //         });
+  //       }
+  //       return error;
         
-    });
-  }
+  //   });
+  // }
   function handleSubmit() {
     if (isMobileNumberValid(number)) {
       if (!isUserNameValid(name)) {
         setNameHelperText("Please Enter user Name");
       } else if (!isUserNameFound) {
-        // console.log(isUserNameFound);
-        newUser();
+        newUserApi(name, number,setAccessToken);
         navigate("/ncart");
       } else {
         sessionStorage.setItem("userName", name);
@@ -275,7 +275,7 @@ export default function Nhome() {
                   ) {
                     if (event.target.value.trim().length === 10) {
                       // console.log(event.target.value);
-                      userPresent(event.target.value.trim());
+                      userPresentApi(event.target.value.trim(), setIsUserNameFound, setAccessToken, setName, setNumber);
                     }
                     setNumber(event.target.value);
                     setNumberHelperText("");

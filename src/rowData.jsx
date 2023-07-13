@@ -91,7 +91,7 @@ export const ShowItemToAddManually = [
 
 export default totalItemInDb;
 
-export const apiLocalPath='https://6790ed0260de97.lhr.life';
+export const apiLocalPath='http://127.0.0.1:8000/';
 
 export const objectDetectionProbability = {
   objectName: [

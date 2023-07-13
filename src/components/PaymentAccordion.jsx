@@ -29,8 +29,7 @@ import coinCash from '../images/coinCash.png';
 import coins from "../images/coins.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { apiLocalPath } from "../rowData";
+import { paymentApi } from "../backendApis/BillApis";
 
 const creditCard = [
   { src: visa, alt: "visa card" },
@@ -71,31 +70,31 @@ const PaymentAccordionStyle = {
   },
 };
 
-function paymentAPI(price) {
-  let data = JSON.stringify({
-    orderID: sessionStorage.getItem("orderId"),
-    amount: price,
-  });
+// function paymentAPI(price) {
+//   let data = JSON.stringify({
+//     orderID: sessionStorage.getItem("orderId"),
+//     amount: price,
+//   });
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: apiLocalPath + "/payments/addNew/",
-    headers: {
-      Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-    },
-    data: data,
-  };
+//   let config = {
+//     method: "post",
+//     maxBodyLength: Infinity,
+//     url: apiLocalPath + "/payments/addNew/",
+//     headers: {
+//       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+//     },
+//     data: data,
+//   };
 
-  axios
-    .request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
+//   axios
+//     .request(config)
+//     .then((response) => {
+//       console.log(JSON.stringify(response.data));
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
+// }
 
 export default function PaymentAccordion() {
   const [expanded, setExpanded] = useState(false);
@@ -173,7 +172,7 @@ export default function PaymentAccordion() {
                 variant="contained"
                 onClick={() => {
                   setOpenModal(true);
-                  paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                  paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
                 }}
               >
@@ -222,7 +221,7 @@ export default function PaymentAccordion() {
                 variant="contained"
                 onClick={() => {
                   setOpenModal(true);
-                  paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                  paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
                 }}
               >
@@ -271,7 +270,7 @@ export default function PaymentAccordion() {
                 variant="contained"
                 onClick={() => {
                   setOpenModal(true);
-                  paymentAPI((totalPrice - totalPrice * 0.1).toFixed(2));
+                  paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
                 }}
               >

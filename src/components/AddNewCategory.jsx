@@ -1,14 +1,10 @@
 import { useState } from "react";
 import {
   Button,
-  Stack,
   TextField,
   Typography,
   Modal,
   Box,
-  Select,
-  MenuItem,
-  InputLabel,
   FormLabel,
   Autocomplete,
 } from "@mui/material";
@@ -18,9 +14,8 @@ import {
   RadioGroup,
   FormHelperText,
 } from "@mui/material";
-import axios from "axios";
-import { apiLocalPath } from "../rowData";
 import { useEffect } from "react";
+import { getCategoriesApi } from "../backendApis/AdminApis";
 
 const addCategoryModalStyle = {
   position: "absolute",
@@ -46,7 +41,7 @@ const addCategoryModalStyle = {
   },
 };
 
-export default function AddNewCategory(prop) {
+export default function AddNewCategory({navigateToAddNewCategory, openAddItemCategoryModal, closeAddNewCategory}) {
   // const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
   const [error, setError] = useState(false);
@@ -67,37 +62,37 @@ export default function AddNewCategory(prop) {
   function handleSubmit() {
     console.log(category,inputCategory)
     // addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto ,itemAvailable);
-    prop.closeAddNewCategory();
+    closeAddNewCategory();
   }
-  function getCategories() {
-    let data = "";
+  // function getCategories() {
+  //   let data = "";
 
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/inventory/category",
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("adminAccessToken"),
-      },
-      data: data,
-    };
+  //   let config = {
+  //     method: "get",
+  //     maxBodyLength: Infinity,
+  //     url: apiLocalPath + "/inventory/category",
+  //     headers: {
+  //       Authorization: "Bearer " + sessionStorage.getItem("adminAccessToken"),
+  //     },
+  //     data: data,
+  //   };
 
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  //   axios
+  //     .request(config)
+  //     .then((response) => {
+  //       console.log(JSON.stringify(response.data));
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
   useEffect(()=>{
-    getCategories();
+    getCategoriesApi();
   },[])
 
   return (
     <>
-      <Modal open={prop.openAddItemCategoryModal}>
+      <Modal open={openAddItemCategoryModal}>
         <Box sx={addCategoryModalStyle} component="form">
           <Typography>Add New Category </Typography>
 
@@ -180,7 +175,7 @@ export default function AddNewCategory(prop) {
           <Button variant="contained" color="primary" onClick={handleSubmit}>
             Submit
           </Button>
-          <Button variant="contained" onClick={prop.closeAddNewCategory}>
+          <Button variant="contained" onClick={closeAddNewCategory}>
             Cancel
           </Button>
         </Box>
