@@ -17,11 +17,12 @@ import {
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import ProfilePhoto from "./ProfilePhoto";
-import { notification } from "antd";
+// import { notification } from "antd";
 import { useState } from "react";
-import { apiLocalPath } from "../rowData";
-import axios from "axios";
-import { FormControl } from "@mui/base";
+// import { apiLocalPath } from "../rowData";
+// import axios from "axios";
+// import { FormControl } from "@mui/base";
+import {editProductDetailsApi} from '../backendApis/AdminApis'
 
 const editItemModalStyle = {
   position: "absolute",
@@ -47,7 +48,7 @@ const editItemModalStyle = {
   },
 };
 
-export default function EditItemDetails({ currentItem }) {
+export default function EditItemDetails({ currentItem, setRowsPerPage}) {
   const [editableProductModal, setEditableProductModal] = useState(false);
   const [productName, setProductName] = useState(currentItem.name);
   const [productPrice, setProductPrice] = useState(currentItem.price);
@@ -59,25 +60,16 @@ export default function EditItemDetails({ currentItem }) {
   );
   const [productQuantity, setProductQuantity] = useState(currentItem.quantity);
   const [productPhoto, setProductPhoto] = useState(currentItem.image);
-  // const [productDetails, setProductDetails] = useState({
-  //   productName: currentItem.name,
-  //   productPrice: currentItem.price,
-  //   productCategory: currentItem.categories,
-  //   productAvailable: currentItem.isActive,
-  //   productPhoto: currentItem.image,
-  //   productQuantity: currentItem.quantity,
-  // });
 
   const handleEdit = (item) => {
-    console.log(currentItem.name);
     setEditableProductModal(true);
-    console.log(item, currentItem);
     setProductName(currentItem.name);
     setProductPrice(currentItem.price);
     setProductCategory(currentItem.categories);
     setProductAvailable(currentItem.isActive);
     setProductQuantity(currentItem.quantity);
     setProductPhoto(currentItem.image);
+    console.log(currentItem.image)
   };
   // const chartRef = useRef(null);
   // const handleChange = (event) => {
@@ -113,48 +105,15 @@ export default function EditItemDetails({ currentItem }) {
       productQuantity,
       productCategory,
       productAvailable,
-      productPhoto
+      productPhoto,
+      currentItem
     );
+    setRowsPerPage(11);
+    setRowsPerPage(10);
     setEditableProductModal(false);
     // setData(updatedData);
   };
-  function editProductDetailsApi() {
-    let data = JSON.stringify({
-      categories: productCategory,
-      image: productPhoto,
-      isActive: productAvailable,
-      name: productName,
-      price: +productPrice,
-      quantity: +productQuantity,
-    });
-
-    let config = {
-      method: "put",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/inventory/updateProducts/" + currentItem.name,
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("adminAccessToken"),
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        if (error.code) {
-          notification.error({
-            message: error.name,
-            description: error.message,
-            placement: "bottomRight",
-          });
-        }
-        return error;
-      });
-  }
+  
 
   return (
     <>
@@ -170,8 +129,9 @@ export default function EditItemDetails({ currentItem }) {
         <Box sx={editItemModalStyle} component="form">
           <Typography>Edit Details</Typography>
           <ProfilePhoto
-            image={productPhoto}
+            productPhoto={productPhoto}
             handlePhotoChange={handlePhotoChange}
+            // setProductPhoto={setProductPhoto}
           />
           <TextField
             name="productName"

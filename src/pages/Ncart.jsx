@@ -2,20 +2,14 @@ import { Box, CircularProgress, Stack } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import CartItem from "../components/CartItem";
-import { apiLocalPath } from "../rowData";
 import Footer from "../components/Footer";
-import axios from "axios";
-// import { Result } from "antd";
 import Navbar from "../components/Navbar";
 import Camera from "../components/Camera";
 import AddItemManually from "../components/AddItemManually";
 import ButtonStack from "../components/ButtonStack";
 import { notification } from "antd";
-import { addItemToCartApi, QuantityApi } from "../backendApis/NcartApis";
+import { addItemToCartApi, generateOrderIdApi, QuantityApi } from "../backendApis/NcartApis";
 
-// let totalItemsGlobal;
-// let itemsArrayGlobal;
-export let itemsArrayGlobal = [];
 
 export default function Ncart() {
   const [image, setImage] = useState(null);
@@ -25,117 +19,22 @@ export default function Ncart() {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
   });
-  // const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
-  // const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
     productName: "",
   });
-  const [authenticated, setauthenticated] = useState(
-    sessionStorage.getItem("accessToken") || false
-  );
+  // const [authenticated, setauthenticated] = useState(
+  //   sessionStorage.getItem("accessToken") || false
+  // );
   const [orderID, setOrderId] = useState(() => {
     const sessionOrderId = sessionStorage.getItem("orderId");
     return sessionOrderId ? JSON.parse(sessionOrderId) : null;
   });
   // const [unAvailable, setUnAvailable] = useState([]);
   const [base64Image, setBase64Image] = useState(null);
-  // const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
-  const [openAddItemToCartSnackbar, setOpenAddItemToCartSnackbar] =
-    useState(false);
   const [isGotData, setIsGotData] = useState(true);
-
-  // function resetCartApi() {
-  //   console.log(orderID);
-  //   let config = {
-  //     method: "get",
-  //     maxBodyLength: Infinity,
-  //     url: apiLocalPath + "/orders/orderItems/" + orderID,
-  //     headers: {
-  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-  //     },
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       console.log(JSON.stringify(response.data));
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       if (error.code) {
-  //         notification.error({
-  //           message: error.name,
-  //           description: error.message,
-  //           placement: 'bottomRight',
-  //         });
-  //         return error;
-  //       }
-
-  //     });
-  // }
-
-  // function addItemToCartApi(productName, quantity) {
-  //   let data = JSON.stringify({
-  //     newOrderItem: {
-  //       name: productName,
-  //       quantity: quantity,
-  //     },
-  //   });
-
-  //   let config = {
-  //     method: "put",
-  //     maxBodyLength: Infinity,
-  //     url: apiLocalPath + "/orders/" + orderID,
-  //     headers: {
-  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: data,
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       let indexOfItem = -1;
-  //       for (let index = 0; index < itemsArray.length; index++) {
-  //         console.log(itemsArray[index].productID, productName);
-  //         if (itemsArray[index].productID === productName) {
-  //           indexOfItem = index;
-  //         }
-  //       }
-  //       if (indexOfItem !== -1) {
-  //         // console.log('This is called')
-  //         QuantityApi(indexOfItem, itemsArray[indexOfItem].quantity + 1);
-  //         // QuantityApi(itemsArray,indexOfItem,itemsArray[indexOfItem].quantity+1, setItems);
-  //       } else {
-  //         sessionStorage.setItem(
-  //           "itemsArray",
-  //           JSON.stringify([...itemsArray, response.data.data.available])
-  //         );
-  //         setItems((prev) => [...prev, response.data.data.available]);
-  //       }
-  //       // setItemManuallyObj({
-  //       //   productName: "",
-  //       // });
-  //       // setShowSnackbar(true);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       if (error.code) {
-  //         notification.error({
-  //           message: error.name,
-  //           description: error.message,
-  //           placement: 'bottomRight',
-  //         });
-  //       }
-  //       return error;
-  //     });
-  // }
 
   const addItemToCart = () => {
     if (itemSelectedManuallyObj.productName.trim() !== "") {
-      // addItemToCartApi(itemSelectedManuallyObj.productName, 1);
       addItemToCartApi(
         itemSelectedManuallyObj.productName,
         1,
@@ -144,49 +43,12 @@ export default function Ncart() {
         setItems
       );
     } else {
-      setOpenAddItemToCartSnackbar(true);
+      notification.info({
+        message: 'Please Select the Product',
+        placement: 'bottomRight',
+      });
     }
   };
-  // const removeItemFromCart = (index) => {
-  //   let data = "";
-
-  //   let config = {
-  //     method: "delete",
-  //     maxBodyLength: Infinity,
-  //     url:
-  //       apiLocalPath +
-  //       "/orders/" +
-  //       itemsArray[index].orderID +
-  //       "/" +
-  //       itemsArray[index].orderItemID,
-  //     headers: {
-  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-  //     },
-  //     data: data,
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       sessionStorage.setItem(
-  //         "itemsArray",
-  //         JSON.stringify(
-  //           itemsArray.filter((currentValue, idx) => {
-  //             return idx !== index;
-  //           })
-  //         )
-  //       );
-  //       setItems((prevState) => {
-  //         return prevState.filter((currentValue, idx) => {
-  //           return idx !== index;
-  //         });
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const handleStartCaptureClick = async () => {
     try {
@@ -209,113 +71,22 @@ export default function Ncart() {
     }
   };
 
-  // function QuantityApi(index, quantity) {
-  //   console.log(itemsArray[index]);
-  //   let data = JSON.stringify({
-  //     productID: itemsArray[index].productID,
-  //     quantity: quantity,
-  //   });
-
-  //   let config = {
-  //     method: "put",
-  //     maxBodyLength: Infinity,
-  //     url:
-  //       apiLocalPath +
-  //       "/orders/" +
-  //       itemsArray[index].orderID +
-  //       "/" +
-  //       itemsArray[index].orderItemID,
-  //     headers: {
-  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: data,
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       // console.log(response.data.data);
-  //       const newItemsArray=itemsArray.slice();
-  //       newItemsArray.filter((current, idx) => {
-  //         if (idx === index) {
-  //           Object.assign(current, response.data.data);
-  //         }
-  //         return true;
-  //       })
-  //       setItems(() => newItemsArray);
-  //       console.log(newItemsArray);
-  //       // setItems((prevState) => {
-  //       //   return [...prevState.filter((current, idx) => {
-  //       //     if (idx === index) {
-  //       //       Object.assign(current, response.data.data);
-  //       //     }
-  //       //     return true;
-  //       //   })];
-  //       // });
-  //       sessionStorage.setItem("itemsArray", JSON.stringify(newItemsArray));
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       if (error.code) {
-  //         notification.error({
-  //           message: error.name,
-  //           description: error.message,
-  //           placement: 'bottomRight',
-  //         });
-  //       }
-  //       return error;
-  //     });
-  // }
-
   function handleIncrement(index) {
-    // QuantityApi(index, +itemsArray[index].quantity + 1);
     QuantityApi(itemsArray, index, itemsArray[index].quantity + 1, setItems);
   }
   function handleDecrement(index) {
-    if (itemsArray[index].quantity > 1)
-      if (itemsArray[index].quantity > 1)
-        // QuantityApi(index, +itemsArray[index].quantity - 1);
-        QuantityApi(
-          itemsArray,
-          index,
-          itemsArray[index].quantity - 1,
-          setItems
-        );
+      if (itemsArray[index].quantity > 1){
+        QuantityApi(itemsArray, index, itemsArray[index].quantity - 1, setItems);
+      }
   }
   function changeQuantity(index, value) {
     // QuantityApi(index, +value);
     QuantityApi(itemsArray, index, value, setItems);
   }
-  function generateOrderId() {
-    let data = "";
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: apiLocalPath + "/orders/addNew/",
-      headers: {
-        Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        // console.log(response.data);
-
-        setOrderId(response.data.data.order.pk);
-        sessionStorage.setItem("orderId", response.data.data.order.pk);
-        // sessionStorage.clear();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
 
   useEffect(() => {
     if (sessionStorage.getItem("orderId") === null) {
-      generateOrderId();
+      generateOrderIdApi(setOrderId);
     }
     handleStartCaptureClick();
   }, []);

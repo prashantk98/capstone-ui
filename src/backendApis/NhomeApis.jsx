@@ -28,14 +28,14 @@ export function userPresentApi(value, setIsUserNameFound, setAccessToken, setNam
     .catch((error) => {
       console.error("user not found");
       setIsUserNameFound(false);
-      if (error.code) {
-        notification.error({
-          message: error.name,
-          description: error.message,
-          placement: 'bottomRight',
-        });
-      }
-      return error;
+      // if (error.code) {
+      //   notification.error({
+      //     message: error.name,
+      //     description: error.message,
+      //     placement: 'bottomRight',
+      //   });
+      // }
+      // return error;
     });
 }
 

@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack } from '@mui/material';
 import EditIcon from "@mui/icons-material/Edit";
-const ProfilePhoto = ({image,handlePhotoChange}) => {
+const ProfilePhoto = ({producPhoto, handlePhotoChange}) => {
   const [openDialog, setOpenDialog] = useState(false);
-  // const [selectedImage, setSelectedImage] = useState(image);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
+    console.log(producPhoto);
   };
-
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
+
+  // const handlePhotoChange = (e) => {
+  //   const file = e.target.files[0];
+  //   const reader = new FileReader();
+
+  //   reader.onload = (event) => {
+  //     setTempProductImage(event.target.result.split(",")[1]);
+  //   };
+
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   // const handleImageChange = (e) => {
   //   const file = e.target.files[0];
@@ -28,7 +40,7 @@ const ProfilePhoto = ({image,handlePhotoChange}) => {
 
   return (
     <Stack direction={'row'} justifyContent={'center'} alignItems="center">
-      <Avatar alt="Profile Photo" src={"data:image/jpeg;base64,"+image} />
+      <Avatar alt="Profile Photo" src={"data:image/jpeg;base64,"+producPhoto} />
 
       <IconButton color="primary" component="span" onClick={handleOpenDialog}>
         <EditIcon />
@@ -43,7 +55,10 @@ const ProfilePhoto = ({image,handlePhotoChange}) => {
           <Button onClick={handleCloseDialog} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button onClick={()=>{
+            // setProductPhoto(tempProductImage);
+            handleCloseDialog();
+          }} color="primary">
             Save
           </Button>
         </DialogActions>

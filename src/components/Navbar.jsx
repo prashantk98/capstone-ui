@@ -1,23 +1,19 @@
 import { NavLink } from "react-router-dom";
-import { AppBar, Toolbar, Grid, Badge,Button } from "@mui/material";
+import { AppBar, Toolbar, Grid, Badge, Button } from "@mui/material";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import { useState } from "react";
-import { useEffect } from "react";
 
-export default function Navbar({isBackButton}) {
+export default function Navbar({ isBackButton }) {
   const [itemsArray, setItems] = useState(() => {
     const storedItems = sessionStorage.getItem("itemsArray");
     return storedItems ? JSON.parse(storedItems) : [];
   });
-  // useEffect(() => {
-  //   const storedItems = sessionStorage.getItem("itemsArray");
-  //   return storedItems ? setItems(JSON.parse(storedItems)) : setItems([]);
-  //   }, [itemsArray])
-  useEffect(() => {
-    sessionStorage.setItem('itemsArray', JSON.stringify(itemsArray));
-  }, [itemsArray]);
-  
+//   const [totalProductInCart, setTotalProductInCart]= useState(
+//     itemsArray.slice().reduce((accumulator, currentValue) =>
+//       accumulator + currentValue.quantity,0)
+// )
+
   return (
     <>
       <AppBar
@@ -79,15 +75,8 @@ export default function Navbar({isBackButton}) {
             >
               <NavLink to="/ncart" className="navbar__cart">
                 <Badge
-                  badgeContent={
-                    itemsArray.length === 0
-                      ? 0
-                      : itemsArray.reduce(
-                          (accumulator, currentValue) =>
-                            accumulator + currentValue.quantity,
-                          0
-                        )
-                  }
+                  badgeContent={itemsArray.slice().reduce((accumulator, currentValue) =>
+                    accumulator + currentValue.quantity,0)}
                   sx={{
                     "& .MuiBadge-badge": {
                       fontSize: "2rem",
@@ -106,8 +95,14 @@ export default function Navbar({isBackButton}) {
               </NavLink>
             </Grid>
             <Grid item>
-              <NavLink to="/admin/login" className="navbar__admin" onClick={()=>{sessionStorage.removeItem("adminAccessToken");
-            sessionStorage.removeItem('adminAuthorization')}}>
+              <NavLink
+                to="/admin/login"
+                className="navbar__admin"
+                onClick={() => {
+                  sessionStorage.removeItem("adminAccessToken");
+                  sessionStorage.removeItem("adminAuthorization");
+                }}
+              >
                 Admin
               </NavLink>
             </Grid>

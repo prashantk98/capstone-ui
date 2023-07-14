@@ -7,6 +7,8 @@ import {
   Box,
   FormLabel,
   Autocomplete,
+  Stack,
+  InputLabel,
 } from "@mui/material";
 import {
   FormControlLabel,
@@ -41,26 +43,31 @@ const addCategoryModalStyle = {
   },
 };
 
-export default function AddNewCategory({navigateToAddNewCategory, openAddItemCategoryModal, closeAddNewCategory}) {
+export default function AddNewCategory({
+  navigateToAddNewCategory,
+  openAddItemCategoryModal,
+  closeAddNewCategory,
+}) {
   // const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
   const [error, setError] = useState(false);
   const [category, setCategory] = useState([]);
   const [inputCategory, setInputCategory] = useState("");
+  const [itemAvailable, setItemAvailable] = useState(true);
 
   const defaultProps = {
-    options: category.sort((a, b) => {
-      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
-    }),
-    getOptionLabel: (option) => (option.name || ""),
+    options: category,
+    getOptionLabel: (option) => option.name || "",
   };
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
     setError(false);
   };
-
+  function handleAutocompleteChange(event, newValue) {
+    setInputCategory(newValue);
+  }
   function handleSubmit() {
-    console.log(category,inputCategory)
+    console.log(inputCategory);
     // addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto ,itemAvailable);
     closeAddNewCategory();
   }
@@ -86,91 +93,46 @@ export default function AddNewCategory({navigateToAddNewCategory, openAddItemCat
   //       console.log(error);
   //     });
   // }
-  useEffect(()=>{
-    getCategoriesApi();
-  },[])
+  useEffect(() => {
+    getCategoriesApi(setCategory);
+  }, []);
 
   return (
     <>
       <Modal open={openAddItemCategoryModal}>
         <Box sx={addCategoryModalStyle} component="form">
           <Typography>Add New Category </Typography>
-
           <Autocomplete
-            value={category}
-            onChange={(event, newValue) => {
-              setCategory(newValue);
-            }}
-            inputValue={inputCategory}
-            onInputChange={(event, newInputValue) => {
-              setInputCategory(newInputValue);
-            }}
-            id="controllable-states-demo"
             {...defaultProps}
-            // options={options}
-            // sx={{ width: 300 }}
+            freeSolo
+            value={inputCategory}
+            onChange={handleAutocompleteChange}
+            id="controllable-states-demo"
+            autoSelect
             renderInput={(params) => (
-              <TextField {...params} label="Category" variant="filled" />
+              <TextField {...params} label="Category" variant="outlined" />
             )}
           />
-          <FormLabel id="demo-controlled-radio-buttons-group">
-            Category is Active or not
-          </FormLabel>
-          <RadioGroup
-            name="radio-buttons"
-            value={selectedValue}
-            onChange={handleChange}
-          >
-            <FormControlLabel
-              value="option1"
-              control={
-                <Radio
-                  sx={{
-                    borderRadius: "0",
-                    "& .MuiSvgIcon-root": {
-                      borderRadius: "0",
-                      borderColor:
-                        selectedValue === "option1" ? "green" : "currentColor",
-                    },
-                  }}
-                />
-              }
-              label="Option 1"
-            />
-            <FormControlLabel
-              value="option2"
-              control={
-                <Radio
-                  sx={{
-                    borderRadius: "0",
-                    "& .MuiSvgIcon-root": {
-                      borderRadius: "0",
-                      borderColor:
-                        selectedValue === "option2" ? "green" : "currentColor",
-                    },
-                  }}
-                />
-              }
-              label="Option 2"
-            />
-            <FormControlLabel
-              value="option3"
-              control={
-                <Radio
-                  sx={{
-                    borderRadius: "0",
-                    "& .MuiSvgIcon-root": {
-                      borderRadius: "0",
-                      borderColor:
-                        selectedValue === "option3" ? "green" : "currentColor",
-                    },
-                  }}
-                />
-              }
-              label="Option 3"
-            />
-          </RadioGroup>
-          {error && <FormHelperText>Please select an option.</FormHelperText>}
+          <Stack>
+            <InputLabel>Item Available</InputLabel>
+            <RadioGroup
+              name="itemAvailable"
+              value={itemAvailable.toString()}
+              onChange={(event) => setItemAvailable(event.target.value === "true")}
+              row
+            >
+              <FormControlLabel
+                value={true}
+                control={<Radio color="success" />}
+                label="Yes"
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio color="success" />}
+                label="No"
+              />
+            </RadioGroup>
+          </Stack>
 
           <Button variant="contained" color="primary" onClick={handleSubmit}>
             Submit

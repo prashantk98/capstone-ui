@@ -1,12 +1,11 @@
 import * as React from "react";
-import { Paper, Grid, Typography, CssBaseline, Box } from "@mui/material";
+import { Grid, CssBaseline, Box } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import SellIcon from "@mui/icons-material/Sell";
 import PageviewIcon from "@mui/icons-material/Pageview";
-import totalItemInDb from "../rowData";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 // import homeBg from '../../images/cart_bg.svg';
 import DrawerCustom from "../components/DrawerCustom";
@@ -44,7 +43,10 @@ const sellIcon = (
 export default function Admin() {
   const navigate = useNavigate();
   const [openAddNewProductModal, setOpenAddNewProductModal] = useState(false);
-  const [openAddItemCategoryModal,setOpenAddNewCategoryModal]= useState(false)
+  const [openAddItemCategoryModal,setOpenAddNewCategoryModal]= useState(false);
+  const [totalProductsArray, setTotalProductsArray] = useState([]);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // const [isChanged, setIsChanged]= useState(false);
   const [isAuthenticated, setisAuthenticated]= useState(sessionStorage.getItem('adminAuthorization')==='true')
   const sidebarButton = [
     { title: "Dashboard", onClickFuntion: navigateToDashborad },
@@ -146,13 +148,15 @@ export default function Admin() {
             navigateToAddNewItem={navigateToAddNewItem}
             openAddNewProductModal={openAddNewProductModal}
             closeAddNewItemModal={closeAddNewItemModal}
+            setRowsPerPage={setRowsPerPage}
           />
           <AddNewCategory
             navigateToAddNewCategory={navigateToAddNewCategory}
             openAddItemCategoryModal={openAddItemCategoryModal}
             closeAddNewCategory={closeAddNewCategory}
           />
-          <ShowItemsTable />
+
+          <ShowItemsTable totalProductsArray={totalProductsArray} setTotalProductsArray={setTotalProductsArray} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}  />
           {/* <EditItemDetails/> */}
           {/* <LoginAdminModal /> */}
           <Footer />

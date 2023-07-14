@@ -2,7 +2,33 @@ import { notification } from "antd";
 import axios from "axios";
 import { apiLocalPath } from "../rowData";
 
-export function resetCartApi(orderID) {
+export function generateOrderIdApi(setOrderId) {
+  let data = "";
+  let config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: apiLocalPath + "/orders/addNew/",
+    headers: {
+      Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
+    },
+    data: data,
+  };
+
+  axios
+    .request(config)
+    .then((response) => {
+      // console.log(response.data);
+
+      setOrderId(response.data.data.order.pk);
+      sessionStorage.setItem("orderId", response.data.data.order.pk);
+      // sessionStorage.clear();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+export function resetCartApi(orderID,setItems) {
   // console.log(orderID);
   let config = {
     method: "get",
@@ -17,17 +43,28 @@ export function resetCartApi(orderID) {
     .request(config)
     .then((response) => {
       console.log(JSON.stringify(response.data));
+      setItems([]);
+      notification.warning({
+        message: 'Cart Reset',
+        placement: 'bottomRight',
+      });
     })
     .catch((error) => {
       console.log(error);
-      if (error.code) {
+      if(error.response.status===403){
+        notification.error({
+          message: 'Invalid token',
+          description: 'Oops Session expired, Fill the details again',
+          placement: "bottomRight",
+        });
+      }else if (error.code) {
         notification.error({
           message: error.name,
           description: error.message,
           placement: "bottomRight",
         });
-        return error;
       }
+      return error;
     });
 }
 
@@ -50,17 +87,33 @@ export function QuantityApi(itemsArray, index, quantity, setItems) {
   };
 
   axios.request(config).then((response) => {
-      const newItemsArray = itemsArray.slice();
-      Object.assign(newItemsArray[index], response.data.data);
-      setItems([...newItemsArray]);
-      sessionStorage.setItem("itemsArray", JSON.stringify([...newItemsArray]));
+    // console.log(itemsArray[index].quantity, response.data.data.quantity)
+    itemsArray[index].quantity<response.data.data.quantity? notification.success({
+      message: 'Increment in Quantity',
+      placement: 'bottomRight',
+    }): notification.success({
+      message: 'Decrement in Quantity',
+      placement: 'bottomRight',
+    })
+    const newItemsArray = itemsArray.slice();
+    Object.assign(newItemsArray[index], response.data.data);
+    setItems([...newItemsArray]);
+    sessionStorage.setItem("itemsArray", JSON.stringify([...newItemsArray]));
       
+    // console.log(itemsArray);  
+
     }).catch((error) => {
       console.log(error);
-      if (error.code) {
+      if(error.response.status===403){
+        notification.error({
+          message: 'Invalid token',
+          description: 'Oops Session expired, Fill the details again',
+          placement: "bottomRight",
+        });
+      }else if (error.code) {
         notification.error({
           message: error.name,
-          description: error.message,
+          description: error.response.data.error,
           placement: "bottomRight",
         });
       }
@@ -68,13 +121,7 @@ export function QuantityApi(itemsArray, index, quantity, setItems) {
     });
 }
 
-export function addItemToCartApi(
-  productName,
-  quantity,
-  orderID,
-  itemsArray,
-  setItems
-) {
+export function addItemToCartApi(productName, quantity, orderID, itemsArray, setItems) {
   let data = JSON.stringify({
     newOrderItem: {
       name: productName,
@@ -96,10 +143,8 @@ export function addItemToCartApi(
   axios
     .request(config)
     .then((response) => {
-      console.log(response.data);
       let indexOfItem = -1;
       for (let index = 0; index < itemsArray.length; index++) {
-        console.log(itemsArray[index].productID, productName);
         if (itemsArray[index].productID === productName) {
           indexOfItem = index;
         }
@@ -107,27 +152,26 @@ export function addItemToCartApi(
       if (indexOfItem !== -1) {
         // console.log('This is called')
         // QuantityApi(indexOfItem, itemsArray[indexOfItem].quantity + 1);
-        QuantityApi(
-          itemsArray,
-          indexOfItem,
-          itemsArray[indexOfItem].quantity + 1,
-          setItems
-        );
+        QuantityApi(itemsArray, indexOfItem, itemsArray[indexOfItem].quantity + 1, setItems);
       } else {
-        sessionStorage.setItem(
-          "itemsArray",
-          JSON.stringify([...itemsArray, response.data.data.available])
-        );
+        sessionStorage.setItem("itemsArray", JSON.stringify([...itemsArray, response.data.data.available]));
         setItems((prev) => [...prev, response.data.data.available]);
+        notification.success({
+          message: 'Items Added Successfully',
+          placement: 'bottomRight',
+        });
       }
-      // setItemManuallyObj({
-      //   productName: "",
-      // });
-      // setShowSnackbar(true);
+      
     })
     .catch((error) => {
       console.log(error);
-      if (error.code) {
+      if(error.response.status===403){
+        notification.error({
+          message: 'Invalid token',
+          description: 'Oops Session expired, Fill the details again',
+          placement: "bottomRight",
+        });
+      }else if (error.code) {
         notification.error({
           message: error.name,
           description: error.message,
@@ -158,7 +202,7 @@ export function removeItemFromCartApi(index, itemsArray, setItems) {
   axios
     .request(config)
     .then((response) => {
-      console.log(response.data);
+      // console.log(response.data);
       
       sessionStorage.setItem(
         "itemsArray",
@@ -173,10 +217,20 @@ export function removeItemFromCartApi(index, itemsArray, setItems) {
           return idx !== index;
         });
       });
+      notification.success({
+        message: 'Product deleted successfully',
+        placement: 'bottomRight',
+      })
     })
     .catch((error) => {
       console.log(error);
-      if (error.code) {
+      if(error.response.status===403){
+        notification.error({
+          message: 'Invalid token',
+          description: 'Oops Session expired, Fill the details again',
+          placement: "bottomRight",
+        });
+      }else if (error.code) {
         notification.error({
           message: error.name,
           description: error.message,
@@ -216,10 +270,20 @@ export function UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, se
           setOpenUnAvailableModal(true);
         }
         setUploadItemPhoto(null);
+        notification.success({
+          message: 'Items Added Successfully',
+          placement: 'bottomRight',
+        });
       })
       .catch((error) => {
         console.log(error);
-        if (error.code) {
+        if(error.response.status===403){
+          notification.error({
+            message: 'Invalid token',
+            description: 'Oops Session expired, Fill the details again',
+            placement: "bottomRight",
+          });
+        }else if (error.code) {
           notification.error({
             message: error.name,
             description: error.message,

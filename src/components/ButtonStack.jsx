@@ -24,10 +24,7 @@ export default function ButtonStack({
   isGotData,
   setIsGotData,
 }) {
-  // console.log(setItems)
   const navigate = useNavigate();
-  const [openCheckoutSnackbar, setOpenCheckoutSnackbar] = useState(false);
-  const [openSnapshotSnackbar, setOpenSnapshotSnackbar] = useState(false);
   const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
   const [unAvailable, setUnAvailable] = useState([]);
   const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
@@ -64,54 +61,6 @@ export default function ButtonStack({
     setBase64Image(imageData);
     // handleStopCaptureClick();
   };
-  // function UpdateCartApi(base64Image) {
-  //   setIsGotData(false);
-  //   // console.log(itemsArray);
-  //   let data = JSON.stringify({
-  //     image: base64Image,
-  //     existingOrderItems: itemsArray,
-  //   });
-
-  //   let config = {
-  //     method: "put",
-  //     maxBodyLength: Infinity,
-  //     url: apiLocalPath + "/orders/" + orderID,
-  //     headers: {
-  //       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: data,
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       setIsGotData(true);
-  //       console.log(response.data);
-  //       // setShowSnackbar(true);
-  //       setItems([...response.data.available]);
-  //       sessionStorage.setItem(
-  //         "itemsArray",
-  //         JSON.stringify([...response.data.available])
-  //       );
-  //       if (response.data.unavailable.length !== 0) {
-  //         setUnAvailable([...response.data.unavailable]);
-  //         setOpenUnAvailableModal(true);
-  //       }
-  //       setUploadItemPhoto(null);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       if (error.code) {
-  //         notification.error({
-  //           message: error.name,
-  //           description: error.message,
-  //           placement: "bottomRight",
-  //         });
-  //       }
-  //       return error;
-  //     });
-  // }
   return (
     <>
       <Stack
@@ -175,8 +124,7 @@ export default function ButtonStack({
               },
             }}
             onClick={() => {
-              setItems([]);
-              resetCartApi(orderID);
+              resetCartApi(orderID,setItems);
             }}
           >
             Reset
@@ -220,7 +168,11 @@ export default function ButtonStack({
                 handleStartCaptureClick();
                 UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setUnAvailable, setOpenUnAvailableModal, setUploadItemPhoto);
               } else {
-                setOpenSnapshotSnackbar(true);
+                notification.info({
+                  message: 'Upload image or take snapshot',
+                  description: 'You must upload an image or take a snapshot to add to cart',
+                  placement: "bottomRight",
+                });
               }
             }}
           >
@@ -243,38 +195,15 @@ export default function ButtonStack({
               sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
               navigate("/cart");
             } else {
-              setOpenCheckoutSnackbar(true);
+              notification.info({
+                message: 'Add at least one item',
+                description: 'Add at least one item to checkout',
+                placement: "bottomRight",
+              });
             }
           }}
         >
           Checkout
-          <Snackbar
-            open={openCheckoutSnackbar}
-            autoHideDuration={4000}
-            onClose={() => setOpenCheckoutSnackbar(false)}
-            message={
-              <>
-                <InfoOutlined /> Add at least 1 item into cart
-              </>
-            }
-            sx={{
-              position: "relative",
-              "& .MuiPaper-root ": {
-                background: "orange",
-                position: "absolute",
-                top: "-4rem",
-                left: "-25rem",
-              },
-              "& .MuiSnackbarContent-message": {
-                fontSize: "1.2rem",
-                padding: "0",
-              },
-              "& svg": {
-                fontSize: "1.6rem",
-                verticalAlign: "middle",
-              },
-            }}
-          />
         </Button>
       </Stack>
       <Modal open={Boolean(openUnAvailableModal)}>
