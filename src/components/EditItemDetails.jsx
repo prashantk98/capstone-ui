@@ -76,21 +76,6 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
     setEditableProductModal(false);
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    // console.log(productPhoto);
-    console.log(productPhoto);
-    // setProductPhoto(file);
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      setProductPhoto(event.target.result.split(",")[1]);
-    };
-
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
   const handleSave = () => {
     editProductDetailsApi(
       productName,
@@ -120,12 +105,10 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
         <EditIcon />
       </IconButton>
       <Modal open={Boolean(editableProductModal)}>
-        {/* <div className="modal-container"> */}
         <Box sx={editItemModalStyle} component="form">
           <Typography>Edit Details</Typography>
           <ProfilePhoto
             image={productPhoto}
-            // handlePhotoChange={handlePhotoChange}
             setProductPhoto={setProductPhoto}
           />
           <TextField
@@ -152,14 +135,6 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
             value={productQuantity}
             onChange={(e) => setProductQuantity(e.target.value)}
           />
-          {/* <TextField
-            name="productCategory"
-            label="Product Category"
-            variant="filled"
-            fullWidth
-            value={productDetails.productCategory}
-            onChange={handleChange}
-          /> */}
           <Stack>
             <InputLabel id="demo-simple-select-standard-label">
               Item Category
@@ -182,26 +157,6 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
           </Stack>
 
           <Stack>
-          {/* <InputLabel id="demo-simple-select-standard-label">
-              Product Available
-            </InputLabel>
-            <Select
-              name="productAvailable"
-              label="Product Available"
-              variant="filled"
-              value={productAvailable}
-              onChange={(e)=>setProductAvailable(e.target.value)}
-            >
-              <MenuItem
-                value={true}
-                sx={{ fontSize: "1.8rem", color: "green" }}
-              >
-                Yes
-              </MenuItem>
-              <MenuItem value={false} sx={{ fontSize: "1.8rem", color: "red" }}>
-                No
-              </MenuItem>
-            </Select> */}
           <FormLabel id="demo-row-radio-buttons-group-label">Product Available</FormLabel>
           <RadioGroup
             row
@@ -214,7 +169,6 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
             <FormControlLabel value={false} control={<Radio />} label="No" />
           </RadioGroup>
           </Stack>
-          {/* <input type="file" accept="image/*" onChange={handlePhotoChange} /> */}
           <Button variant="contained" onClick={handleSave}>
             Save
           </Button>
