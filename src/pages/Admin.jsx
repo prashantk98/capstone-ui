@@ -150,6 +150,8 @@ export default function Admin() {
             openAddNewProductModal={openAddNewProductModal}
             closeAddNewItemModal={closeAddNewItemModal}
             setRowsPerPage={setRowsPerPage}
+            isDataChanged={isDataChanged}
+            setIsDataChanged={setIsDataChanged}
           />
           <AddNewCategory
             navigateToAddNewCategory={navigateToAddNewCategory}

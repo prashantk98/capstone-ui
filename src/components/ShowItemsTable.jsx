@@ -13,15 +13,15 @@ import {
   MenuItem,
   InputLabel,
   Stack,
+  IconButton,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-// import totalItemInDb, { apiLocalPath } from "../rowData";
-// import axios from "axios";
+import CheckIcon from "@mui/icons-material/Check";
 import EditItemDetails from "./EditItemDetails";
-// import { notification } from "antd";
 import { totalProductTableApi } from "../backendApis/AdminApis";
+import { Button } from "@mui/base";
 
 function TableRowsLoader({ rowsNum, colNum }) {
   return [...Array(rowsNum)].map((row, index) => (
@@ -41,7 +41,14 @@ function TableRowsLoader({ rowsNum, colNum }) {
   ));
 }
 
-export default function ShowItemsTable({totalProductsArray, setTotalProductsArray, rowsPerPage, setRowsPerPage, isDataChanged, setIsDataChanged}) {
+export default function ShowItemsTable({
+  totalProductsArray,
+  setTotalProductsArray,
+  rowsPerPage,
+  setRowsPerPage,
+  isDataChanged,
+  setIsDataChanged,
+}) {
   const [isTotalData, setIsTotalData] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: "",
@@ -84,16 +91,25 @@ export default function ShowItemsTable({totalProductsArray, setTotalProductsArra
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    setIsDataChanged(true);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    setIsDataChanged(true);
   };
   useEffect(() => {
-    if(isDataChanged){
-    totalProductTableApi(setIsTotalData, page, rowsPerPage, setTotalProductsArray, setCount, tableCategory);
-    setIsDataChanged(false);
+    if (isDataChanged) {
+      totalProductTableApi(
+        setIsTotalData,
+        page,
+        rowsPerPage,
+        setTotalProductsArray,
+        setCount,
+        tableCategory
+      );
+      setIsDataChanged(false);
     }
   }, [page, rowsPerPage, tableCategory]);
 
@@ -105,14 +121,20 @@ export default function ShowItemsTable({totalProductsArray, setTotalProductsArra
           right: "0",
           zIndex: "1",
           top: "2rem",
-          display: 'inline'
+          display: "inline",
         }}
       >
-        <InputLabel sx={{fontSize: '1.8rem',m: '0 2rem',display: 'inline'}}>Select the Category</InputLabel>
+        <InputLabel sx={{ fontSize: "1.8rem", m: "0 2rem", display: "inline" }}>
+          Select the Category
+        </InputLabel>
         <Select
           // multiple
           value={tableCategory}
-          onChange={(e) => setTableCategory(e.target.value)}
+          onChange={(e) => {
+            setTableCategory(e.target.value);
+            setIsDataChanged(true);
+            setPage(0);
+          }}
           open={tableCategoryListOpen}
           onOpen={() => setTableCategoryListOpen(true)}
           onClose={() => setTableCategoryListOpen(false)}
@@ -245,7 +267,11 @@ export default function ShowItemsTable({totalProductsArray, setTotalProductsArra
                       {current.isActive ? "Yes" : "No"}
                     </TableCell>
                     <TableCell>
-                      <EditItemDetails currentItem={current} setRowsPerPage={setRowsPerPage} />
+                      <EditItemDetails
+                        currentItem={current}
+                        setRowsPerPage={setRowsPerPage}
+                        setIsDataChanged={setIsDataChanged}
+                      />
                     </TableCell>
                   </TableRow>
                 );

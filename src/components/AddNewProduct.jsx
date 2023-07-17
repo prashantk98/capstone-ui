@@ -436,7 +436,8 @@ export default function AddNewProduct({
   navigateToAddNewItem,
   openAddNewProductModal,
   closeAddNewItemModal,
-  setRowsPerPage
+  setRowsPerPage,
+  setIsDataChanged
 }) {
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
@@ -499,6 +500,8 @@ export default function AddNewProduct({
       // Perform form submission
       addNewProductApi(itemName, itemPrice, itemQuantity, itemCategory, itemPhoto, itemAvailable);
       // Reset form fields
+      setIsDataChanged(true);
+      setRowsPerPage(25);
       setRowsPerPage(10);
       resetFormFields();
       closeAddNewItemModal();

@@ -31,6 +31,7 @@ export default function Ncart() {
   // );
   const [orderID, setOrderId] = useState(() => {
     const sessionOrderId = sessionStorage.getItem("orderId");
+    console.log(sessionOrderId)
     return sessionOrderId ? JSON.parse(sessionOrderId) : null;
   });
   // const [unAvailable, setUnAvailable] = useState([]);
@@ -89,11 +90,12 @@ export default function Ncart() {
   }
 
   useEffect(() => {
-    if (sessionStorage.getItem("orderId") === null) {
+    // const fetchOrderId= sessionStorage.getItem("orderId");
+    if (!orderID) {
       generateOrderIdApi(setOrderId);
     }
     handleStartCaptureClick();
-  }, []);
+  }, [orderID]);
   // if (authenticated) {
   return (
     <>

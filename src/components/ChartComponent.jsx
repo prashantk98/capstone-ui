@@ -7,76 +7,32 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { apiLocalPath } from "../rowData";
 import ReactEcharts from "echarts-for-react";
 import { useState } from "react";
-import axios from "axios";
 import { useEffect } from "react";
-import { totalProductApi } from "../backendApis/AdminApis";
+import { totalProductTableApi } from "../backendApis/AdminApis";
 
 export default function ChartComponent() {
   const [isCategoryListOpen, setCategoryListOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All Product");
+  const [selectedCategory, setSelectedCategory] = useState("?/");
   const [totalItemInDb, setTotalItemInDb] = useState([]);
   const [isGotData, setIsGotData] = useState(false);
+  const [count, setCount] = useState(0);
 
-  // const handleCategoryChange = (event) => {
-  //   const { value } = event.target;
-  //   if (value.length === 0) {
-  //     setSelectedCategories([...defaultCategory]);
-  //   // totalProductApi(category);
-  //   } else {
-  //     setSelectedCategories(value);
-
-  //   // totalProductApi();
-  //   }
-  //   setCategoryListOpen(false);
-  // };
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value); // Update the selected category
     // totalProductApi();
   };
-
-  // function totalProductApi() {
-  //   setIsGotData(false);
-  //   const token = sessionStorage.getItem("adminAccessToken");
-  //   let config = {
-  //     method: "GET",
-  //     url: `${apiLocalPath}/inventory/products?page=${0}&page_size=2000`,
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-
-  //   axios
-  //     .request(config)
-  //     .then((response) => {
-  //       // console.log(response.data);
-  //       // setDefaultCategory(response.data.results);
-  //       setTotalItemInDb(response.data.results);
-  //       setIsGotData(true);
-  //       // setTotalProductsArray(response.data.results);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }
   const getChartOption = (category) => {
-    // console.log(totalItemInDb);
     const chartOptions = {
       tooltip: {
         trigger: "axis",
         formatter: (params) => {
           const dataIndex = params[0]?.dataIndex;
           if (dataIndex !== undefined) {
-            const data = category!=="All Product"? totalItemInDb.reduce((accumulator, current) => {
-              if (current.categories.includes(category)) {
+            const data = totalItemInDb.reduce((accumulator, current) => {
                 return [...accumulator, current.image];
-              } else {
-                return [...accumulator];
-              }
-            }, []): totalItemInDb.map((item) => item.image);
+            }, []);
             const imageSource = `data:image/jpeg;base64,${data[dataIndex]}`;
             return `
                 <img src= "${imageSource}" alt="${params[0]?.name}" style="width: 4rem; height: 4rem;" />
@@ -96,20 +52,9 @@ export default function ChartComponent() {
         type: "category",
         boundaryGap: false,
         nameLocation: "middle",
-         data: category!=="All Product"?totalItemInDb.reduce((accumulator, current) => {
-            if (current.categories.includes(category)) {
+         data: totalItemInDb.reduce((accumulator, current) => {
               return [...accumulator, current.name];
-            } else {
-              return [...accumulator];
-            }
-          }, []): totalItemInDb.map((item) => item.name),
-        // data: totalItemInDb.reduce((accumulator, current) => {
-        //   if (category === current.category) {
-        //     return [...accumulator, current.productName];
-        //   } else {
-        //     return [...accumulator];
-        //   }
-        // }, []),
+          }, []),
       },
       yAxis: {
         name: "Probability %",
@@ -137,9 +82,8 @@ export default function ChartComponent() {
   };
   
   useEffect(() => {
-    // totalProductApi("");
-    totalProductApi(setIsGotData, setTotalItemInDb);
-  }, []);
+    totalProductTableApi(setIsGotData,0,20000,setTotalItemInDb, setCount,selectedCategory)
+  }, [selectedCategory]);
 
   return (
     <>
@@ -172,9 +116,9 @@ export default function ChartComponent() {
             },
           }}
         >
-          <MenuItem value="Fruits">Fruit</MenuItem>
-          <MenuItem value="Vegetables">Vegetable</MenuItem>
-          <MenuItem value="All Product">All</MenuItem>
+          <MenuItem value="/Fruits">Fruit</MenuItem>
+          <MenuItem value="/Vegetables">Vegetable</MenuItem>
+          <MenuItem value="?/">All</MenuItem>
         </Select>
         <Typography
           sx={{
@@ -182,7 +126,7 @@ export default function ChartComponent() {
             fontWeight: "700",
           }}
         >
-          Probability Of {selectedCategory} Detection
+          Probability Of {selectedCategory==='?/'?'All Product': selectedCategory.split('/')[1]} Detection, Total {count}
         </Typography>
         {isGotData ? (
           <ReactEcharts

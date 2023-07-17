@@ -48,7 +48,7 @@ const editItemModalStyle = {
   },
 };
 
-export default function EditItemDetails({ currentItem, setRowsPerPage}) {
+export default function EditItemDetails({ currentItem, setRowsPerPage, setIsDataChanged}) {
   const [editableProductModal, setEditableProductModal] = useState(false);
   const [productName, setProductName] = useState(currentItem.name);
   const [productPrice, setProductPrice] = useState(currentItem.price);
@@ -108,7 +108,8 @@ export default function EditItemDetails({ currentItem, setRowsPerPage}) {
       productPhoto,
       currentItem
     );
-    setRowsPerPage(11);
+    setIsDataChanged(true);
+    setRowsPerPage(25);
     setRowsPerPage(10);
     setEditableProductModal(false);
     // setData(updatedData);

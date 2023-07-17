@@ -41,43 +41,82 @@ export function userPresentApi(value, setIsUserNameFound, setAccessToken, setNam
     });
 }
 
-export function newUserApi(name, number,setAccessToken) {
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+// export function newUserApi(name, number,setAccessToken) {
+//   var myHeaders = new Headers();
+//   myHeaders.append("Content-Type", "application/json");
 
-  var raw = JSON.stringify({
-    name: name,
-    phoneNumber: number,
-    created_by: "Omesh",
-  });
+//   var raw = JSON.stringify({
+//     name: name,
+//     phoneNumber: number,
+//     created_by: "Omesh",
+//   });
 
-  var requestOptions = {
-    method: "POST",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
+//   var requestOptions = {
+//     method: "POST",
+//     headers: myHeaders,
+//     body: raw,
+//     redirect: "follow",
+//   };
 
-  fetch(apiLocalPath + "/signup/user/", requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      result = JSON.parse(result);
-      // console.log(result);
-      setAccessToken(result.token);
-      sessionStorage.setItem("userName", name);
-      sessionStorage.setItem("userMobile", number);
-      sessionStorage.setItem("accessToken", result.token);
-    })
-    .catch((error) => {
-      console.log("error", error);
-      if (error.code) {
-        notification.error({
-          message: error.name,
-          description: error.message,
-          placement: 'bottomRight',
-        });
-      }
-      return error;
+//   fetch(apiLocalPath + "/signup/user/", requestOptions)
+//     .then((response) => response.text())
+//     .then((result) => {
+//       result = JSON.parse(result);
+//       console.log(result);
+//       setAccessToken(result.token);
+//       sessionStorage.setItem("userName", name);
+//       sessionStorage.setItem("userMobile", number);
+//       sessionStorage.setItem("accessToken", result.token);
+//     })
+//     .catch((error) => {
+//       console.log("error", error);
+//       if (error.code) {
+//         notification.error({
+//           message: error.name,
+//           description: error.message,
+//           placement: 'bottomRight',
+//         });
+//       }
+//       return error;
       
-  });
+//   });
+// }
+
+export async function newUserApi(name, number, setAccessToken) {
+  try {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      name: name,
+      phoneNumber: number,
+      created_by: "Omesh",
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    const response = await fetch(apiLocalPath + "/signup/user/", requestOptions);
+    const result = await response.json();
+    console.log(result);
+
+    setAccessToken(result.token);
+    sessionStorage.setItem("userName", name);
+    sessionStorage.setItem("userMobile", number);
+    sessionStorage.setItem("accessToken", result.token);
+  } catch (error) {
+    console.log("error", error);
+    if (error.code) {
+      notification.error({
+        message: error.name,
+        description: error.message,
+        placement: 'bottomRight',
+      });
+    }
+    return error;
+  }
 }

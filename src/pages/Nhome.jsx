@@ -21,7 +21,7 @@ import { AppStateContext } from "../App";
 
 function isMobileNumberValid(value) {
   value = value.trim();
-  return value.length === 10;
+  return value.length === 10&&+value!==0;
 }
 function isUserNameValid(value) {
   return value.trim().length !== 0;
@@ -55,12 +55,14 @@ export default function Nhome() {
   // });
 
   function handleSubmit() {
+    // isMobileNumberValid(number)
     if (isMobileNumberValid(number)) {
       if (!isUserNameValid(name)) {
         setNameHelperText("Please Enter user Name");
       } else if (!isUserNameFound) {
-        newUserApi(name, number,setAccessToken);
+       newUserApi(name, number, setAccessToken);
         navigate("/ncart");
+
       } else {
         sessionStorage.setItem("userName", name);
         sessionStorage.setItem("userMobile", number);
@@ -120,14 +122,6 @@ export default function Nhome() {
             </Typography>
           </div>
           <Box
-            component="form"
-            // action="/#"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!isMobileNumberValid(number)) {
-                setNumberHelperText("Enter 10 digit mobile number");
-              }
-            }}
             sx={{
               "&": {
                 paddingTop: "5rem",
@@ -151,7 +145,7 @@ export default function Nhome() {
                 fontSize: "1.4rem",
               },
             }}
-            noValidate
+            // noValidate
           >
             <Typography
               sx={{
@@ -170,6 +164,7 @@ export default function Nhome() {
 
             <Paper
               elevation={1}
+            component="form"
               sx={{
                 width: "70%",
                 margin: "0 auto",
@@ -230,7 +225,7 @@ export default function Nhome() {
                 onChange={(event) => {
                   setItems([]);
                   sessionStorage.clear();
-                  if (/^[A-Za-z]*$/.test(event.target.value)) {
+                  if (/^[A-Za-z ]*$/.test(event.target.value)) {
                     setName(event.target.value);
                     setNameHelperText("");
                     // setIsUserNameFound(true);
@@ -284,7 +279,7 @@ export default function Nhome() {
                 </Button>
                 <Button
                   variant="contained"
-                  type="submit"
+                  // type="submit"
                   sx={{
                     "&:hover": {
                       backgroundColor: "var(--primary)",

@@ -46,7 +46,10 @@ export const AppStateContext = createContext();
 
 function App() {
   // Step 2: Define shared state and its update function
-  const [itemsArray, setItems] = useState([]);
+  const [itemsArray, setItems] = useState(() => {
+    const storedItems = sessionStorage.getItem("itemsArray");
+    return storedItems ? JSON.parse(storedItems) : [];
+  });
 
   // Step 3: Wrap components with context provider
   return (
