@@ -21,7 +21,7 @@ import { AppStateContext } from "../App";
 
 function isMobileNumberValid(value) {
   value = value.trim();
-  return value.length === 10&&+value!==0;
+  return value.length === 10 && +value !== 0;
 }
 function isUserNameValid(value) {
   return value.trim().length !== 0;
@@ -41,13 +41,13 @@ export default function Nhome() {
   });
   const [nameHelperText, setNameHelperText] = useState("");
   const [numberHelperText, setNumberHelperText] = useState("");
-  const [isUserNameFound, setIsUserNameFound] = useState(()=>{
-    const isUserFound= sessionStorage.getItem('isUserFound');
-    return isUserFound?isUserFound: false;
+  const [isUserNameFound, setIsUserNameFound] = useState(() => {
+    const isUserFound = sessionStorage.getItem("isUserFound");
+    return isUserFound ? isUserFound : false;
   });
-  const [accessToken, setAccessToken] = useState(()=>{
-    const LoginToken= sessionStorage.getItem('accessToken');
-    return LoginToken?LoginToken: null
+  const [accessToken, setAccessToken] = useState(() => {
+    const LoginToken = sessionStorage.getItem("accessToken");
+    return LoginToken ? LoginToken : null;
   });
   // const [itemsArray, setItems] = useState(() => {
   //   const storedItems = sessionStorage.getItem("itemsArray");
@@ -60,9 +60,29 @@ export default function Nhome() {
       if (!isUserNameValid(name)) {
         setNameHelperText("Please Enter user Name");
       } else if (!isUserNameFound) {
-       newUserApi(name, number, setAccessToken);
-        navigate("/ncart");
-
+        newUserApi(name, number, setAccessToken)
+          .then((response) => response.text())
+          .then((result) => {
+            result = JSON.parse(result);
+            console.log(result);
+            setAccessToken(result.token);
+            sessionStorage.setItem("userName", name);
+            sessionStorage.setItem("userMobile", number);
+            sessionStorage.setItem("accessToken", result.token);
+            navigate("/ncart");
+          })
+          .catch((error) => {
+            console.log("error", error);
+            //  if (error.code) {
+            //    notification.error({
+            //      message: error.name,
+            //      description: error.message,
+            //      placement: 'bottomRight',
+            //    });
+            //  }
+            //  return error;
+          });
+        // navigate("/ncart");
       } else {
         sessionStorage.setItem("userName", name);
         sessionStorage.setItem("userMobile", number);
@@ -70,7 +90,7 @@ export default function Nhome() {
         navigate("/ncart");
       }
     } else {
-      setNumberHelperText('Enter both mobile number and name');
+      setNumberHelperText("Enter both mobile number and name");
     }
   }
   return (
@@ -88,27 +108,27 @@ export default function Nhome() {
           sx={{
             width: "40%",
             "@media screen and (max-width: 1024px) and (min-width: 768px)": {
-              width: '60%',
-          },
+              width: "60%",
+            },
             "@media screen and (max-width: 768px) and (min-width: 0)": {
-                width: '100%',
-                background: `url(${newHomeBg})`,
-                backgroundSize: 'cover'
+              width: "100%",
+              background: `url(${newHomeBg})`,
+              backgroundSize: "cover",
             },
             "@media screen and (max-width: 425px)": {
-              '& .logo__nhome':{
-                paddingTop: '8.6rem'
-              },'& .logo__nhome img':{
-                width: '3.6rem'
+              "& .logo__nhome": {
+                paddingTop: "8.6rem",
               },
-              '& .logo__nhome p':{
-                fontSize: '2.4rem'
+              "& .logo__nhome img": {
+                width: "3.6rem",
               },
-              '& .MuiPaper-root':{
-                width: '90%'
-              }
-        },
-            
+              "& .logo__nhome p": {
+                fontSize: "2.4rem",
+              },
+              "& .MuiPaper-root": {
+                width: "90%",
+              },
+            },
           }}
         >
           <div className="logo__nhome">
@@ -154,9 +174,9 @@ export default function Nhome() {
                 fontSize: "4.4rem",
                 textTransform: "capitalize",
                 "@media screen and (max-width: 425px)": {
-                    fontSize: '3.2rem',
-                    textAlign: 'center'
-              },
+                  fontSize: "3.2rem",
+                  textAlign: "center",
+                },
               }}
             >
               welcome to Smart Cart
@@ -164,7 +184,7 @@ export default function Nhome() {
 
             <Paper
               elevation={1}
-            component="form"
+              component="form"
               sx={{
                 width: "70%",
                 margin: "0 auto",
@@ -203,7 +223,13 @@ export default function Nhome() {
                   ) {
                     if (event.target.value.trim().length === 10) {
                       // console.log(event.target.value);
-                      userPresentApi(event.target.value.trim(), setIsUserNameFound, setAccessToken, setName, setNumber);
+                      userPresentApi(
+                        event.target.value.trim(),
+                        setIsUserNameFound,
+                        setAccessToken,
+                        setName,
+                        setNumber
+                      );
                     }
                     setNumber(event.target.value);
                     setNumberHelperText("");
@@ -212,7 +238,7 @@ export default function Nhome() {
                   }
                 }}
                 name="mobile"
-                error={numberHelperText!==''}
+                error={numberHelperText !== ""}
                 helperText={numberHelperText}
                 required
               />
@@ -297,16 +323,15 @@ export default function Nhome() {
           sx={{
             width: "60%",
             background: `url(${newHomeBg})`,
-            backgroundSize: 'cover',
+            backgroundSize: "cover",
             "@media screen and (max-width: 1024px) and (min-width: 768px)": {
-              width: '40%',
-          },
-            '@media screen and (max-width: 768px)': {
-              display: 'none'
-          },
+              width: "40%",
+            },
+            "@media screen and (max-width: 768px)": {
+              display: "none",
+            },
           }}
-        >
-        </Box>
+        ></Box>
       </Stack>
       <Footer></Footer>
     </>

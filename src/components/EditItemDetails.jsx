@@ -71,14 +71,7 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
     setProductPhoto(() => currentItem.image);
     console.log(productPhoto);
   };
-  // const chartRef = useRef(null);
-  // const handleChange = (event) => {
-  //   const { name, value } = event.target;
-  //   // setProductDetails((prevProductDetails) => ({
-  //   //   ...prevProductDetails,
-  //   //   [name]: value,
-  //   // }));
-  // };
+ 
   const handleCancel = () => {
     setEditableProductModal(false);
   };
@@ -121,6 +114,7 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
       <IconButton
         onClick={() => {
           handleEdit(currentItem);
+
         }}
       >
         <EditIcon />
@@ -130,9 +124,9 @@ export default function EditItemDetails({ currentItem, setRowsPerPage, setIsData
         <Box sx={editItemModalStyle} component="form">
           <Typography>Edit Details</Typography>
           <ProfilePhoto
-            productPhoto={productPhoto}
-            handlePhotoChange={handlePhotoChange}
-            // setProductPhoto={setProductPhoto}
+            image={productPhoto}
+            // handlePhotoChange={handlePhotoChange}
+            setProductPhoto={setProductPhoto}
           />
           <TextField
             name="productName"

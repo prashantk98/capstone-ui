@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack } from '@mui/material';
 import EditIcon from "@mui/icons-material/Edit";
-const ProfilePhoto = ({producPhoto, handlePhotoChange}) => {
+const ProfilePhoto = ({image, handlePhotoChange}) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleOpenDialog = () => {
@@ -39,7 +39,8 @@ const ProfilePhoto = ({producPhoto, handlePhotoChange}) => {
 
   return (
     <Stack direction={'row'} justifyContent={'center'} alignItems="center">
-      <Avatar alt="Profile Photo" src={"data:image/jpeg;base64,"+producPhoto} />
+      {/* <Avatar alt="Profile Photo" src={"data:image/jpeg;base64,"+producPhoto} /> */}
+      <img alt="Profile" src={"data:image/jpeg;base64,"+image} />
 
       <IconButton color="primary" component="span" onClick={handleOpenDialog}>
         <EditIcon />
