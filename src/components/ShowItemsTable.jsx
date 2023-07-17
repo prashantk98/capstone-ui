@@ -41,7 +41,7 @@ function TableRowsLoader({ rowsNum, colNum }) {
   ));
 }
 
-export default function ShowItemsTable({totalProductsArray, setTotalProductsArray, rowsPerPage, setRowsPerPage}) {
+export default function ShowItemsTable({totalProductsArray, setTotalProductsArray, rowsPerPage, setRowsPerPage, isDataChanged, setIsDataChanged}) {
   const [isTotalData, setIsTotalData] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: "",
@@ -91,7 +91,10 @@ export default function ShowItemsTable({totalProductsArray, setTotalProductsArra
     setPage(0);
   };
   useEffect(() => {
+    if(isDataChanged){
     totalProductTableApi(setIsTotalData, page, rowsPerPage, setTotalProductsArray, setCount, tableCategory);
+    setIsDataChanged(false);
+    }
   }, [page, rowsPerPage, tableCategory]);
 
   return (

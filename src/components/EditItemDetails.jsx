@@ -68,8 +68,8 @@ export default function EditItemDetails({ currentItem, setRowsPerPage}) {
     setProductCategory(currentItem.categories);
     setProductAvailable(currentItem.isActive);
     setProductQuantity(currentItem.quantity);
-    setProductPhoto(currentItem.image);
-    console.log(currentItem.image)
+    setProductPhoto(() => currentItem.image);
+    console.log(productPhoto);
   };
   // const chartRef = useRef(null);
   // const handleChange = (event) => {

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -10,33 +9,24 @@ import {
 import Footer from "../components/Footer";
 import PaymentAccordion from "../components/PaymentAccordion";
 import Navbar from "../components/Navbar";
+import { useContext } from "react";
+import { AppStateContext } from "../App";
 
 export default function Cart() {
-  const [itemsArray, setItems] = useState(
-    !JSON.parse(sessionStorage.getItem("itemsArray"))
-      ? []
-      : JSON.parse(sessionStorage.getItem("itemsArray"))
-  );
-  const [totalItems, setTotalItems] = useState(
-    itemsArray.length !== 0
-      ? itemsArray.reduce(
-          (accumulator, currentValue) => accumulator + currentValue.quantity,
-          0
-        )
-      : 0
-  );
-  const [totalPrice, setTotalPrice] = useState(
-    itemsArray.reduce(
-      (accumulator, currentValue) =>
-        accumulator + currentValue.price * currentValue.quantity,
-      0
-    )
-  );
+  const { itemsArray } = useContext(AppStateContext);
+  // const [itemsArray, setItems] = useState(
+  //   !JSON.parse(sessionStorage.getItem("itemsArray"))
+  //     ? []
+  //     : JSON.parse(sessionStorage.getItem("itemsArray"))
+  // );
+  const totalItems = itemsArray.reduce((accumulator, currentValue) => accumulator + currentValue.quantity,0);
+  const totalPrice = itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.price *currentValue.quantity,0);
 
   return (
     <>
       <Navbar
       isBackButton={true}
+      itemsArray={itemsArray}
       />
       <section className="cart">
         <h3 className="cart__title">

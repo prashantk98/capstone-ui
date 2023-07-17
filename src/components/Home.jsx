@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import Navbar from "./Navbar";
 import { Button, Stack, TextField, Box } from "@mui/material";
 import axios from 'axios';
-// import { useEffect } from "react";
+import { useContext } from "react";
+import { AppStateContext } from "../App";
 
 // function isMobile(value){
 //   value = value.trim();
@@ -14,6 +15,7 @@ import axios from 'axios';
 
 export default function Home() {
   const [image, setImage] = useState(null);
+  const { itemsArray } = useContext(AppStateContext);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
 
@@ -56,7 +58,7 @@ export default function Home() {
   // }, []);
   return (
     <>
-      <Navbar />
+      <Navbar itemsArray={itemsArray} />
       <section className="home">
         <h3 className="home__line">Welcome to smart cart</h3>
         <div className="home__details">

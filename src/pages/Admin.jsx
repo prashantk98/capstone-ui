@@ -46,6 +46,7 @@ export default function Admin() {
   const [openAddItemCategoryModal,setOpenAddNewCategoryModal]= useState(false);
   const [totalProductsArray, setTotalProductsArray] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isDataChanged, setIsDataChanged]= useState(true);
   // const [isChanged, setIsChanged]= useState(false);
   const [isAuthenticated, setisAuthenticated]= useState(sessionStorage.getItem('adminAuthorization')==='true')
   const sidebarButton = [
@@ -156,9 +157,7 @@ export default function Admin() {
             closeAddNewCategory={closeAddNewCategory}
           />
 
-          <ShowItemsTable totalProductsArray={totalProductsArray} setTotalProductsArray={setTotalProductsArray} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage}  />
-          {/* <EditItemDetails/> */}
-          {/* <LoginAdminModal /> */}
+          <ShowItemsTable totalProductsArray={totalProductsArray} setTotalProductsArray={setTotalProductsArray} rowsPerPage={rowsPerPage} setRowsPerPage={setRowsPerPage} isDataChanged={isDataChanged} setIsDataChanged={setIsDataChanged} />
           <Footer />
         </Box>
       </Box>

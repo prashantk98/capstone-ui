@@ -6,7 +6,6 @@ const ProfilePhoto = ({producPhoto, handlePhotoChange}) => {
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
-    console.log(producPhoto);
   };
   const handleCloseDialog = () => {
     setOpenDialog(false);

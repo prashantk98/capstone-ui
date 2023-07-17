@@ -9,16 +9,20 @@ import AddItemManually from "../components/AddItemManually";
 import ButtonStack from "../components/ButtonStack";
 import { notification } from "antd";
 import { addItemToCartApi, generateOrderIdApi, QuantityApi } from "../backendApis/NcartApis";
+import { useContext } from "react";
+import { AppStateContext } from "../App";
 
 
 export default function Ncart() {
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
-  const [itemsArray, setItems] = useState(() => {
-    const storedItems = sessionStorage.getItem("itemsArray");
-    return storedItems ? JSON.parse(storedItems) : [];
-  });
+  // const [itemsArray, setItems] = useState(() => {
+  //   const storedItems = sessionStorage.getItem("itemsArray");
+  //   return storedItems ? JSON.parse(storedItems) : [];
+  // });
+
+  const { itemsArray, setItems } = useContext(AppStateContext);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
     productName: "",
   });
@@ -94,7 +98,7 @@ export default function Ncart() {
   return (
     <>
       <section className="new-cart">
-        <Navbar key={itemsArray} />
+        <Navbar key={itemsArray} itemsArray={itemsArray} />
         <Stack
           direction="row"
           sx={{

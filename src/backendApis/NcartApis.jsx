@@ -98,7 +98,7 @@ export function QuantityApi(itemsArray, index, quantity, setItems) {
     const newItemsArray = itemsArray.slice();
     Object.assign(newItemsArray[index], response.data.data);
     setItems([...newItemsArray]);
-    sessionStorage.setItem("itemsArray", JSON.stringify([...newItemsArray]));
+    // sessionStorage.setItem("itemsArray", JSON.stringify([...newItemsArray]));
       
     // console.log(itemsArray);  
 
@@ -154,7 +154,7 @@ export function addItemToCartApi(productName, quantity, orderID, itemsArray, set
         // QuantityApi(indexOfItem, itemsArray[indexOfItem].quantity + 1);
         QuantityApi(itemsArray, indexOfItem, itemsArray[indexOfItem].quantity + 1, setItems);
       } else {
-        sessionStorage.setItem("itemsArray", JSON.stringify([...itemsArray, response.data.data.available]));
+        // sessionStorage.setItem("itemsArray", JSON.stringify([...itemsArray, response.data.data.available]));
         setItems((prev) => [...prev, response.data.data.available]);
         notification.success({
           message: 'Items Added Successfully',
@@ -204,14 +204,14 @@ export function removeItemFromCartApi(index, itemsArray, setItems) {
     .then((response) => {
       // console.log(response.data);
       
-      sessionStorage.setItem(
-        "itemsArray",
-        JSON.stringify(
-          itemsArray.filter((currentValue, idx) => {
-            return idx !== index;
-          })
-        )
-      );
+      // sessionStorage.setItem(
+      //   "itemsArray",
+      //   JSON.stringify(
+      //     itemsArray.filter((currentValue, idx) => {
+      //       return idx !== index;
+      //     })
+      //   )
+      // );
       setItems((prevState) => {
         return prevState.filter((currentValue, idx) => {
           return idx !== index;
@@ -264,7 +264,7 @@ export function UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, se
         setIsGotData(true);
         console.log(response.data);
         setItems([...response.data.available]);
-        sessionStorage.setItem("itemsArray",JSON.stringify([...response.data.available]));
+        // sessionStorage.setItem("itemsArray",JSON.stringify([...response.data.available]));
         if (response.data.unavailable.length !== 0) {
           setUnAvailable([...response.data.unavailable]);
           setOpenUnAvailableModal(true);

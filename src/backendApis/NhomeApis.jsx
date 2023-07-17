@@ -24,10 +24,12 @@ export function userPresentApi(value, setIsUserNameFound, setAccessToken, setNam
       setAccessToken(response.data.token);
       setName(response.data.username);
       setNumber(value);
+      sessionStorage.setItem('isUserFound', true)
     })
     .catch((error) => {
       console.error("user not found");
       setIsUserNameFound(false);
+      sessionStorage.setItem('isUserFound', false)
       // if (error.code) {
       //   notification.error({
       //     message: error.name,

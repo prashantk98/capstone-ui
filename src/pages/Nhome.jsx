@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { newUserApi, userPresentApi } from "../backendApis/NhomeApis";
 
+import { useContext } from "react";
+import { AppStateContext } from "../App";
+
 function isMobileNumberValid(value) {
   value = value.trim();
   return value.length === 10;
@@ -25,6 +28,8 @@ function isUserNameValid(value) {
 }
 
 export default function Nhome() {
+  const { itemsArray, setItems } = useContext(AppStateContext);
+
   const navigate = useNavigate();
   const [number, setNumber] = useState(() => {
     const storedNumber = sessionStorage.getItem("userMobile");
@@ -36,12 +41,18 @@ export default function Nhome() {
   });
   const [nameHelperText, setNameHelperText] = useState("");
   const [numberHelperText, setNumberHelperText] = useState("");
-  const [isUserNameFound, setIsUserNameFound] = useState(false);
-  const [accessToken, setAccessToken] = useState(null);
-  const [itemsArray, setItems] = useState(() => {
-    const storedItems = sessionStorage.getItem("itemsArray");
-    return storedItems ? JSON.parse(storedItems) : [];
+  const [isUserNameFound, setIsUserNameFound] = useState(()=>{
+    const isUserFound= sessionStorage.getItem('isUserFound');
+    return isUserFound?isUserFound: false;
   });
+  const [accessToken, setAccessToken] = useState(()=>{
+    const LoginToken= sessionStorage.getItem('accessToken');
+    return LoginToken?LoginToken: null
+  });
+  // const [itemsArray, setItems] = useState(() => {
+  //   const storedItems = sessionStorage.getItem("itemsArray");
+  //   return storedItems ? JSON.parse(storedItems) : [];
+  // });
 
   function handleSubmit() {
     if (isMobileNumberValid(number)) {
@@ -62,7 +73,7 @@ export default function Nhome() {
   }
   return (
     <>
-      <Navbar key={itemsArray} />
+      <Navbar key={itemsArray} itemsArray={itemsArray} />
       <Stack
         direction="row"
         sx={{
@@ -189,6 +200,7 @@ export default function Nhome() {
                 value={number}
                 onWheel={(e) => e.target.blur()}
                 onChange={(event) => {
+                  setItems([]);
                   sessionStorage.clear();
                   if (
                     /^[0-9]*$/.test(event.target.value) &&
@@ -216,6 +228,7 @@ export default function Nhome() {
                 onWheel={(e) => e.target.blur()}
                 value={name}
                 onChange={(event) => {
+                  setItems([]);
                   sessionStorage.clear();
                   if (/^[A-Za-z]*$/.test(event.target.value)) {
                     setName(event.target.value);
@@ -272,9 +285,7 @@ export default function Nhome() {
                 <Button
                   variant="contained"
                   type="submit"
-                  // href="/ncart"
                   sx={{
-                    // margin: "0 8rem",
                     "&:hover": {
                       backgroundColor: "var(--primary)",
                     },
@@ -294,20 +305,15 @@ export default function Nhome() {
             backgroundSize: 'cover',
             "@media screen and (max-width: 1024px) and (min-width: 768px)": {
               width: '40%',
-              // background: `url(${newHomeBg})`,
-              // backgroundSize: 'cover'
           },
             '@media screen and (max-width: 768px)': {
               display: 'none'
           },
           }}
         >
-          {/* <img src={newHomeBg} alt="new home Bg" width="100%" height="100%" /> */}
         </Box>
       </Stack>
       <Footer></Footer>
     </>
   );
 }
-
-//I have to add header and footer
