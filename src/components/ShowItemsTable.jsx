@@ -13,15 +13,12 @@ import {
   MenuItem,
   InputLabel,
   Stack,
-  IconButton,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import CheckIcon from "@mui/icons-material/Check";
 import EditItemDetails from "./EditItemDetails";
 import { totalProductTableApi } from "../backendApis/AdminApis";
-import { Button } from "@mui/base";
 
 function TableRowsLoader({ rowsNum, colNum }) {
   return [...Array(rowsNum)].map((row, index) => (

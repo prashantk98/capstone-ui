@@ -84,7 +84,21 @@ export const ShowItemToAddManually = [
   {productName:"Apple"},
   {productName:"Mango"},
   {productName:"Watermelon"},
-  {productName:"Pineapple"}
+  {productName:"Pineapple"},
+  {productName:"Litchi"},
+  {productName:"Pear"},
+  {productName:"strawberry"},
+  {productName:"Pomegranate"},
+  {productName:"Peach"},
+  {productName:"Kiwi"},
+  {productName:"Guava"},
+  {productName:"cherry"},
+  {productName:"Cauliflower"},
+  {productName:"Tomato"},
+  {productName:"Cucumber"},
+  {productName:"Carrot"},
+  {productName:"Brinjal"},
+
 ]
 
 

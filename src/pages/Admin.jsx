@@ -47,8 +47,7 @@ export default function Admin() {
   const [totalProductsArray, setTotalProductsArray] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isDataChanged, setIsDataChanged]= useState(true);
-  // const [isChanged, setIsChanged]= useState(false);
-  const [isAuthenticated, setisAuthenticated]= useState(sessionStorage.getItem('adminAuthorization')==='true')
+  const isAuthenticated = sessionStorage.getItem('adminAuthorization')==='true';
   const sidebarButton = [
     { title: "Dashboard", onClickFuntion: navigateToDashborad },
     { title: "Add New Product", onClickFuntion: navigateToAddNewItem },

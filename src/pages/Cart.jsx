@@ -13,12 +13,7 @@ import { useContext } from "react";
 import { AppStateContext } from "../App";
 
 export default function Cart() {
-  const { itemsArray } = useContext(AppStateContext);
-  // const [itemsArray, setItems] = useState(
-  //   !JSON.parse(sessionStorage.getItem("itemsArray"))
-  //     ? []
-  //     : JSON.parse(sessionStorage.getItem("itemsArray"))
-  // );
+  const { itemsArray, setItems } = useContext(AppStateContext);
   const totalItems = itemsArray.reduce((accumulator, currentValue) => accumulator + currentValue.quantity,0);
   const totalPrice = itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.price *currentValue.quantity,0);
 
@@ -173,7 +168,7 @@ export default function Cart() {
                 Total Amount ₹ {(totalPrice - totalPrice * 0.1).toFixed(2)}
               </strong>
             </Typography>
-            <PaymentAccordion />
+            <PaymentAccordion itemsArray={itemsArray} setItems={setItems} />
           </Box>
         </div>
       </section>

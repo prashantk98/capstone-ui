@@ -70,58 +70,21 @@ const PaymentAccordionStyle = {
   },
 };
 
-// function paymentAPI(price) {
-//   let data = JSON.stringify({
-//     orderID: sessionStorage.getItem("orderId"),
-//     amount: price,
-//   });
 
-//   let config = {
-//     method: "post",
-//     maxBodyLength: Infinity,
-//     url: apiLocalPath + "/payments/addNew/",
-//     headers: {
-//       Authorization: "Bearer " + sessionStorage.getItem("accessToken"),
-//     },
-//     data: data,
-//   };
-
-//   axios
-//     .request(config)
-//     .then((response) => {
-//       console.log(JSON.stringify(response.data));
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
-// }
-
-export default function PaymentAccordion() {
+export default function PaymentAccordion({itemsArray, setItems}) {
   const [expanded, setExpanded] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const navigate = useNavigate();
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
-  const [itemsArray, setItems] = useState(
-    !JSON.parse(sessionStorage.getItem("itemsArray"))
-      ? []
-      : JSON.parse(sessionStorage.getItem("itemsArray"))
-  );
-  // const [itemName, setItemName] = useState("");
-  const [totalPrice, setTotalPrice] = useState(
-    itemsArray.reduce(
-      (accumulator, currentValue) =>
-        accumulator + currentValue.price * currentValue.quantity,
-      0
-    )
-  );
+  const totalPrice= itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.price *currentValue.quantity,0);
   return (
     <>
       <Card
         sx={{
           // background: "none",
-          boxShadow: "unset",
+          // boxShadow: "unset",
         }}
       >
         <CardContent sx={PaymentAccordionStyle}>
@@ -171,9 +134,9 @@ export default function PaymentAccordion() {
               <Button
                 variant="contained"
                 onClick={() => {
-                  setOpenModal(true);
                   paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
+                  setOpenModal(true);
                 }}
               >
                 Pay Now
@@ -220,9 +183,9 @@ export default function PaymentAccordion() {
               <Button
                 variant="contained"
                 onClick={() => {
-                  setOpenModal(true);
                   paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
+                  setOpenModal(true);
                 }}
               >
                 <QrCodeIcon />
@@ -269,9 +232,9 @@ export default function PaymentAccordion() {
               <Button
                 variant="contained"
                 onClick={() => {
-                  setOpenModal(true);
                   paymentApi((totalPrice - totalPrice * 0.1).toFixed(2));
                   sessionStorage.clear();
+                  setOpenModal(true);
                 }}
               >
                 Pay Now
@@ -314,7 +277,7 @@ export default function PaymentAccordion() {
               <Button
                 variant="contained"
                 key="Home"
-                onClick={() => navigate("/")}
+                onClick={() => {navigate("/"); setItems([])}}
                 color="success"
               >
                 Home

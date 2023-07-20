@@ -17,18 +17,11 @@ export default function Ncart() {
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const audioRef = useRef(null);
-  // const [itemsArray, setItems] = useState(() => {
-  //   const storedItems = sessionStorage.getItem("itemsArray");
-  //   return storedItems ? JSON.parse(storedItems) : [];
-  // });
 
   const { itemsArray, setItems } = useContext(AppStateContext);
   const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
     productName: "",
   });
-  // const [authenticated, setauthenticated] = useState(
-  //   sessionStorage.getItem("accessToken") || false
-  // );
   const [orderID, setOrderId] = useState(() => {
     const sessionOrderId = sessionStorage.getItem("orderId");
     console.log(sessionOrderId)
@@ -189,42 +182,4 @@ export default function Ncart() {
       <Footer />
     </>
   );
-  // } else {
-  //   return (
-  //     <>
-  //       <Modal open={!sessionStorage.getItem("accessToken")}>
-  //         <Box
-  //           style={{
-  //             position: "absolute",
-  //             top: "50%",
-  //             left: "50%",
-  //             transform: "translate(-50%, -50%)",
-  //             backgroundColor: "#fff",
-  //             padding: "2rem",
-  //             height: "20rem",
-  //           }}
-  //         >
-  //           <Typography variant="h2" gutterBottom>
-  //             Please Login
-  //           </Typography>
-  //           <Typography variant="body1" color="textSecondary" fontSize="3rem">
-  //             You need to log in to access this page.
-  //           </Typography>
-  //           <Button
-  //             variant="contained"
-  //             onClick={
-  //               () => (window.location.href = "nhome")
-  //               // <Navigate replace to="/nhome" />
-  //             }
-  //             style={{ marginTop: "1rem", fontSize: "1.8rem" }}
-  //           >
-  //             Go to home
-  //           </Button>
-  //         </Box>
-  //       </Modal>
-
-  //       {/* <Navigate replace to="/nhome" /> */}
-  //     </>
-  //   );
-  // }
 }
