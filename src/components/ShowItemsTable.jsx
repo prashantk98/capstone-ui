@@ -108,7 +108,7 @@ export default function ShowItemsTable({
       );
       setIsDataChanged(false);
     }
-  }, [page, rowsPerPage, tableCategory]);
+  }, [page, rowsPerPage, tableCategory, setIsDataChanged, setCount, isDataChanged, setTotalProductsArray]);
 
   return (
     <div style={{ position: "relative", paddingTop: "5rem", width: "100%" }}>
@@ -152,15 +152,11 @@ export default function ShowItemsTable({
         component={Paper}
         sx={{
           width: "100%",
-          // maxHeight: "40rem",
-          // margin: "3rem 0",
           margin: "4rem 0",
           position: "relative",
         }}
       >
         <Table
-          // aria-label="simple table"
-          // stickyHeader
           sx={{
             "& thead th": {
               fontWeight: "600",
@@ -211,14 +207,12 @@ export default function ShowItemsTable({
                   <TableRow
                     key={index}
                     sx={{
-                      // "&:last-child td, &:last-child th": { border: 0 },
                       "td img": {
                         width: "3.2rem",
                         height: "3.2rem",
                       },
                     }}
                   >
-                    {/* <TableCell>{index + 1}</TableCell> */}
                     <TableCell>
                       <img
                         src={"data:image/jpeg;base64," + current.image}
@@ -231,23 +225,12 @@ export default function ShowItemsTable({
                     <TableCell
                       sx={
                         current.probability * 100 <= 50
-                          ? {
-                              color: "red",
-                            }
+                          ? {color: "red",}
                           : current.probability * 100 <= 70
-                          ? {
-                              color: "orange",
-                            }
-                          : {
-                              color: "green",
-                            }
+                          ? {color: "orange",}
+                          : {color: "green",}
                       }
-                    >
-                      {
-                        (current.probability * 100).toFixed(2)
-                        // (Math.random()*50+index).toFixed(2)
-                      }
-                    </TableCell>
+                    >{(current.probability * 100).toFixed(2)}</TableCell>
                     <TableCell>{current.price}</TableCell>
                     <TableCell>{current.quantity}</TableCell>
                     <TableCell

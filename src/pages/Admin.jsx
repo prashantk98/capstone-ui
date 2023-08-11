@@ -7,12 +7,14 @@ import PageviewIcon from "@mui/icons-material/Pageview";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-// import homeBg from '../../images/cart_bg.svg';
 import DrawerCustom from "../components/DrawerCustom";
 import ShowItemsTable from "../components/ShowItemsTable";
 import Stats from "../components/ Stats";
 import AddNewProduct from "../components/AddNewProduct";
 import AddNewCategory from "../components/AddNewCategory";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
 
 import { Button, Result } from 'antd';
@@ -48,10 +50,10 @@ export default function Admin() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isDataChanged, setIsDataChanged]= useState(true);
   const isAuthenticated = sessionStorage.getItem('adminAuthorization')==='true';
-  const sidebarButton = [
-    { title: "Dashboard", onClickFuntion: navigateToDashborad },
-    { title: "Add New Product", onClickFuntion: navigateToAddNewItem },
-    { title: "Add Category", onClickFuntion: navigateToAddNewCategory },
+  const sidebarButtons = [
+    { title: "Dashboard", onClickFuntion: navigateToDashborad, icon:  <DashboardIcon/>},
+    { title: "Add New Product", onClickFuntion: navigateToAddNewItem, icon: <LibraryAddIcon/> },
+    { title: "Add Category", onClickFuntion: navigateToAddNewCategory, icon: <PlaylistAddIcon/> },
   ];
 
   function navigateToDashborad() {
@@ -61,16 +63,13 @@ export default function Admin() {
     setOpenAddNewProductModal(true);
   }
   function closeAddNewItemModal() {
-    // return false;
     setOpenAddNewProductModal(false);
   }
   function closeAddNewCategory() {
-    // return false;
     setOpenAddNewCategoryModal(false);
   }
   function navigateToAddNewCategory() {
     setOpenAddNewCategoryModal(true);
-    console.log("add new category");
   }
 
   if (isAuthenticated) {
@@ -83,7 +82,7 @@ export default function Admin() {
       >
         <CssBaseline />
 
-        <DrawerCustom sidebarButton={sidebarButton} />
+        <DrawerCustom sidebarButtons={sidebarButtons} />
         <Box
           component="main"
           sx={{

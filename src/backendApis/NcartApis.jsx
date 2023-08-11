@@ -244,7 +244,7 @@ export function removeItemFromCartApi(index, itemsArray, setItems) {
 }
 
 
-export function UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setUnAvailable, setOpenUnAvailableModal, setUploadItemPhoto) {
+export function UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setOpenUnAvailableModal) {
     setIsGotData(false);
     let data = JSON.stringify({
       image: base64Image,
@@ -267,10 +267,10 @@ export function UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, se
         setItems([...response.data.available]);
         sessionStorage.setItem("itemsArray",JSON.stringify([...response.data.available]));
         if (response.data.unavailable.length !== 0) {
-          setUnAvailable([...response.data.unavailable]);
+          // setUnAvailable([...response.data.unavailable]);
           setOpenUnAvailableModal(true);
         }
-        setUploadItemPhoto(null);
+        // setUploadItemPhoto(null);
         notification.success({
           message: 'Items Added Successfully',
           placement: 'bottomRight',

@@ -2,26 +2,12 @@ import { NavLink } from "react-router-dom";
 import { AppBar, Toolbar, Grid, Badge, Button } from "@mui/material";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
-// import { useState } from "react";
 
 export default function Navbar({ isBackButton, itemsArray }) {
-  // const [itemsArray, setItems] = useState(() => {
-  //   const storedItems = sessionStorage.getItem("itemsArray");
-  //   return storedItems ? JSON.parse(storedItems) : [];
-  // });
-
-
-//   const [totalProductInCart, setTotalProductInCart]= useState(
-//     itemsArray.slice().reduce((accumulator, currentValue) =>
-//       accumulator + currentValue.quantity,0)
-// )
-
   return (
     <>
       <AppBar
         sx={{
-          paddingLeft: "1rem",
-          paddingRight: "2rem",
           background: "#558044",
           fontWeight: "500",
         }}
@@ -39,7 +25,6 @@ export default function Navbar({ isBackButton, itemsArray }) {
                   sx={{
                     "&": {
                       fontSize: "1.8rem",
-                      // color: "black",
                       color: "white",
                     },
                     "& svg": {
@@ -51,7 +36,6 @@ export default function Navbar({ isBackButton, itemsArray }) {
                   }}
                   onClick={() => {
                     window.history.back();
-                    // navigate(-1);
                   }}
                 >
                   <KeyboardDoubleArrowLeftIcon /> Go Back
@@ -75,7 +59,7 @@ export default function Navbar({ isBackButton, itemsArray }) {
                 position: "relative",
               }}
             >
-              <NavLink to="/ncart" className="navbar__cart">
+              <NavLink to="/cart" className="navbar__cart">
                 <Badge
                   badgeContent={itemsArray.reduce((accumulator, currentValue) =>
                     accumulator + currentValue.quantity,0)}

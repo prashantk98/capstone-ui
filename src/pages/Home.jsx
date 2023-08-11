@@ -49,13 +49,8 @@ export default function Nhome() {
     const LoginToken = sessionStorage.getItem("accessToken");
     return LoginToken ? LoginToken : null;
   });
-  // const [itemsArray, setItems] = useState(() => {
-  //   const storedItems = sessionStorage.getItem("itemsArray");
-  //   return storedItems ? JSON.parse(storedItems) : [];
-  // });
 
   function handleSubmit() {
-    // isMobileNumberValid(number)
     if (isMobileNumberValid(number)) {
       if (!isUserNameValid(name)) {
         setNameHelperText("Please Enter user Name");
@@ -69,7 +64,7 @@ export default function Nhome() {
             sessionStorage.setItem("userName", name);
             sessionStorage.setItem("userMobile", number);
             sessionStorage.setItem("accessToken", result.token);
-            navigate("/ncart");
+            navigate("/cart");
           })
           .catch((error) => {
             console.log("error", error);
@@ -87,7 +82,7 @@ export default function Nhome() {
         sessionStorage.setItem("userName", name);
         sessionStorage.setItem("userMobile", number);
         sessionStorage.setItem("accessToken", accessToken);
-        navigate("/ncart");
+        navigate("/cart");
       }
     } else {
       setNumberHelperText("Enter both mobile number and name");
@@ -173,9 +168,12 @@ export default function Nhome() {
                 margin: "0 4.8rem 6rem",
                 fontSize: "4.4rem",
                 textTransform: "capitalize",
+                "@media screen and (max-width: 768px)": {
+                  textAlign: "center",
+                  color: "white",
+                },
                 "@media screen and (max-width: 425px)": {
                   fontSize: "3.2rem",
-                  textAlign: "center",
                 },
               }}
             >

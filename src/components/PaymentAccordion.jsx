@@ -220,7 +220,6 @@ export default function PaymentAccordion({itemsArray, setItems}) {
                 {cashPaymentMethod.map((item, index) => (
                   <ImageListItem key={index} >
                     <img src={item.src} alt={item.alt} />
-                    {/* <img src={coins} alt={'coins'} /> */}
                   </ImageListItem>
                 ))}
               </ImageList>

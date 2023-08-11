@@ -7,7 +7,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
 import { removeItemFromCartApi } from "../backendApis/NcartApis";
-// import { useRef } from "react";
 
 const LightTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -17,44 +16,29 @@ const LightTooltip = styled(({ className, ...props }) => (
     color: "rgba(0, 0, 0, 0.87)",
     fontSize: "1.2rem",
     display: 'block',
-    // fontSize: '14px',
     padding: '8px',
     borderRadius: '4px',
-    // maxWidth: '250px',
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
     zIndex: 9999,
-    // padding: '0'
     
   },
 }));
 
-export default function CartItem(prop) {
-  // const [value, setValue] = useState(prop.item.qty);
-  const quantityValue=prop.item.quantity;
+export default function CartItem(props) {
+  const quantityValue=props.item.quantity;
   const [value, setValue] = useState(+quantityValue);
-  // const handleIncrement = () => {
-  //   setValue(+value + 1);
-  //   // prop.qty-=1;
-  // };
-
-  // const handleDecrement = () => {
-  //   if (value > 1) {
-  //     setValue(+value - 1);
-  //     // prop.qty-=1;
-  //   }
-  // };
 
   return (
     <>
-      <div className="cart-item" key={prop.index}>
+      <div className="cart-item" key={props.index}>
         <img
-          src={"data:image/jpeg;base64," + prop.item.imgSrc}
-          alt={prop.item.imgSrc}
+          src={"data:image/jpeg;base64," + props.item.imgSrc}
+          alt={props.item.imgSrc}
         />
         <div className="cart-item__details">
-          <h3 className="cart-item__title">{prop.item.productName}</h3>
+          <h3 className="cart-item__title">{props.item.productName}</h3>
           <p className="cart-item__description">
-            Description Of {prop.item.productName}
+            Description Of {props.item.productName}
           </p>
         </div>
         <Stack direction={'row'} spacing={1}>
@@ -107,14 +91,14 @@ export default function CartItem(prop) {
             className="cart-item__detection-probability"
             style={{
               color:
-                prop.item.probability * 100 <= 50
+                props.item.probability * 100 <= 50
                   ? "red"
-                  : prop.item.probability * 100 <= 70
+                  : props.item.probability * 100 <= 70
                   ? "orange"
                   : "green",
             }}
           >
-            {Math.floor(prop.item.probability * 100)}% 
+            {Math.floor(props.item.probability * 100)}% 
           </p>
         </Stack>
         
@@ -122,8 +106,7 @@ export default function CartItem(prop) {
           <IconButton
             size="large"
             onClick={() => {
-              // handleDecrement();
-              prop.handleDecrement(prop.index);
+              props.handleDecrement(props.index);
             }}
           >
             <RemoveIcon />
@@ -132,45 +115,36 @@ export default function CartItem(prop) {
             type="number"
             min="1"
             height="2rem"
-            // value={prop.item.quantity}
-            value={prop.item.quantity}
+            // value={props.item.quantity}
+            value={props.item.quantity}
             onWheel={(e) => e.target.blur()}
             onChange={(event) => {
-              // prop.changeQuantity(prop.index, Math.floor(+event.target.value));
-              // setValue(event.target.value);
               setValue((preValue)=>{
-                // prop.changeQuantity(prop.index,+event.target.value);
                 return event.target.value;
               })
               if (+value <= 0) {
                 event.target.value = 1;
                 setValue(1);
-                // prop.changeQuantity(prop.index, 0);
               }
-              // prop.changeQuantity(prop.index, +value);
-              // setTimeout(() => {
-              //   prop.changeQuantity(prop.index, Math.floor(+event.target.value));
-              // }, 2000);
             }}
           />
           <IconButton
             size="large"
             onClick={() => {
-              // handleIncrement();
-              prop.handleIncrement(prop.index);
+              props.handleIncrement(props.index);
             }}
           >
             <AddIcon />
           </IconButton>
         </div>
 
-        {/* <p className="cart-item__price">₹{value * prop.item.price}</p> */}
-        <p className="cart-item__price">₹{ prop.item.total}</p>
+        {/* <p className="cart-item__price">₹{value * props.item.price}</p> */}
+        <p className="cart-item__price">₹{ props.item.total}</p>
         <IconButton
           aria-label="delete"
           size="large"
           onClick={() => {
-            removeItemFromCartApi(prop.index, prop.itemsArray, prop.setItems);
+            removeItemFromCartApi(props.index, props.itemsArray, props.setItems);
           }}
         >
           <DeleteIcon fontSize="inherit" />

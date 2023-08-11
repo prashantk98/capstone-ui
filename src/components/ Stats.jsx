@@ -7,16 +7,18 @@ export default function Stats({ title, icon, statsData }) {
         elevation={3}
         sx={{
           p: 3,
+          "& .MuiTypography-root": {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: 'center'
+          },
         }}
       >
         <Typography
           sx={{
             fontSize: "1.6rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             position: "relative",
-            textAlign: "center",
           }}
         >
           {icon}
@@ -25,13 +27,10 @@ export default function Stats({ title, icon, statsData }) {
         <Typography
           sx={{
             fontSize: "1.8rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
             fontWeight: "700",
           }}
         >
-          {title==="Total Revenue"?<>₹</>:<></>}
+          {title === "Total Revenue" ? <>₹</> : <></>}
           <CountUp end={statsData} duration={1} />
         </Typography>
       </Paper>

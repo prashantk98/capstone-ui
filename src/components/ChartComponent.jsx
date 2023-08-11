@@ -6,10 +6,8 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import React from "react";
 import ReactEcharts from "echarts-for-react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect, React } from "react";
 import { totalProductTableApi } from "../backendApis/AdminApis";
 
 export default function ChartComponent() {
@@ -20,69 +18,72 @@ export default function ChartComponent() {
   const [count, setCount] = useState(0);
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value); // Update the selected category
-    // totalProductApi();
+    setSelectedCategory(event.target.value); 
   };
-  const getChartOption = (category) => {
-    const chartOptions = {
-      tooltip: {
-        trigger: "axis",
-        formatter: (params) => {
-          const dataIndex = params[0]?.dataIndex;
-          if (dataIndex !== undefined) {
-            const data = totalItemInDb.reduce((accumulator, current) => {
-                return [...accumulator, current.image];
-            }, []);
-            const imageSource = `data:image/jpeg;base64,${data[dataIndex]}`;
-            return `
+  const chartOptions = {
+    tooltip: {
+      trigger: "axis",
+      formatter: (params) => {
+        const dataIndex = params[0]?.dataIndex;
+        if (dataIndex !== undefined) {
+          const data = totalItemInDb.reduce((accumulator, current) => {
+            return [...accumulator, current.image];
+          }, []);
+          const imageSource = `data:image/jpeg;base64,${data[dataIndex]}`;
+          return `
                 <img src= "${imageSource}" alt="${params[0]?.name}" style="width: 4rem; height: 4rem;" />
                 <div>${params[0]?.name}: ${params[0]?.value}%</div>
             `;
-          }
-          return "";
-        },
+        }
+        return "";
       },
-      xAxis: {
-        name: "Product Name",
-        nameGap: 40,
-        nameTextStyle: {
-          fontSize: 14,
-          fontWeight: "800",
-        },
-        type: "category",
-        boundaryGap: false,
-        nameLocation: "middle",
-         data: totalItemInDb.reduce((accumulator, current) => {
-              return [...accumulator, current.name];
-          }, []),
+    },
+    xAxis: {
+      name: "Product Name",
+      nameGap: 40,
+      nameTextStyle: {
+        fontSize: 14,
+        fontWeight: "800",
       },
-      yAxis: {
-        name: "Probability %",
-        nameGap: 40,
-        nameTextStyle: {
-          fontSize: 14,
-          fontWeight: "800",
-        },
-        type: "value",
-        nameLocation: "middle",
-        axisName: {
-          fontWeight: "bold",
-        },
+      type: "category",
+      boundaryGap: false,
+      nameLocation: "middle",
+      data: totalItemInDb.reduce((accumulator, current) => {
+        return [...accumulator, current.name];
+      }, []),
+    },
+    yAxis: {
+      name: "Probability %",
+      nameGap: 40,
+      nameTextStyle: {
+        fontSize: 14,
+        fontWeight: "800",
       },
-      series: [
-        {
-          data: totalItemInDb.reduce((accumulator, current) => {
-            return [...accumulator, (current.probability * 100).toFixed(2)];
-          }, []),
-          type: "line",
-        },
-      ],
-    };
-    return chartOptions;
+      type: "value",
+      nameLocation: "middle",
+      axisName: {
+        fontWeight: "bold",
+      },
+    },
+    series: [
+      {
+        data: totalItemInDb.reduce((accumulator, current) => {
+          return [...accumulator, (current.probability * 100).toFixed(2)];
+        }, []),
+        type: "line",
+      },
+    ],
   };
-  
+
   useEffect(() => {
-    totalProductTableApi(setIsGotData,0,20000,setTotalItemInDb, setCount,selectedCategory)
+    totalProductTableApi(
+      setIsGotData,
+      0,
+      20000,
+      setTotalItemInDb,
+      setCount,
+      selectedCategory
+    );
   }, [selectedCategory]);
 
   return (
@@ -98,7 +99,6 @@ export default function ChartComponent() {
         }}
       >
         <Select
-          // multiple
           value={selectedCategory}
           onChange={handleCategoryChange}
           open={isCategoryListOpen}
@@ -126,11 +126,15 @@ export default function ChartComponent() {
             fontWeight: "700",
           }}
         >
-          Probability Of {selectedCategory==='?/'?'All Product': selectedCategory.split('/')[1]} Detection, Total {count}
+          Probability Of{" "}
+          {selectedCategory === "?/"
+            ? "All Product"
+            : selectedCategory.split("/")[1]}{" "}
+          Detection, Total {count}
         </Typography>
         {isGotData ? (
           <ReactEcharts
-            option={getChartOption(selectedCategory)}
+            option={chartOptions}
             style={{ height: "40rem", marginBottom: "1rem" }}
           />
         ) : (

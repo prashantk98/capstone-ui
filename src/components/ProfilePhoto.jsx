@@ -6,7 +6,6 @@ const dialogStyle={
   '& .MuiTypography-root, button':{
     fontSize: '1.6rem'
   },
-
 }
 const ProfilePhoto = ({image, setProductPhoto}) => {
   const [openDialog, setOpenDialog] = useState(false);

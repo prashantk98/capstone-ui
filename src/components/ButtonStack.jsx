@@ -1,13 +1,10 @@
 import React from "react";
-import { Stack, Button, Snackbar, Modal, Box, IconButton } from "@mui/material";
-import InfoOutlined from "@mui/icons-material/InfoOutlined";
+import { Stack, Button, Modal, Box, IconButton } from "@mui/material";
 import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
 import CloseIcon from "@mui/icons-material/Close";
 import { notification, Result } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { apiLocalPath } from "../rowData";
-// import axios from "axios";
 import { resetCartApi, UpdateCartApi } from "../backendApis/NcartApis";
 
 export default function ButtonStack({
@@ -26,18 +23,17 @@ export default function ButtonStack({
 }) {
   const navigate = useNavigate();
   const [openUnAvailableModal, setOpenUnAvailableModal] = useState(false);
-  const [unAvailable, setUnAvailable] = useState([]);
-  const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
+  // const [unAvailable, setUnAvailable] = useState([]);
+  // const [uploadItemPhoto, setUploadItemPhoto] = useState(null);
 
   function handleFileChange(e) {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUploadItemPhoto(reader.result);
+        // setUploadItemPhoto(reader.result);
         setImage(reader.result);
         const base64String = reader.result;
-        // console.log(base64String);
         const imageData = base64String.split(",")[1];
         setBase64Image(imageData);
       };
@@ -162,11 +158,18 @@ export default function ButtonStack({
           <Button
             variant="contained"
             color="success"
-            // href="/cart"
             onClick={() => {
               if (image) {
                 handleStartCaptureClick();
-                UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setUnAvailable, setOpenUnAvailableModal, setUploadItemPhoto);
+                // UpdateCartApi(setIsGotData, base64Image, itemsArray, orderID, setItems, setUnAvailable, setOpenUnAvailableModal, setUploadItemPhoto);
+                UpdateCartApi(
+                  setIsGotData,
+                  base64Image,
+                  itemsArray,
+                  orderID,
+                  setItems,
+                  setOpenUnAvailableModal
+                );
               } else {
                 notification.info({
                   message: 'Upload image or take snapshot',
@@ -193,7 +196,7 @@ export default function ButtonStack({
           onClick={() => {
             if (itemsArray.length !== 0) {
               sessionStorage.setItem("itemsArray", JSON.stringify(itemsArray));
-              navigate("/cart");
+              navigate("/bill");
             } else {
               notification.info({
                 message: 'Add at least one item',

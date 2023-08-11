@@ -6,24 +6,18 @@ import {
   IconButton,
   Divider,
   Toolbar,
-  Typography,
   List,
   Grid,
-  Badge
+  Badge,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AddIcon from "@mui/icons-material/Add";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import { styled, useTheme } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCart from "@mui/icons-material/ShoppingCart";
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useState } from "react";
-import Navbar from "./Navbar";
 import { NavLink } from "react-router-dom";
 const drawerWidth = 240;
 
@@ -90,15 +84,15 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-export default function DrawerCustom({sidebarButton}) {
+export default function DrawerCustom({ sidebarButtons }) {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  const getDrawerOpen=()=>{
-    return open;
-  }
+  // const getDrawerOpen=()=>{
+  //   return open;
+  // }
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -124,62 +118,60 @@ export default function DrawerCustom({sidebarButton}) {
             }}
           >
             <MenuIcon
-            sx={{
-              fontSize: '2rem'
-            }}
-             />
+              sx={{
+                fontSize: "2rem",
+              }}
+            />
           </IconButton>
           <Grid
-              container
+            container
+            sx={{
+              alignItems: "center",
+            }}
+          >
+            <Grid item>
+              <NavLink to="/" className="navbar__logo">
+                Smart Cart
+              </NavLink>
+            </Grid>
+            <Grid item sm></Grid>
+
+            <Grid item>
+              <NavLink to="/" className="navbar__home">
+                Home
+              </NavLink>
+            </Grid>
+            <Grid
+              item
               sx={{
-                alignItems: "center",
+                position: "relative",
               }}
             >
-              <Grid item>
-                <NavLink to="/" className="navbar__logo">
-                  Smart Cart
-                </NavLink>
-              </Grid>
-              <Grid item sm></Grid>
-
-              <Grid item>
-                <NavLink to="/" className="navbar__home">
-                  Home
-                </NavLink>
-              </Grid>
-              <Grid
-                item
-                sx={{
-                  position: "relative",
-                }}
-              >
-                <NavLink to="/ncart" className="navbar__cart">
-                  <Badge
-                    badgeContent={0}
-                    sx={{
-                      "& .MuiBadge-badge": {
-                        fontSize: "2rem",
-                        margin: "0 .8rem 0",
-                      },
-                      '& svg':{
-                        fontSize: "3.6rem",
-                        padding: "0 .8rem",
-                        }
-                    }}
-                  >
-                    <ShoppingCart>
-
-                    </ShoppingCart>
-                  </Badge>
-                  Cart
-                </NavLink>
-              </Grid>
-              <Grid item>
-                <NavLink to="/admin/login" className="navbar__admin">
-                  Admin
-                </NavLink>
-              </Grid>
+              <NavLink to="/cart" className="navbar__cart">
+                <Badge
+                  badgeContent={0}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      fontSize: "2rem",
+                      margin: "0 .8rem 0",
+                    },
+                    "& svg": {
+                      fontSize: "3.6rem",
+                      padding: "0 .8rem",
+                    },
+                  }}
+                >
+                  <ShoppingCart />
+                </Badge>
+                Cart
+              </NavLink>
             </Grid>
+            <Grid item>
+              <NavLink to="/admin/login" className="navbar__admin">
+                Admin
+              </NavLink>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -203,7 +195,7 @@ export default function DrawerCustom({sidebarButton}) {
             },
           }}
         >
-          {sidebarButton.map((currentElement, index) => (
+          {sidebarButtons.map((currentElement, index) => (
             <ListItem key={index} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
@@ -220,7 +212,7 @@ export default function DrawerCustom({sidebarButton}) {
                     justifyContent: "center",
                   }}
                 >
-                  {index===0 ? <DashboardIcon /> : (index===1 ? <LibraryAddIcon />: <PlaylistAddIcon />)}
+                  {currentElement.icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={currentElement.title}

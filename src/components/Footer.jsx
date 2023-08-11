@@ -30,11 +30,7 @@ export default function Footer() {
               alignItems: "top",
               fontSize: "2rem",
               justifyContent: "space-between",
-              // padding: '.8rem'
-            },
-            "& .MuiGrid-item": {
-              padding: "0",
-            },
+            }
           }}
         >
           <Grid
@@ -62,7 +58,6 @@ export default function Footer() {
                 fontWeight: 300,
                 lineHeight: '2.4rem',
                 wordSpacing: '.2rem',
-                // color: 'rgba(0, 0, 0, 0.6)'
               },
             }}
           >

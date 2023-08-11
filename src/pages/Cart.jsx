@@ -1,176 +1,183 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Stack,
-  Box,
-} from "@mui/material";
-// import { useNavigate, NavLink } from "react-router-dom";
+import { Box, CircularProgress, Stack } from "@mui/material";
+import { useEffect, useRef } from "react";
+import { useState } from "react";
+import CartItem from "../components/CartItem";
 import Footer from "../components/Footer";
-import PaymentAccordion from "../components/PaymentAccordion";
 import Navbar from "../components/Navbar";
+import Camera from "../components/Camera";
+import AddItemManually from "../components/AddItemManually";
+import ButtonStack from "../components/ButtonStack";
+import { notification } from "antd";
+import { addItemToCartApi, generateOrderIdApi, QuantityApi } from "../backendApis/NcartApis";
 import { useContext } from "react";
 import { AppStateContext } from "../App";
 
-export default function Cart() {
-  const { itemsArray, setItems } = useContext(AppStateContext);
-  const totalItems = itemsArray.reduce((accumulator, currentValue) => accumulator + currentValue.quantity,0);
-  const totalPrice = itemsArray.reduce((accumulator, currentValue) =>accumulator + currentValue.price *currentValue.quantity,0);
 
+export default function Ncart() {
+  const [image, setImage] = useState(null);
+  const videoRef = useRef(null);
+  const audioRef = useRef(null);
+
+  const { itemsArray, setItems } = useContext(AppStateContext);
+  const [itemSelectedManuallyObj, setItemManuallyObj] = useState({
+    productName: "",
+  });
+  const [orderID, setOrderId] = useState(() => {
+    const sessionOrderId = sessionStorage.getItem("orderId");
+    console.log(sessionOrderId)
+    return sessionOrderId ? JSON.parse(sessionOrderId) : null;
+  });
+  // const [unAvailable, setUnAvailable] = useState([]);
+  const [base64Image, setBase64Image] = useState(null);
+  const [isGotData, setIsGotData] = useState(true);
+
+  const addItemToCart = () => {
+    if (itemSelectedManuallyObj.productName.trim() !== "") {
+      addItemToCartApi(
+        itemSelectedManuallyObj.productName,
+        1,
+        orderID,
+        itemsArray,
+        setItems
+      );
+    } else {
+      notification.info({
+        message: 'Please Select the Product',
+        placement: 'bottomRight',
+      });
+    }
+  };
+
+  const handleStartCaptureClick = async () => {
+    try {
+      setImage(null);
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      videoRef.current.style.transform = "scaleX(-1)";
+      videoRef.current.style.width = "100%";
+      videoRef.current.style.height = "100%";
+    } catch (error) {
+      console.error(error);
+      if (error.code) {
+        notification.error({
+          message: error.name,
+          description: error.message,
+          placement: "bottomRight",
+        });
+      }
+      return error;
+    }
+  };
+
+  function handleIncrement(index) {
+    QuantityApi(itemsArray, index, itemsArray[index].quantity + 1, setItems);
+  }
+  function handleDecrement(index) {
+      if (itemsArray[index].quantity > 1){
+        QuantityApi(itemsArray, index, itemsArray[index].quantity - 1, setItems);
+      }
+  }
+  function changeQuantity(index, value) {
+    // QuantityApi(index, +value);
+    QuantityApi(itemsArray, index, value, setItems);
+  }
+
+  useEffect(() => {
+    // const fetchOrderId= sessionStorage.getItem("orderId");
+    if (!orderID) {
+      generateOrderIdApi(setOrderId);
+    }
+    handleStartCaptureClick();
+  }, [orderID]);
+  // if (authenticated) {
   return (
     <>
-      <Navbar
-      isBackButton={true}
-      itemsArray={itemsArray}
-      />
-      <section className="cart">
-        <h3 className="cart__title">
-          Hello {sessionStorage.getItem("userName")}
-        </h3>
-        <p className="cart__description">
-          You have {totalItems} {totalItems > 1 ? "items" : "item"} in your cart
-        </p>
-
-        <div className="cart__container">
+      <section className="new-cart">
+        <Navbar key={itemsArray} itemsArray={itemsArray} />
+        <Stack
+          direction="row"
+          sx={{
+            padding: "8rem 4rem 0rem",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            "@media screen and (max-width: 1024px)": {
+              flexDirection: "column",
+              gap: "2rem",
+              alignItems: 'center'
+            },
+            "@media screen and (max-width: 768px)": {
+              flexDirection: "column",
+              gap: "2rem",
+            },
+          }}
+        >
+          <Camera
+            image={image}
+            videoRef={videoRef}
+            audioRef={audioRef}
+            setBase64Image={setBase64Image}
+            setImage={setImage}
+          />
           <Box
             sx={{
               "&": {
                 width: "50%",
                 borderRadius: ".5rem",
-                // height: '50.6rem'
-              },
-              "& .MuiPaper-root": {
-                // height: '5rem'
+                // height: "50.6rem",
+                "@media screen and (max-width: 1024px)": {
+                  width: "90%",
+                },
+                "@media screen and (max-width: 768px)": {
+                  width: "100%",
+                },
               },
             }}
           >
-            <Stack
+            <AddItemManually
+              setItemManuallyObj={setItemManuallyObj}
+              addItemToCart={addItemToCart}
+            />
+
+            <Box
               sx={{
-                // height: '40rem',
+                height: "37.3rem",
+                // height: '70%',
                 overflowY: "scroll",
+                textAlign: "center",
               }}
             >
+              {!isGotData && <CircularProgress />}
               {itemsArray.map((currentValue, index) => {
                 return (
-                  <div className="bill-item" key={index}>
-                    <img
-                      src={"data:image/jpeg;base64," + currentValue.imgSrc}
-                      alt={currentValue.imgSrc}
-                    />
-                    <div className="bill-item__details">
-                      <h3 className="bill-item__title">
-                        {currentValue.productName}
-                      </h3>
-                      <p className="bill-item__description">
-                        Description Of {currentValue.productName}
-                      </p>
-                    </div>
-                    <p className="bill__quantity">{currentValue.quantity}</p>
-                    <p className="bill-item__price">
-                      ₹{currentValue.price * currentValue.quantity}
-                    </p>
-                  </div>
+                  <CartItem
+                    index={index}
+                    item={currentValue}
+                    handleIncrement={handleIncrement}
+                    handleDecrement={handleDecrement}
+                    key={index}
+                    changeQuantity={changeQuantity}
+                    itemsArray={itemsArray}
+                    setItems={setItems}
+                  />
                 );
               })}
-            </Stack>
-            <Card
-              elevation={2}
-              sx={{
-                "&": {
-                  width: "100%",
-                  // height: "30rem",
-                  backgroundColor: "#F5F3EF",
-                  padding: "0",
-                  marginTop: "2rem",
-                },
-                "& .MuiCardContent-root": {
-                  padding: "0",
-                },
-              }}
-            >
-              <CardContent
-                sx={{
-                  "& .MuiTypography-root": {
-                    padding: "13px 24px",
-                    fontSize: "1.8rem",
-                  },
-                }}
-              >
-                <Typography
-                  sx={{
-                    textTransform: "uppercase",
-                    color: "#878787",
-                    borderBottom: "1px solid #e0e0e0",
-                  }}
-                >
-                  PRICE DETAILS
-                </Typography>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography>
-                    Price ({totalItems} {totalItems > 1 ? "items" : "item"})
-                  </Typography>
-                  <Typography>₹{totalPrice}</Typography>
-                </Stack>
-                <Stack
-                  direction="row"
-                  justifyContent="space-between"
-                  sx={{
-                    borderBottom: "1px dashed #e0e0e0",
-                  }}
-                >
-                  <Typography>
-                    Discount (<strong>10%</strong>)
-                  </Typography>
-                  <Typography
-                    sx={{
-                      color: "#388e3c",
-                    }}
-                  >
-                    -₹{(totalPrice * 0.1).toFixed(2)}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography>
-                    <strong>Total Amount</strong>
-                  </Typography>
-                  <Typography>
-                    <strong>
-                      ₹{(totalPrice - totalPrice * 0.1).toFixed(2)}
-                    </strong>
-                  </Typography>
-                </Stack>
-                <Stack>
-                  <Typography sx={{ color: "#388e3c" }}>
-                    You will save ₹{(totalPrice * 0.1).toFixed(2)} on this order
-                  </Typography>
-                </Stack>
-              </CardContent>
-            </Card>
+            </Box>
           </Box>
-
-          <Box
-            sx={{
-              width: "40%",
-              backgroundColor: "white",
-              // height: "46rem",
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: "2rem",
-                color: "black",
-                textAlign: "center",
-                // background: 'white',
-                padding: "1rem",
-              }}
-            >
-              <strong>
-                Total Amount ₹ {(totalPrice - totalPrice * 0.1).toFixed(2)}
-              </strong>
-            </Typography>
-            <PaymentAccordion itemsArray={itemsArray} setItems={setItems} />
-          </Box>
-        </div>
+        </Stack>
+        <ButtonStack
+          image={image}
+          setImage={setImage}
+          setBase64Image={setBase64Image}
+          itemsArray={itemsArray}
+          videoRef={videoRef}
+          audioRef={audioRef}
+          setItems={setItems}
+          handleStartCaptureClick={handleStartCaptureClick}
+          base64Image={base64Image}
+          orderID={orderID}
+          isGotData={isGotData}
+          setIsGotData={setIsGotData}
+        />
       </section>
       <Footer />
     </>

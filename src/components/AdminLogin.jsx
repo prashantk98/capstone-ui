@@ -1,6 +1,5 @@
 import {
   Modal,
-  Box,
   Avatar,
   Typography,
   Paper,
@@ -56,7 +55,7 @@ const addLoginModalStyle = {
         width: "100%",
         fontSize: "2rem",
         background: "#eee",
-        padding: '1rem'
+        padding: "1rem",
       },
       "& .MuiFormHelperText-root": {
         fontSize: "1.6rem",
@@ -73,12 +72,8 @@ const addLoginModalStyle = {
   },
 };
 
-
-
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [openLoginAdminModal, setOpenLoginAdminModal] = useState(true);
-  const [authentication, setAuthentication]= useState(false);
   const [adminDetails, setAdminDetails] = useState({
     adminUserName: "",
     adminPassword: "",
@@ -87,44 +82,35 @@ export default function AdminLogin() {
 
   function loginUser(adminDetails) {
     let data = JSON.stringify({
-      "password": adminDetails.adminPassword,
-      "username": adminDetails.adminUserName
+      password: adminDetails.adminPassword,
+      username: adminDetails.adminUserName,
     });
-    
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: apiLocalPath+'/auth/admin/login',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      data : data
-    };
-    
-    axios.request(config)
-    .then((response) => {
-      // console.log(response.data);
-      sessionStorage.setItem('adminAccessToken', response.data.token);
-      setAuthentication(true);
-      sessionStorage.setItem("adminAuthorization", true);
-      navigate("/admin");
 
-    })
-    .catch((error) => {
-      console.log(error);
-      // if(error.response.status===401){
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: apiLocalPath + "/auth/admin/login",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        sessionStorage.setItem("adminAccessToken", response.data.token);
+        sessionStorage.setItem("adminAuthorization", true);
+        navigate("/admin");
+      })
+      .catch((error) => {
+        console.log(error);
         setPasswordHelperText(error.response.data.error);
-      // }
-    });
+      });
   }
   function handleLoginDetails(event) {
     event.preventDefault();
     loginUser(adminDetails);
-    // console.log(authentication)
-    // if(sessionStorage.getItem('adminAccessToken')!==null) {
-    //   sessionStorage.setItem("adminAuthorization", true);
-    //   navigate("/admin");
-    // }
   }
   function handleReset() {
     setAdminDetails({
@@ -135,14 +121,12 @@ export default function AdminLogin() {
   return (
     <>
       <Modal
-        open={openLoginAdminModal}
+        open={true}
         sx={{
           justifyItems: "center",
-          // background: `url(${cartBg})`,
           backgroundSize: "cover",
         }}
       >
-        {/* <Box sx={addLoginModalStyle}> */}
         <Paper sx={addLoginModalStyle}>
           <Avatar sx={{ bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
@@ -163,8 +147,6 @@ export default function AdminLogin() {
                 required
               />
               {
-              // adminDetails.adminUserName === "prashant" && 
-              (
                 <TextField
                   type="password"
                   variant="standard"
@@ -180,30 +162,30 @@ export default function AdminLogin() {
                   required
                   helperText={passwordHelperText}
                 />
-              )}
+              }
             </FormControl>
-            {/* {passwordHelperText !== "" && ( */}
-              <Link href="/admin/login">Forget Password</Link>
-            {/* )} */}
+            <Link href="/admin/login">Forget Password</Link>
             {
-            // (adminDetails.adminPassword==='Yolo'&&adminDetails.adminUserName==='prashant')&&
-            <Stack direction="row" width="80%" gap='10%' justifyContent="center">
-              {/* {adminDetails.adminUserName !== "" && ( */}
+              <Stack
+                direction="row"
+                width="80%"
+                gap="10%"
+                justifyContent="center"
+              >
                 <Button type="reset" variant="contained" onClick={handleReset}>
                   Reset
                 </Button>
-              {/* )} */}
-              <Button
-                variant="contained"
-                type="submit"
-                onClick={handleLoginDetails}
-              >
-                Login
-              </Button>
-            </Stack>}
+                <Button
+                  variant="contained"
+                  type="submit"
+                  onClick={handleLoginDetails}
+                >
+                  Login
+                </Button>
+              </Stack>
+            }
           </form>
         </Paper>
-        {/* </Box> */}
       </Modal>
     </>
   );
